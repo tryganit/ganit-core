@@ -75,6 +75,8 @@ fn type_rank(v: &Value) -> u8 {
         Value::Number(_) | Value::Empty => 0,
         Value::Text(_)                  => 1,
         Value::Bool(_)                  => 2,
+        // Error and Array cannot reach compare_values through the normal eval path
+        // (eval_binary guards against errors before calling compare_values).
         Value::Error(_) | Value::Array(_) => 3,
     }
 }
@@ -96,8 +98,12 @@ fn eval_binary(op: &BinaryOp, lv: Value, rv: Value) -> Value {
                     ln / rn
                 }
                 BinaryOp::Pow => ln.powf(rn),
+                // Safety: outer match arm covers exactly Add|Sub|Mul|Div|Pow; Concat and comparison ops are handled separately.
                 _ => unreachable!(),
             };
+            if !result.is_finite() {
+                return Value::Error(ErrorKind::Num);
+            }
             Value::Number(result)
         }
 
@@ -143,6 +149,7 @@ fn compare_values(op: &BinaryOp, lv: &Value, rv: &Value) -> bool {
                 BinaryOp::Gt => lr > rr,
                 BinaryOp::Le => lr <= rr,
                 BinaryOp::Ge => lr >= rr,
+                // Safety: outer match arm covers exactly Eq|Ne|Lt|Gt|Le|Ge; arithmetic and Concat ops are handled separately.
                 _ => unreachable!(),
             }
         }
@@ -151,7 +158,9 @@ fn compare_values(op: &BinaryOp, lv: &Value, rv: &Value) -> bool {
 
 fn apply_cmp(op: &BinaryOp, ord: Option<std::cmp::Ordering>) -> bool {
     match ord {
-        None => false, // NaN comparisons are always false
+        // NaN: per Value::Number invariant this should not occur after the is_finite() guard;
+        // returning false matches Excel semantics if it somehow does.
+        None => false,
         Some(o) => match op {
             BinaryOp::Eq => o.is_eq(),
             BinaryOp::Ne => o.is_ne(),
@@ -159,6 +168,7 @@ fn apply_cmp(op: &BinaryOp, ord: Option<std::cmp::Ordering>) -> bool {
             BinaryOp::Gt => o.is_gt(),
             BinaryOp::Le => o.is_le(),
             BinaryOp::Ge => o.is_ge(),
+            // Safety: apply_cmp is only called from compare_values which is only called from eval_binary's comparison arm (Eq|Ne|Lt|Gt|Le|Ge).
             _ => unreachable!(),
         },
     }
@@ -520,5 +530,99 @@ mod tests {
             span: dummy_span(),
         };
         assert_eq!(run(&expr, &reg, ctx), Value::Error(ErrorKind::DivByZero));
+    }
+
+    // ── Non-finite arithmetic ────────────────────────────────────────────────
+
+    #[test]
+    fn pow_negative_fractional_exponent_is_num_error() {
+        // (-8.0).powf(0.333) → NaN → #NUM!
+        let (reg, ctx) = make_ctx();
+        let expr = Expr::BinaryOp {
+            op: BinaryOp::Pow,
+            left: Box::new(Expr::Number(-8.0, dummy_span())),
+            right: Box::new(Expr::Number(0.333, dummy_span())),
+            span: dummy_span(),
+        };
+        assert_eq!(run(&expr, &reg, ctx), Value::Error(ErrorKind::Num));
+    }
+
+    #[test]
+    fn pow_overflow_to_infinity_is_num_error() {
+        // 1e308.powf(2.0) → infinity → #NUM!
+        let (reg, ctx) = make_ctx();
+        let expr = Expr::BinaryOp {
+            op: BinaryOp::Pow,
+            left: Box::new(Expr::Number(1e308, dummy_span())),
+            right: Box::new(Expr::Number(2.0, dummy_span())),
+            span: dummy_span(),
+        };
+        assert_eq!(run(&expr, &reg, ctx), Value::Error(ErrorKind::Num));
+    }
+
+    // ── Lazy function dispatch ───────────────────────────────────────────────
+
+    #[test]
+    fn function_lazy_receives_raw_args() {
+        // Register a lazy fn that reads a variable from ctx — proves EvalCtx is passed correctly
+        // and args are NOT pre-evaluated.
+        let mut reg = Registry::new();
+        reg.register_lazy("LAZY_VAR", |args, ctx| {
+            // The first arg is a Variable expr; evaluate it manually to prove ctx is live
+            evaluate_expr(&args[0], ctx)
+        });
+        let mut vars = std::collections::HashMap::new();
+        vars.insert("X".to_string(), Value::Number(99.0));
+        let ctx = Context::new(vars);
+        let expr = Expr::FunctionCall {
+            name: "LAZY_VAR".to_string(),
+            args: vec![Expr::Variable("X".to_string(), dummy_span())],
+            span: dummy_span(),
+        };
+        assert_eq!(run(&expr, &reg, ctx), Value::Number(99.0));
+    }
+
+    // ── Multi-arg eager error ordering ───────────────────────────────────────
+
+    #[test]
+    fn function_eager_first_error_wins_over_second() {
+        let mut reg = Registry::new();
+        reg.register_eager("ADD2", |args| {
+            match (args.get(0), args.get(1)) {
+                (Some(Value::Number(a)), Some(Value::Number(b))) => Value::Number(a + b),
+                _ => Value::Error(ErrorKind::Value),
+            }
+        });
+        // arg[0] = #DIV/0!, arg[1] = #REF! → first error should win
+        let mut vars = std::collections::HashMap::new();
+        vars.insert("A".to_string(), Value::Error(ErrorKind::DivByZero));
+        vars.insert("B".to_string(), Value::Error(ErrorKind::Ref));
+        let ctx = Context::new(vars);
+        let expr = Expr::FunctionCall {
+            name: "ADD2".to_string(),
+            args: vec![
+                Expr::Variable("A".to_string(), dummy_span()),
+                Expr::Variable("B".to_string(), dummy_span()),
+            ],
+            span: dummy_span(),
+        };
+        assert_eq!(run(&expr, &reg, ctx), Value::Error(ErrorKind::DivByZero));
+    }
+
+    // ── Concat error propagation ─────────────────────────────────────────────
+
+    #[test]
+    fn concat_right_error_propagates() {
+        let (reg, _) = make_ctx();
+        let mut vars = std::collections::HashMap::new();
+        vars.insert("E".to_string(), Value::Error(ErrorKind::Value));
+        let ctx = Context::new(vars);
+        let expr = Expr::BinaryOp {
+            op: BinaryOp::Concat,
+            left: Box::new(Expr::Text("hello".to_string(), dummy_span())),
+            right: Box::new(Expr::Variable("E".to_string(), dummy_span())),
+            span: dummy_span(),
+        };
+        assert_eq!(run(&expr, &reg, ctx), Value::Error(ErrorKind::Value));
     }
 }
