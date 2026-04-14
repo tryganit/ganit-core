@@ -1,12 +1,17 @@
 use std::collections::HashMap;
 use crate::types::Value;
 
-/// Holds variable bindings for formula evaluation.
+/// Holds the named variable bindings for a formula evaluation.
+///
+/// All keys are stored and looked up in uppercase, so variable names are
+/// case-insensitive (`A1`, `a1`, and `A1` all refer to the same binding).
 pub struct Context {
     pub vars: HashMap<String, Value>,
 }
 
 impl Context {
+    /// Create a `Context` from a map of variable name → value.
+    /// Keys are normalised to uppercase on insertion.
     pub fn new(vars: HashMap<String, Value>) -> Self {
         let normalized = vars.into_iter()
             .map(|(k, v)| (k.to_uppercase(), v))
@@ -14,6 +19,7 @@ impl Context {
         Self { vars: normalized }
     }
 
+    /// Create an empty `Context` with no variable bindings.
     pub fn empty() -> Self {
         Self { vars: HashMap::new() }
     }
@@ -28,23 +34,4 @@ impl Context {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::types::Value;
-
-    #[test]
-    fn get_case_insensitive() {
-        let vars = [("myVar".to_string(), Value::Number(42.0))].into();
-        let ctx = Context::new(vars);
-        // All casing variants should find the same value
-        assert_eq!(ctx.get("myVar"), Value::Number(42.0));
-        assert_eq!(ctx.get("MYVAR"), Value::Number(42.0));
-        assert_eq!(ctx.get("myvar"), Value::Number(42.0));
-    }
-
-    #[test]
-    fn get_missing_returns_empty() {
-        let ctx = Context::empty();
-        assert_eq!(ctx.get("x"), Value::Empty);
-    }
-}
+mod tests;

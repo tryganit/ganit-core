@@ -264,6 +264,10 @@ impl<'a> Parser<'a> {
 
 // ── public API ──────────────────────────────────────────────────────────────
 
+/// Parse a formula string into an expression tree.
+///
+/// The formula must start with `=`. Returns a [`ParseError`] if the input
+/// is not a valid formula.
 pub fn parse(formula: &str) -> Result<Expr, ParseError> {
     let input = formula.strip_prefix('=').unwrap_or(formula).trim();
     let p = Parser::new(formula);
@@ -290,6 +294,7 @@ pub fn parse(formula: &str) -> Result<Expr, ParseError> {
     }
 }
 
+/// Validate that a formula string is syntactically correct without returning the AST.
 pub fn validate(formula: &str) -> Result<(), ParseError> {
     parse(formula).map(|_| ())
 }

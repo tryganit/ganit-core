@@ -8,7 +8,8 @@ use crate::types::{ErrorKind, Value};
 
 // ── EvalCtx ───────────────────────────────────────────────────────────────
 
-/// Bundles evaluation context and function registry for use by Lazy functions.
+/// Bundles the variable context and function registry for use during evaluation.
+/// Passed to lazy functions so they can recursively evaluate sub-expressions.
 pub struct EvalCtx<'r> {
     pub ctx: Context,
     pub registry: &'r Registry,
@@ -22,7 +23,12 @@ impl<'r> EvalCtx<'r> {
 
 // ── Function kinds ─────────────────────────────────────────────────────────
 
+/// A function that receives pre-evaluated arguments.
+/// Argument errors are caught before dispatch — the slice never contains `Value::Error`.
 pub type EagerFn = fn(&[Value]) -> Value;
+
+/// A function that receives raw AST nodes and controls its own evaluation order.
+/// Used for short-circuit operators like `IF`, `AND`, `OR`.
 pub type LazyFn  = fn(&[Expr], &mut EvalCtx<'_>) -> Value;
 
 pub enum FunctionKind {
@@ -32,6 +38,7 @@ pub enum FunctionKind {
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
+/// The runtime registry of built-in and user-registered spreadsheet functions.
 pub struct Registry {
     functions: HashMap<String, FunctionKind>,
 }
@@ -63,7 +70,8 @@ impl Default for Registry {
     }
 }
 
-/// Validate argument count. Returns `Some(Value::Error(ErrorKind::Value))` if out of range.
+/// Validate argument count for eager functions (args already evaluated to `&[Value]`).
+/// Returns `Some(Value::Error(ErrorKind::Value))` if the count is out of range.
 pub fn check_arity(args: &[Value], min: usize, max: usize) -> Option<Value> {
     if args.len() < min || args.len() > max {
         Some(Value::Error(ErrorKind::Value))
@@ -72,7 +80,8 @@ pub fn check_arity(args: &[Value], min: usize, max: usize) -> Option<Value> {
     }
 }
 
-/// Validate argument count by raw length. Use for lazy functions where args are `&[Expr]`.
+/// Validate argument count for lazy functions (args are `&[Expr]`).
+/// Returns `Some(Value::Error(ErrorKind::Value))` if the count is out of range.
 pub fn check_arity_len(count: usize, min: usize, max: usize) -> Option<Value> {
     if count < min || count > max {
         Some(Value::Error(ErrorKind::Value))

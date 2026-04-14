@@ -1,4 +1,15 @@
-/// Format an f64 the way Excel does: up to 15 significant digits, no trailing zeros.
+/// Format an `f64` for display in a spreadsheet cell.
+///
+/// Uses up to 14 significant digits and strips trailing zeros.
+/// Returns `"#NUM!"` for `NaN` or infinite values.
+///
+/// # Examples
+/// ```
+/// # use ganit_core::display::display_number;
+/// assert_eq!(display_number(1.0), "1");
+/// assert_eq!(display_number(0.1 + 0.2), "0.3");
+/// assert_eq!(display_number(f64::NAN), "#NUM!");
+/// ```
 pub fn display_number(n: f64) -> String {
     if n.is_nan() || n.is_infinite() {
         return "#NUM!".to_string();
