@@ -16,7 +16,13 @@ use functions::FunctionKind;
 pub fn evaluate_expr(expr: &Expr, ctx: &mut EvalCtx<'_>) -> Value {
     match expr {
         // ── Leaf nodes ──────────────────────────────────────────────────────
-        Expr::Number(n, _) => Value::Number(*n),
+        Expr::Number(n, _) => {
+            if n.is_finite() {
+                Value::Number(*n)
+            } else {
+                Value::Error(ErrorKind::Num)
+            }
+        }
         Expr::Text(s, _)   => Value::Text(s.clone()),
         Expr::Bool(b, _)   => Value::Bool(*b),
         Expr::Variable(name, _) => ctx.ctx.get(name),

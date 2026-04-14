@@ -1,6 +1,6 @@
 use crate::eval::coercion::to_number;
 use crate::eval::functions::check_arity;
-use crate::types::Value;
+use crate::types::{ErrorKind, Value};
 
 pub fn sum_fn(args: &[Value]) -> Value {
     if let Some(err) = check_arity(args, 1, 255) {
@@ -13,6 +13,9 @@ pub fn sum_fn(args: &[Value]) -> Value {
             Err(e) => return e,
             Ok(n) => sum += n,
         }
+    }
+    if !sum.is_finite() {
+        return Value::Error(ErrorKind::Num);
     }
     Value::Number(sum)
 }

@@ -34,3 +34,11 @@ fn mixed_bool_text_number() {
 fn empty_arg_treated_as_zero() {
     assert_eq!(sum_fn(&[Value::Empty, Value::Number(5.0)]), Value::Number(5.0));
 }
+
+#[test]
+fn overflow_to_infinity_returns_num_error() {
+    assert_eq!(
+        sum_fn(&[Value::Number(1e308_f64), Value::Number(1e308_f64)]),
+        Value::Error(ErrorKind::Num)
+    );
+}
