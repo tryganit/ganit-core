@@ -15,7 +15,7 @@ fn single_number() {
 }
 
 #[test]
-fn zero_arg() {
+fn single_zero_value() {
     assert_eq!(sum_fn(&[Value::Number(0.0)]), Value::Number(0.0));
 }
 

@@ -56,3 +56,16 @@ fn one_arg_returns_value_error() {
     let args = vec![Expr::Bool(true, dummy_span())];
     assert_eq!(if_fn(&args, &mut ctx), Value::Error(ErrorKind::Value));
 }
+
+#[test]
+fn four_args_returns_value_error() {
+    let reg = Registry::new();
+    let mut ctx = make_eval_ctx(&reg);
+    let args = vec![
+        Expr::Bool(true, dummy_span()),
+        Expr::Number(1.0, dummy_span()),
+        Expr::Number(2.0, dummy_span()),
+        Expr::Number(3.0, dummy_span()),
+    ];
+    assert_eq!(if_fn(&args, &mut ctx), Value::Error(ErrorKind::Value));
+}
