@@ -3,6 +3,8 @@ pub fn display_number(n: f64) -> String {
     if n.is_nan() || n.is_infinite() {
         return "#NUM!".to_string();
     }
+    // Normalize -0.0 to 0.0 (Excel displays both as "0")
+    let n = if n == 0.0 { 0.0 } else { n };
     let abs = n.abs();
     let decimals: usize = if abs == 0.0 {
         14
@@ -31,5 +33,6 @@ mod tests {
         assert_eq!(display_number(-3.5), "-3.5");
         assert_eq!(display_number(f64::NAN), "#NUM!");
         assert_eq!(display_number(f64::INFINITY), "#NUM!");
+        assert_eq!(display_number(-0.0_f64), "0");
     }
 }
