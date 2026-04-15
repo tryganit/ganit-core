@@ -29,12 +29,14 @@ pub fn string_literal(i: &str) -> IResult<&str, String> {
 }
 
 /// Parse TRUE or FALSE (case-insensitive), ensuring no trailing alphanumeric char
-/// (so "TRUNC" is not parsed as "TRUE" + "NC").
+/// (so "TRUNC" is not parsed as "TRUE" + "NC") and not followed by `(` (so
+/// "FALSE()" is parsed as a function call, not a bare boolean literal).
 pub fn bool_literal(i: &str) -> IResult<&str, bool> {
     let upper: String = i.chars().take(5).collect::<String>().to_uppercase();
     if upper.starts_with("FALSE") {
         let rest = &i[5..];
-        if rest.chars().next().map(|c| c.is_alphanumeric() || c == '_').unwrap_or(false) {
+        let next = rest.chars().next();
+        if next.map(|c| c.is_alphanumeric() || c == '_' || c == '(').unwrap_or(false) {
             return Err(nom::Err::Error(nom::error::Error::new(i, nom::error::ErrorKind::Tag)));
         }
         return Ok((rest, false));
@@ -42,7 +44,8 @@ pub fn bool_literal(i: &str) -> IResult<&str, bool> {
     let upper4: String = i.chars().take(4).collect::<String>().to_uppercase();
     if upper4 == "TRUE" {
         let rest = &i[4..];
-        if rest.chars().next().map(|c| c.is_alphanumeric() || c == '_').unwrap_or(false) {
+        let next = rest.chars().next();
+        if next.map(|c| c.is_alphanumeric() || c == '_' || c == '(').unwrap_or(false) {
             return Err(nom::Err::Error(nom::error::Error::new(i, nom::error::ErrorKind::Tag)));
         }
         return Ok((rest, true));
@@ -50,11 +53,12 @@ pub fn bool_literal(i: &str) -> IResult<&str, bool> {
     Err(nom::Err::Error(nom::error::Error::new(i, nom::error::ErrorKind::Tag)))
 }
 
-/// Parse an identifier: `[a-zA-Z_][a-zA-Z0-9_]*`
+/// Parse an identifier: `[a-zA-Z_][a-zA-Z0-9_.]*`
+/// Dots are allowed within identifiers to support function names like `ERROR.TYPE`.
 pub fn identifier(i: &str) -> IResult<&str, &str> {
     let mut parser = recognize(pair(
         take_while1(|c: char| c.is_alphabetic() || c == '_'),
-        take_while(|c: char| c.is_alphanumeric() || c == '_'),
+        take_while(|c: char| c.is_alphanumeric() || c == '_' || c == '.'),
     ));
     parser.parse(i)
 }

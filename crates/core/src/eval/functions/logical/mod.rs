@@ -8,6 +8,9 @@ pub mod iferror;
 pub mod ifs;
 pub mod switch;
 pub mod is_checks;
+pub mod constants;
+pub mod xor;
+pub mod info;
 
 pub fn register_logical(registry: &mut Registry) {
     registry.register_lazy("IF", if_fn::if_fn);
@@ -18,9 +21,19 @@ pub fn register_logical(registry: &mut Registry) {
     registry.register_lazy("IFNA", iferror::ifna_fn);
     registry.register_lazy("IFS", ifs::ifs_fn);
     registry.register_lazy("SWITCH", switch::switch_fn);
-    registry.register_eager("ISNUMBER", is_checks::isnumber_fn);
-    registry.register_eager("ISTEXT", is_checks::istext_fn);
-    registry.register_eager("ISERROR", is_checks::iserror_fn);
-    registry.register_eager("ISBLANK", is_checks::isblank_fn);
-    registry.register_eager("ISNA", is_checks::isna_fn);
+    registry.register_lazy("ISNUMBER",  is_checks::isnumber_lazy_fn);
+    registry.register_lazy("ISTEXT",    is_checks::istext_lazy_fn);
+    registry.register_lazy("ISERROR",   is_checks::iserror_lazy_fn);
+    registry.register_lazy("ISBLANK",   is_checks::isblank_lazy_fn);
+    registry.register_lazy("ISNA",      is_checks::isna_lazy_fn);
+    registry.register_lazy("ISERR",     is_checks::iserr_fn);
+    registry.register_lazy("ISLOGICAL", is_checks::islogical_fn);
+    registry.register_lazy("ISNONTEXT", is_checks::isnontext_fn);
+    registry.register_eager("NA",    constants::na_fn);
+    registry.register_eager("TRUE",  constants::true_fn);
+    registry.register_eager("FALSE", constants::false_fn);
+    registry.register_lazy("XOR", xor::xor_fn);
+    registry.register_lazy("ERROR.TYPE", info::error_type_fn);
+    registry.register_lazy("N",          info::n_fn);
+    registry.register_lazy("TYPE",       info::type_fn);
 }
