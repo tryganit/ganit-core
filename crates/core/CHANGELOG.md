@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0](https://github.com/tryganit/ganit-core/compare/ganit-core-v0.1.6...ganit-core-v0.2.0) - 2026-04-15
+
+### Fixed
+
+- *(mcp)* make list_functions registry-driven, delete static catalogue
+
 ## [0.1.6](https://github.com/tryganit/ganit-core/compare/ganit-core-v0.1.4...ganit-core-v0.1.6) - 2026-04-15
 
 ### Other
