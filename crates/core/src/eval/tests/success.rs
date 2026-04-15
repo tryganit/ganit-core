@@ -197,7 +197,7 @@ fn function_unknown_returns_name_error() {
 fn function_eager_with_registered_fn() {
     // Register a custom eager fn: DOUBLE(x) = x * 2
     let mut reg = Registry::new();
-    reg.register_eager("DOUBLE", |args| {
+    reg.register_internal("DOUBLE", |args| {
         if let Some(Value::Number(n)) = args.first() {
             Value::Number(n * 2.0)
         } else {
@@ -218,7 +218,7 @@ fn function_lazy_receives_raw_args() {
     // Register a lazy fn that reads a variable from ctx — proves EvalCtx is passed correctly
     // and args are NOT pre-evaluated.
     let mut reg = Registry::new();
-    reg.register_lazy("LAZY_VAR", |args, ctx| {
+    reg.register_internal_lazy("LAZY_VAR", |args, ctx| {
         // The first arg is a Variable expr; evaluate it manually to prove ctx is live
         evaluate_expr(&args[0], ctx)
     });
@@ -236,7 +236,7 @@ fn function_lazy_receives_raw_args() {
 #[test]
 fn function_eager_first_error_wins_over_second() {
     let mut reg = Registry::new();
-    reg.register_eager("ADD2", |args| {
+    reg.register_internal("ADD2", |args| {
         match (args.get(0), args.get(1)) {
             (Some(Value::Number(a)), Some(Value::Number(b))) => Value::Number(a + b),
             _ => Value::Error(ErrorKind::Value),

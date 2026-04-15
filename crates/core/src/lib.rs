@@ -9,8 +9,10 @@ pub use display::display_number;
 pub use parser::{parse, validate, Expr};
 pub use types::{ErrorKind, ParseError, Value};
 
+pub use eval::functions::{FunctionMeta, Registry};
+
 use std::collections::HashMap;
-use eval::{evaluate_expr, Context, EvalCtx, Registry};
+use eval::{evaluate_expr, Context, EvalCtx};
 
 /// Evaluate a formula string with named variables.
 ///
