@@ -254,7 +254,6 @@ name = "ganit-wasm"
 version = "0.1.0"
 dependencies = [
  "ganit-core",
- "serde",
  "serde-wasm-bindgen",
  "serde_json",
  "wasm-bindgen",

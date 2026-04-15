@@ -1,3 +1,4 @@
+// json! macro depth for the list_functions array (62 entries) exceeds the default 128
 #![recursion_limit = "256"]
 
 use std::collections::HashMap;
@@ -26,13 +27,14 @@ fn value_to_json(v: Value) -> serde_json::Value {
         Value::Bool(b) => json!({ "value": b, "type": "bool" }),
         Value::Error(e) => json!({ "value": null, "type": "error", "error": e.to_string() }),
         Value::Empty => json!({ "value": null, "type": "empty" }),
-        Value::Array(_) => json!({ "value": null, "type": "empty" }),
+        Value::Array(_) => json!({ "value": null, "type": "array" }),
     }
 }
 
 /// Evaluate a formula with named variables supplied as a JS object.
 ///
 /// `variables` must be a plain JS object mapping string keys to number/string/bool/null.
+/// Passing `undefined` or `null` is safe and is treated as no variables.
 /// Returns `{ value, type }` or `{ value: null, type: "error", error: "..." }`.
 #[wasm_bindgen]
 pub fn evaluate(formula: &str, variables: JsValue) -> JsValue {
