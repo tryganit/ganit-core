@@ -24,12 +24,6 @@ jobs:
       - name: Clippy
         run: cargo clippy --workspace -- -D warnings
 
-      - name: Install cargo-audit
-        run: cargo install cargo-audit --locked
-
-      - name: Audit
-        run: cargo audit
-
       - name: Install cargo-deny
         run: cargo install cargo-deny --locked
       - name: Deny check
