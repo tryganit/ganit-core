@@ -69,7 +69,7 @@ fn error_propagates_left_over_right_in_cmp() {
 #[test]
 fn function_eager_propagates_arg_error() {
     let mut reg = Registry::new();
-    reg.register_eager("IDENTITY", |args| args.first().cloned().unwrap_or(Value::Empty));
+    reg.register_internal("IDENTITY", |args| args.first().cloned().unwrap_or(Value::Empty));
     let mut vars = std::collections::HashMap::new();
     vars.insert("E".to_string(), Value::Error(ErrorKind::Ref));
     let ctx = Context::new(vars);

@@ -40,16 +40,28 @@ pub enum FunctionKind {
     Lazy(LazyFn),
 }
 
+// ── FunctionMeta ──────────────────────────────────────────────────────────
+
+/// Metadata for a user-facing spreadsheet function.
+/// Co-located with the registration call so it can never drift.
+#[derive(Debug)]
+pub struct FunctionMeta {
+    pub category: &'static str,
+    pub signature: &'static str,
+    pub description: &'static str,
+}
+
 // ── Registry ──────────────────────────────────────────────────────────────
 
 /// The runtime registry of built-in and user-registered spreadsheet functions.
 pub struct Registry {
     functions: HashMap<String, FunctionKind>,
+    metadata: HashMap<String, FunctionMeta>,
 }
 
 impl Registry {
     pub fn new() -> Self {
-        let mut r = Self { functions: HashMap::new() };
+        let mut r = Self { functions: HashMap::new(), metadata: HashMap::new() };
         math::register_math(&mut r);
         logical::register_logical(&mut r);
         text::register_text(&mut r);
@@ -59,16 +71,42 @@ impl Registry {
         r
     }
 
-    pub fn register_eager(&mut self, name: &str, f: EagerFn) {
+    /// Register a user-facing eager function with metadata.
+    /// Appears in `list_functions()`.
+    pub fn register_eager(&mut self, name: &str, f: EagerFn, meta: FunctionMeta) {
+        let key = name.to_uppercase();
+        self.functions.insert(key.clone(), FunctionKind::Eager(f));
+        self.metadata.insert(key, meta);
+    }
+
+    /// Register a user-facing lazy function with metadata.
+    /// Appears in `list_functions()`.
+    pub fn register_lazy(&mut self, name: &str, f: LazyFn, meta: FunctionMeta) {
+        let key = name.to_uppercase();
+        self.functions.insert(key.clone(), FunctionKind::Lazy(f));
+        self.metadata.insert(key, meta);
+    }
+
+    /// Register an internal/compiler-only eager function without metadata.
+    /// Never appears in `list_functions()`.
+    pub fn register_internal(&mut self, name: &str, f: EagerFn) {
         self.functions.insert(name.to_uppercase(), FunctionKind::Eager(f));
     }
 
-    pub fn register_lazy(&mut self, name: &str, f: LazyFn) {
+    /// Register an internal/compiler-only lazy function without metadata.
+    /// Never appears in `list_functions()`.
+    pub fn register_internal_lazy(&mut self, name: &str, f: LazyFn) {
         self.functions.insert(name.to_uppercase(), FunctionKind::Lazy(f));
     }
 
     pub fn get(&self, name: &str) -> Option<&FunctionKind> {
         self.functions.get(&name.to_uppercase())
+    }
+
+    /// Iterate all user-facing functions with their metadata.
+    /// The registry is the single source of truth — this can never drift.
+    pub fn list_functions(&self) -> impl Iterator<Item = (&str, &FunctionMeta)> {
+        self.metadata.iter().map(|(k, v)| (k.as_str(), v))
     }
 }
 
@@ -96,5 +134,28 @@ pub fn check_arity_len(count: usize, min: usize, max: usize) -> Option<Value> {
         Some(Value::Error(ErrorKind::NA))
     } else {
         None
+    }
+}
+
+// ── Tests ─────────────────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn list_functions_matches_registry() {
+        let registry = Registry::new();
+        let listed: Vec<(&str, &FunctionMeta)> = registry.list_functions().collect();
+        assert!(!listed.is_empty(), "registry should expose at least one function");
+        // Every listed name must be resolvable — catches metadata/functions map skew
+        for (name, _meta) in &listed {
+            assert!(
+                registry.get(name).is_some(),
+                "listed function {name} not found via get()"
+            );
+        }
+        // metadata count == listed count (no orphaned metadata entries)
+        assert_eq!(listed.len(), registry.metadata.len());
     }
 }

@@ -272,24 +272,25 @@ pub fn unary_percent_fn(args: &[Value]) -> Value {
 }
 
 // ── Registration ──────────────────────────────────────────────────────────────
+// Operator aliases are compiler-internal; they must not appear in list_functions().
 
 pub fn register_operator(registry: &mut Registry) {
     // Arithmetic
-    registry.register_eager("ADD", add_fn);
-    registry.register_eager("MINUS", minus_fn);
-    registry.register_eager("MULTIPLY", multiply_fn);
-    registry.register_eager("DIVIDE", divide_fn);
+    registry.register_internal("ADD", add_fn);
+    registry.register_internal("MINUS", minus_fn);
+    registry.register_internal("MULTIPLY", multiply_fn);
+    registry.register_internal("DIVIDE", divide_fn);
     // Comparison
-    registry.register_eager("EQ", eq_fn);
-    registry.register_eager("NE", ne_fn);
-    registry.register_eager("GT", gt_fn);
-    registry.register_eager("GTE", gte_fn);
-    registry.register_eager("LT", lt_fn);
-    registry.register_eager("LTE", lte_fn);
+    registry.register_internal("EQ", eq_fn);
+    registry.register_internal("NE", ne_fn);
+    registry.register_internal("GT", gt_fn);
+    registry.register_internal("GTE", gte_fn);
+    registry.register_internal("LT", lt_fn);
+    registry.register_internal("LTE", lte_fn);
     // Unary / power
-    registry.register_eager("POW", pow_fn);
-    registry.register_eager("CONCAT", concat_fn);
-    registry.register_eager("UMINUS", uminus_fn);
-    registry.register_eager("UPLUS", uplus_fn);
-    registry.register_eager("UNARY_PERCENT", unary_percent_fn);
+    registry.register_internal("POW", pow_fn);
+    registry.register_internal("CONCAT", concat_fn);
+    registry.register_internal("UMINUS", uminus_fn);
+    registry.register_internal("UPLUS", uplus_fn);
+    registry.register_internal("UNARY_PERCENT", unary_percent_fn);
 }

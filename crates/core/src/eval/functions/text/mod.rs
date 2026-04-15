@@ -1,4 +1,5 @@
 use super::Registry;
+use super::FunctionMeta;
 
 pub mod char_fn;
 pub mod code_fn;
@@ -20,24 +21,24 @@ pub mod upper;
 pub mod value_fn;
 
 pub fn register_text(registry: &mut Registry) {
-    registry.register_eager("LEFT",        left::left_fn);
-    registry.register_eager("MID",         mid::mid_fn);
-    registry.register_eager("RIGHT",       right::right_fn);
-    registry.register_eager("LEN",         len::len_fn);
-    registry.register_eager("LOWER",       lower::lower_fn);
-    registry.register_eager("UPPER",       upper::upper_fn);
-    registry.register_eager("TRIM",        trim::trim_fn);
-    registry.register_eager("CONCATENATE", concatenate::concatenate_fn);
-    registry.register_eager("FIND",        find::find_fn);
-    registry.register_eager("SUBSTITUTE",  substitute::substitute_fn);
-    registry.register_eager("REPLACE",     replace::replace_fn);
-    registry.register_eager("TEXT",        text_fn::text_fn);
-    registry.register_eager("VALUE",       value_fn::value_fn);
-    registry.register_eager("REPT",        rept::rept_fn);
-    registry.register_eager("CHAR",        char_fn::char_fn);
-    registry.register_eager("UNICHAR",     char_fn::unichar_fn);
-    registry.register_eager("CODE",        code_fn::code_fn);
-    registry.register_eager("UNICODE",     code_fn::unicode_fn);
-    registry.register_eager("EXACT",       exact::exact_fn);
-    registry.register_eager("T",           t_fn::t_fn);
+    registry.register_eager("LEFT",        left::left_fn,              FunctionMeta { category: "text", signature: "LEFT(text, num_chars)",                      description: "Left portion of a string" });
+    registry.register_eager("MID",         mid::mid_fn,                FunctionMeta { category: "text", signature: "MID(text, start, num_chars)",                description: "Substring from middle of text" });
+    registry.register_eager("RIGHT",       right::right_fn,            FunctionMeta { category: "text", signature: "RIGHT(text, num_chars)",                     description: "Right portion of a string" });
+    registry.register_eager("LEN",         len::len_fn,                FunctionMeta { category: "text", signature: "LEN(text)",                                  description: "Number of characters in text" });
+    registry.register_eager("LOWER",       lower::lower_fn,            FunctionMeta { category: "text", signature: "LOWER(text)",                                description: "Convert to lowercase" });
+    registry.register_eager("UPPER",       upper::upper_fn,            FunctionMeta { category: "text", signature: "UPPER(text)",                                description: "Convert to uppercase" });
+    registry.register_eager("TRIM",        trim::trim_fn,              FunctionMeta { category: "text", signature: "TRIM(text)",                                 description: "Remove extra whitespace" });
+    registry.register_eager("CONCATENATE", concatenate::concatenate_fn,FunctionMeta { category: "text", signature: "CONCATENATE(value1,...)",                    description: "Concatenate values (legacy)" });
+    registry.register_eager("FIND",        find::find_fn,              FunctionMeta { category: "text", signature: "FIND(find_text, within_text, start)",        description: "Case-sensitive position search" });
+    registry.register_eager("SUBSTITUTE",  substitute::substitute_fn,  FunctionMeta { category: "text", signature: "SUBSTITUTE(text, old, new, instance)",       description: "Replace occurrences of a substring" });
+    registry.register_eager("REPLACE",     replace::replace_fn,        FunctionMeta { category: "text", signature: "REPLACE(text, start, num_chars, new_text)",  description: "Replace portion of text" });
+    registry.register_eager("TEXT",        text_fn::text_fn,           FunctionMeta { category: "text", signature: "TEXT(value, format)",                        description: "Format number as text" });
+    registry.register_eager("VALUE",       value_fn::value_fn,         FunctionMeta { category: "text", signature: "VALUE(text)",                                description: "Convert text to number" });
+    registry.register_eager("REPT",        rept::rept_fn,              FunctionMeta { category: "text", signature: "REPT(text, number_times)",                   description: "Repeat text N times" });
+    registry.register_eager("CHAR",        char_fn::char_fn,           FunctionMeta { category: "text", signature: "CHAR(number)",                               description: "Character from ASCII/Unicode code" });
+    registry.register_eager("UNICHAR",     char_fn::unichar_fn,        FunctionMeta { category: "text", signature: "UNICHAR(number)",                            description: "Unicode character from code point" });
+    registry.register_eager("CODE",        code_fn::code_fn,           FunctionMeta { category: "text", signature: "CODE(text)",                                 description: "Numeric code of first character" });
+    registry.register_eager("UNICODE",     code_fn::unicode_fn,        FunctionMeta { category: "text", signature: "UNICODE(text)",                              description: "Unicode code point of first character" });
+    registry.register_eager("EXACT",       exact::exact_fn,            FunctionMeta { category: "text", signature: "EXACT(text1, text2)",                        description: "Case-sensitive string comparison" });
+    registry.register_eager("T",           t_fn::t_fn,                 FunctionMeta { category: "text", signature: "T(value)",                                   description: "Return text if value is text, else empty string" });
 }

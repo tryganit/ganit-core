@@ -3,7 +3,7 @@ pub mod coercion;
 pub mod functions;
 
 pub use context::Context;
-pub use functions::{EvalCtx, Registry};
+pub use functions::{EvalCtx, FunctionMeta, Registry};
 
 use crate::parser::ast::{BinaryOp, Expr, UnaryOp};
 use crate::types::{ErrorKind, Value};

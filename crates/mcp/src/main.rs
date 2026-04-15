@@ -3,7 +3,7 @@
 use std::collections::HashMap;
 use std::io::{self, BufRead, Write};
 
-use ganit_core::{evaluate, parse, validate, Expr, Value};
+use ganit_core::{evaluate, parse, validate, Expr, Registry, Value};
 use serde_json::{json, Value as JsonValue};
 
 fn main() {
@@ -185,17 +185,17 @@ fn tool_batch_evaluate(args: &JsonValue) -> JsonValue {
 }
 
 fn tool_list_functions() -> JsonValue {
-    let entries: Vec<JsonValue> = FUNCTIONS
-        .iter()
-        .map(|(name, category, syntax, description)| {
-            json!({
-                "name": name,
-                "category": category,
-                "syntax": syntax,
-                "description": description
-            })
-        })
+    let registry = Registry::new();
+    let mut entries: Vec<JsonValue> = registry
+        .list_functions()
+        .map(|(name, meta)| json!({
+            "name": name,
+            "category": meta.category,
+            "syntax": meta.signature,
+            "description": meta.description,
+        }))
         .collect();
+    entries.sort_by_key(|e| e["name"].as_str().unwrap_or("").to_owned());
     json!({ "functions": entries })
 }
 
@@ -312,71 +312,3 @@ fn tools_list() -> JsonValue {
     ])
 }
 
-// ─── Function catalogue (58 functions) ───────────────────────────────────────
-
-static FUNCTIONS: &[(&str, &str, &str, &str)] = &[
-    // math (18)
-    ("ABS",        "math",        "ABS(number)",                          "Absolute value of a number"),
-    ("CEILING",    "math",        "CEILING(number, significance)",         "Round up to nearest multiple of significance"),
-    ("FLOOR",      "math",        "FLOOR(number, significance)",           "Round down to nearest multiple of significance"),
-    ("INT",        "math",        "INT(number)",                           "Round down to nearest integer"),
-    ("LN",         "math",        "LN(number)",                            "Natural logarithm"),
-    ("LOG",        "math",        "LOG(number, base)",                     "Logarithm to specified base"),
-    ("LOG10",      "math",        "LOG10(number)",                         "Base-10 logarithm"),
-    ("MOD",        "math",        "MOD(number, divisor)",                  "Remainder after division"),
-    ("POWER",      "math",        "POWER(number, power)",                  "Number raised to a power"),
-    ("PRODUCT",    "math",        "PRODUCT(value1,...)",                   "Product of arguments"),
-    ("ROUND",      "math",        "ROUND(number, digits)",                 "Round to specified decimal places"),
-    ("ROUNDDOWN",  "math",        "ROUNDDOWN(number, digits)",             "Round toward zero"),
-    ("ROUNDUP",    "math",        "ROUNDUP(number, digits)",               "Round away from zero"),
-    ("SIGN",       "math",        "SIGN(number)",                          "Sign of a number: -1, 0, or 1"),
-    ("SQRT",       "math",        "SQRT(number)",                          "Square root"),
-    ("SUM",        "math",        "SUM(value1,...)",                       "Sum of arguments"),
-    ("SUMIF",      "math",        "SUMIF(range, criteria, sum_range)",     "Sum cells matching a condition"),
-    ("TRUNC",      "math",        "TRUNC(number, digits)",                 "Truncate to integer or decimal places"),
-    // logical (11)
-    ("AND",        "logical",     "AND(value1,...)",                       "True if all arguments are true"),
-    ("FALSE",      "logical",     "FALSE()",                               "Logical false value"),
-    ("IF",         "logical",     "IF(condition, true_val, false_val)",    "Conditional value"),
-    ("IFERROR",    "logical",     "IFERROR(value, value_if_error)",        "Return alternate value on error"),
-    ("IFNA",       "logical",     "IFNA(value, value_if_na)",              "Return alternate value on #N/A"),
-    ("IFS",        "logical",     "IFS(cond1, val1,...)",                  "First value whose condition is true"),
-    ("NOT",        "logical",     "NOT(value)",                            "Logical negation"),
-    ("OR",         "logical",     "OR(value1,...)",                        "True if any argument is true"),
-    ("SWITCH",     "logical",     "SWITCH(expr, val1, result1,...)",       "Match expression against values"),
-    ("TRUE",       "logical",     "TRUE()",                                "Logical true value"),
-    ("XOR",        "logical",     "XOR(value1,...)",                       "True if an odd number of arguments are true"),
-    // text (21)
-    ("CHAR",       "text",        "CHAR(number)",                          "Character from ASCII/Unicode code"),
-    ("CLEAN",      "text",        "CLEAN(text)",                           "Remove non-printable characters"),
-    ("CODE",       "text",        "CODE(text)",                            "Numeric code of first character"),
-    ("CONCAT",     "text",        "CONCAT(value1,...)",                    "Concatenate values"),
-    ("CONCATENATE","text",        "CONCATENATE(value1,...)",               "Concatenate values (legacy)"),
-    ("EXACT",      "text",        "EXACT(text1, text2)",                   "Case-sensitive string comparison"),
-    ("FIND",       "text",        "FIND(find_text, within_text, start)",   "Case-sensitive position search"),
-    ("LEFT",       "text",        "LEFT(text, num_chars)",                 "Left portion of a string"),
-    ("LEN",        "text",        "LEN(text)",                             "Number of characters in text"),
-    ("LOWER",      "text",        "LOWER(text)",                           "Convert to lowercase"),
-    ("MID",        "text",        "MID(text, start, num_chars)",           "Substring from middle of text"),
-    ("PROPER",     "text",        "PROPER(text)",                          "Capitalise first letter of each word"),
-    ("REPLACE",    "text",        "REPLACE(text, start, num_chars, new_text)", "Replace portion of text"),
-    ("REPT",       "text",        "REPT(text, number_times)",              "Repeat text N times"),
-    ("RIGHT",      "text",        "RIGHT(text, num_chars)",                "Right portion of a string"),
-    ("SEARCH",     "text",        "SEARCH(find_text, within_text, start)", "Case-insensitive position search"),
-    ("SUBSTITUTE", "text",        "SUBSTITUTE(text, old, new, instance)",  "Replace occurrences of a substring"),
-    ("TEXT",       "text",        "TEXT(value, format)",                   "Format number as text"),
-    ("TRIM",       "text",        "TRIM(text)",                            "Remove extra whitespace"),
-    ("UPPER",      "text",        "UPPER(text)",                           "Convert to uppercase"),
-    ("VALUE",      "text",        "VALUE(text)",                           "Convert text to number"),
-    // statistical (7)
-    ("AVERAGE",    "statistical", "AVERAGE(value1,...)",                   "Arithmetic mean of arguments"),
-    ("AVERAGEIF",  "statistical", "AVERAGEIF(range, criteria, avg_range)", "Average of cells matching a condition"),
-    ("COUNT",      "statistical", "COUNT(value1,...)",                     "Count numeric values"),
-    ("COUNTA",     "statistical", "COUNTA(value1,...)",                    "Count non-empty values"),
-    ("COUNTBLANK", "statistical", "COUNTBLANK(range)",                     "Count empty cells"),
-    ("COUNTIF",    "statistical", "COUNTIF(range, criteria)",              "Count cells matching a condition"),
-    ("MAX",        "statistical", "MAX(value1,...)",                       "Maximum value"),
-    ("MIN",        "statistical", "MIN(value1,...)",                       "Minimum value"),
-    // financial (1)
-    ("PMT",        "financial",   "PMT(rate, nper, pv)",                   "Periodic payment for a loan"),
-];
