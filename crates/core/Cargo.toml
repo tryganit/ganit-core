@@ -11,3 +11,4 @@ nom = "8"
 
 [dev-dependencies]
 proptest = "1"
+calamine = "0.26"
