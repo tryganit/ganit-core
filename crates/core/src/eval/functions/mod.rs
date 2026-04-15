@@ -1,5 +1,6 @@
 pub mod logical;
 pub mod math;
+pub mod text;
 
 use std::collections::HashMap;
 use crate::eval::context::Context;
@@ -48,6 +49,7 @@ impl Registry {
         let mut r = Self { functions: HashMap::new() };
         math::register_math(&mut r);
         logical::register_logical(&mut r);
+        text::register_text(&mut r);
         r
     }
 
