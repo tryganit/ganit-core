@@ -52,7 +52,7 @@ pub fn evaluate(formula: &str, variables: JsValue) -> JsValue {
         None => HashMap::new(),
     };
 
-    let result = ganit_core::evaluate(formula, vars);
+    let result = ganit_core::evaluate(formula, &vars);
     let json_result = value_to_json(result);
     serde_wasm_bindgen::to_value(&json_result).unwrap_or(JsValue::NULL)
 }

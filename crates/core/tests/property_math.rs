@@ -3,12 +3,12 @@ use ganit_core::{evaluate, Value};
 use std::collections::HashMap;
 
 fn run(formula: &str) -> Value {
-    evaluate(formula, HashMap::new())
+    evaluate(formula, &HashMap::new())
 }
 
 fn run_vars(formula: &str, vars: Vec<(&str, f64)>) -> Value {
     let map = vars.into_iter().map(|(k, v)| (k.to_string(), Value::Number(v))).collect();
-    evaluate(formula, map)
+    evaluate(formula, &map)
 }
 
 fn small_f64() -> impl Strategy<Value = f64> {

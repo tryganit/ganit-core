@@ -127,7 +127,7 @@ fn tool_evaluate(args: &JsonValue) -> JsonValue {
         None => return json!({ "error": "missing formula" }),
     };
     let vars = parse_variables(&args["variables"]);
-    let value = evaluate(formula, vars);
+    let value = evaluate(formula, &vars);
     value_to_json(&value)
 }
 
@@ -177,7 +177,7 @@ fn tool_batch_evaluate(args: &JsonValue) -> JsonValue {
         .iter()
         .map(|f| {
             let formula = f.as_str().unwrap_or("");
-            let value = evaluate(formula, vars.clone());
+            let value = evaluate(formula, &vars);
             value_to_json(&value)
         })
         .collect();

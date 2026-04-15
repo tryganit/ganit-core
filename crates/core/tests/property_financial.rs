@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 fn run_vars(formula: &str, vars: Vec<(&str, f64)>) -> Value {
     let map = vars.into_iter().map(|(k, v)| (k.to_string(), Value::Number(v))).collect();
-    evaluate(formula, map)
+    evaluate(formula, &map)
 }
 
 fn small_positive() -> impl Strategy<Value = f64> {
@@ -65,6 +65,6 @@ fn npv_zero_rate_sanity() {
         ("v1".to_string(), Value::Number(100.0)),
         ("v2".to_string(), Value::Number(200.0)),
     ].into_iter().collect();
-    let result = evaluate("=NPV(0, v1, v2)", vars);
+    let result = evaluate("=NPV(0, v1, v2)", &vars);
     assert_eq!(result, Value::Number(300.0));
 }
