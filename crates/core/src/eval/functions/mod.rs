@@ -1,6 +1,7 @@
 pub mod financial;
 pub mod logical;
 pub mod math;
+pub mod statistical;
 pub mod text;
 
 use std::collections::HashMap;
@@ -52,6 +53,7 @@ impl Registry {
         logical::register_logical(&mut r);
         text::register_text(&mut r);
         financial::register_financial(&mut r);
+        statistical::register_statistical(&mut r);
         r
     }
 
