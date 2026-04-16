@@ -33,6 +33,10 @@ pub mod search;
 pub mod trim;
 pub mod upper;
 pub mod value_fn;
+pub mod asc;
+pub mod join_fn;
+pub mod split_fn;
+pub mod textjoin;
 
 pub fn register_text(registry: &mut Registry) {
     registry.register_eager("LEFT",        left::left_fn,              FunctionMeta { category: "text", signature: "LEFT(text, num_chars)",                      description: "Left portion of a string" });
@@ -69,4 +73,8 @@ pub fn register_text(registry: &mut Registry) {
     registry.register_eager("FINDB",       findb::findb_fn,            FunctionMeta { category: "text", signature: "FINDB(find_text, within_text, [start_num])",      description: "Case-sensitive byte-position search" });
     registry.register_eager("REPLACEB",    replaceb::replaceb_fn,      FunctionMeta { category: "text", signature: "REPLACEB(text, start_byte, num_bytes, new_text)", description: "Replace portion of text by byte position" });
     registry.register_eager("SEARCHB",     searchb::searchb_fn,        FunctionMeta { category: "text", signature: "SEARCHB(find_text, within_text, [start_num])",    description: "Case-insensitive byte-position search with wildcards" });
+    registry.register_eager("ASC",         asc::asc_fn,                FunctionMeta { category: "text", signature: "ASC(text)",                                        description: "Convert full-width chars to half-width" });
+    registry.register_eager("JOIN",        join_fn::join_fn,           FunctionMeta { category: "text", signature: "JOIN(delimiter, value1, ...)",                     description: "Join values with delimiter" });
+    registry.register_eager("SPLIT",       split_fn::split_fn,         FunctionMeta { category: "text", signature: "SPLIT(text, delimiter)",                           description: "Split text into array by delimiter" });
+    registry.register_eager("TEXTJOIN",    textjoin::textjoin_fn,      FunctionMeta { category: "text", signature: "TEXTJOIN(delimiter, ignore_empty, value1, ...)",   description: "Join values with delimiter, optionally skip empty" });
 }
