@@ -19,3 +19,6 @@ pub fn avedev_fn(args: &[Value]) -> Value {
     }
     Value::Number(avedev)
 }
+
+#[cfg(test)]
+mod tests;

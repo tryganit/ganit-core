@@ -21,3 +21,6 @@ pub fn stdev_p_fn(args: &[Value]) -> Value {
         other => other,
     }
 }
+
+#[cfg(test)]
+mod tests;

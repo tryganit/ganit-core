@@ -24,3 +24,6 @@ pub(crate) fn sample_variance(nums: &[f64]) -> Value {
     }
     Value::Number(var)
 }
+
+#[cfg(test)]
+mod tests;

@@ -10,3 +10,6 @@ pub fn var_fn(args: &[Value]) -> Value {
     let nums = collect_nums(args);
     sample_variance(&nums)
 }
+
+#[cfg(test)]
+mod tests;

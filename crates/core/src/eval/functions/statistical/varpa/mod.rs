@@ -10,3 +10,6 @@ pub fn varpa_fn(args: &[Value]) -> Value {
     let nums = collect_nums_a(args);
     pop_variance(&nums)
 }
+
+#[cfg(test)]
+mod tests;

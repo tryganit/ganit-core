@@ -19,3 +19,6 @@ pub fn devsq_fn(args: &[Value]) -> Value {
     }
     Value::Number(devsq)
 }
+
+#[cfg(test)]
+mod tests;

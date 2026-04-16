@@ -10,3 +10,6 @@ pub fn varp_fn(args: &[Value]) -> Value {
     let nums = collect_nums(args);
     pop_variance(&nums)
 }
+
+#[cfg(test)]
+mod tests;

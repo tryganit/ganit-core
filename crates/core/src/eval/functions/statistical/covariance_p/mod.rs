@@ -27,3 +27,6 @@ pub fn covariance_p_fn(args: &[Value]) -> Value {
     }
     Value::Number(cov)
 }
+
+#[cfg(test)]
+mod tests;
