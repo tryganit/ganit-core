@@ -128,7 +128,7 @@ fn eval_apply(func: &Expr, call_args: &[Expr], ctx: &mut EvalCtx<'_>) -> Value {
 
     // Save existing values for any param names we are about to shadow.
     let mut saved: Vec<(String, Option<Value>)> = Vec::with_capacity(param_names.len());
-    for (name, val) in param_names.iter().zip(evaluated_args.into_iter()) {
+    for (name, val) in param_names.iter().zip(evaluated_args) {
         let old = ctx.ctx.set(name.clone(), val);
         saved.push((name.clone(), old));
     }
