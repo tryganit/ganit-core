@@ -24,8 +24,12 @@ pub mod oct2hex;
 
 /// Parse a binary string (up to 10 chars of 0/1) as 10-bit two's complement → i64.
 /// Returns None if invalid chars or length > 10.
+/// Empty string is treated as "0" (Google Sheets behaviour).
 pub(crate) fn parse_bin(s: &str) -> Option<i64> {
-    if s.is_empty() || s.len() > 10 {
+    if s.is_empty() {
+        return Some(0);
+    }
+    if s.len() > 10 {
         return None;
     }
     for c in s.chars() {
@@ -45,8 +49,12 @@ pub(crate) fn parse_bin(s: &str) -> Option<i64> {
 
 /// Parse an octal string (up to 10 chars of 0–7) as 29-bit two's complement → i64.
 /// Returns None if invalid chars or length > 10.
+/// Empty string is treated as "0" (Google Sheets behaviour).
 pub(crate) fn parse_oct(s: &str) -> Option<i64> {
-    if s.is_empty() || s.len() > 10 {
+    if s.is_empty() {
+        return Some(0);
+    }
+    if s.len() > 10 {
         return None;
     }
     for c in s.chars() {
@@ -65,8 +73,12 @@ pub(crate) fn parse_oct(s: &str) -> Option<i64> {
 
 /// Parse a hex string (up to 10 chars, case-insensitive) as 40-bit two's complement → i64.
 /// Returns None if invalid chars or length > 10.
+/// Empty string is treated as "0" (Google Sheets behaviour).
 pub(crate) fn parse_hex(s: &str) -> Option<i64> {
-    if s.is_empty() || s.len() > 10 {
+    if s.is_empty() {
+        return Some(0);
+    }
+    if s.len() > 10 {
         return None;
     }
     for c in s.chars() {
