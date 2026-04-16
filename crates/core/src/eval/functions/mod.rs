@@ -1,3 +1,4 @@
+pub mod date;
 pub mod financial;
 pub mod logical;
 pub mod math;
@@ -68,6 +69,7 @@ impl Registry {
         financial::register_financial(&mut r);
         statistical::register_statistical(&mut r);
         operator::register_operator(&mut r);
+        date::register_date(&mut r);
         r
     }
 
