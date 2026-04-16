@@ -9,7 +9,7 @@ const VALID_INFO_TYPES: &[&str] = &[
 
 pub fn cell_fn(args: &[Expr], ctx: &mut EvalCtx<'_>) -> Value {
     // arity checks
-    if args.len() < 1 || args.len() > 2 {
+    if args.is_empty() || args.len() > 2 {
         return Value::Error(ErrorKind::NA);
     }
     if args.len() == 1 {
