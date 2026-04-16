@@ -1,7 +1,7 @@
 use crate::eval::coercion::to_string_val;
 use crate::eval::functions::check_arity;
 use crate::types::{ErrorKind, Value};
-use regex::Regex;
+use regex_lite::Regex;
 
 /// `REGEXMATCH(text, pattern)` — returns TRUE if text contains a match for pattern.
 /// Partial match (pattern can match anywhere in text).

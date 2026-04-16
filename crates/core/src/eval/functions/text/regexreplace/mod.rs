@@ -1,7 +1,7 @@
 use crate::eval::coercion::to_string_val;
 use crate::eval::functions::check_arity;
 use crate::types::{ErrorKind, Value};
-use regex::Regex;
+use regex_lite::Regex;
 
 /// `REGEXREPLACE(text, pattern, replacement)` — replaces ALL non-overlapping matches
 /// of pattern in text with replacement.

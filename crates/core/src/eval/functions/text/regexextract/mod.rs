@@ -1,7 +1,7 @@
 use crate::eval::coercion::to_string_val;
 use crate::eval::functions::check_arity;
 use crate::types::{ErrorKind, Value};
-use regex::Regex;
+use regex_lite::Regex;
 
 /// `REGEXEXTRACT(text, pattern)` — returns the first match of pattern in text.
 /// Returns `#N/A` if no match. Returns `#REF!` if the pattern contains capture groups.
