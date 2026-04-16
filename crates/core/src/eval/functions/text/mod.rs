@@ -29,6 +29,9 @@ pub mod substitute;
 pub mod t_fn;
 pub mod text_fn;
 pub mod proper;
+pub mod regexextract;
+pub mod regexmatch;
+pub mod regexreplace;
 pub mod search;
 pub mod trim;
 pub mod upper;
@@ -77,4 +80,7 @@ pub fn register_text(registry: &mut Registry) {
     registry.register_eager("JOIN",        join_fn::join_fn,           FunctionMeta { category: "text", signature: "JOIN(delimiter, value1, ...)",                     description: "Join values with delimiter" });
     registry.register_eager("SPLIT",       split_fn::split_fn,         FunctionMeta { category: "text", signature: "SPLIT(text, delimiter)",                           description: "Split text into array by delimiter" });
     registry.register_eager("TEXTJOIN",    textjoin::textjoin_fn,      FunctionMeta { category: "text", signature: "TEXTJOIN(delimiter, ignore_empty, value1, ...)",   description: "Join values with delimiter, optionally skip empty" });
+    registry.register_eager("REGEXMATCH",   regexmatch::regexmatch_fn,     FunctionMeta { category: "text", signature: "REGEXMATCH(text, pattern)",               description: "True if text matches regex pattern" });
+    registry.register_eager("REGEXEXTRACT", regexextract::regexextract_fn, FunctionMeta { category: "text", signature: "REGEXEXTRACT(text, pattern)",             description: "Extract first regex match from text" });
+    registry.register_eager("REGEXREPLACE", regexreplace::regexreplace_fn, FunctionMeta { category: "text", signature: "REGEXREPLACE(text, pattern, replacement)", description: "Replace regex matches in text" });
 }
