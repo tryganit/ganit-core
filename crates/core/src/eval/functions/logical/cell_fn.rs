@@ -2,9 +2,9 @@ use crate::eval::{evaluate_expr, functions::EvalCtx};
 use crate::parser::ast::Expr;
 use crate::types::{ErrorKind, Value};
 
+// Source: https://support.google.com/docs/answer/3267071
 const VALID_INFO_TYPES: &[&str] = &[
-    "address", "col", "color", "contents", "filename", "format",
-    "parentheses", "prefix", "protect", "row", "type", "width",
+    "address", "col", "color", "contents", "prefix", "row", "sheet", "type", "width",
 ];
 
 pub fn cell_fn(args: &[Expr], ctx: &mut EvalCtx<'_>) -> Value {
@@ -34,12 +34,11 @@ pub fn cell_fn(args: &[Expr], ctx: &mut EvalCtx<'_>) -> Value {
             _ => "v".to_string(),
         }),
         "contents" => ref_val,
-        "col" => Value::Number(1.0),
-        "row" => Value::Number(1.0),
+        "col"   => Value::Number(1.0),
+        "row"   => Value::Number(1.0),
         "color" => Value::Number(0.0),
-        "parentheses" => Value::Number(0.0),
-        "protect" => Value::Number(1.0),
         "width" => Value::Number(8.0),
+        "sheet" => Value::Text(String::new()), // no sheet context available
         _ => Value::Text(String::new()),
     }
 }
