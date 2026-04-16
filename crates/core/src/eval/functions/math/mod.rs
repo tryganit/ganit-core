@@ -99,4 +99,9 @@ pub fn register_math(registry: &mut Registry) {
     registry.register_eager("SUMSQ",      sumsq::sumsq_fn,              FunctionMeta { category: "math",        signature: "SUMSQ(value1,...)",                          description: "Sum of squares of arguments" });
     registry.register_eager("FACTDOUBLE", factdouble::factdouble_fn,    FunctionMeta { category: "math",        signature: "FACTDOUBLE(n)",                              description: "Double factorial of a number" });
     registry.register_eager("SERIESSUM",  seriessum::seriessum_fn,      FunctionMeta { category: "math",        signature: "SERIESSUM(x, n, m, coefficients)",           description: "Sum of a power series" });
+    registry.register_eager("COMBIN",      combin::combin_fn,            FunctionMeta { category: "math",        signature: "COMBIN(n, k)",                               description: "Number of combinations without repetition" });
+    registry.register_eager("COMBINA",     combina::combina_fn,          FunctionMeta { category: "math",        signature: "COMBINA(n, k)",                              description: "Number of combinations with repetition" });
+    registry.register_eager("MULTINOMIAL", multinomial::multinomial_fn,  FunctionMeta { category: "math",        signature: "MULTINOMIAL(value1,...)",                    description: "Multinomial coefficient of given arguments" });
+    registry.register_eager("GCD",         gcd::gcd_fn,                  FunctionMeta { category: "math",        signature: "GCD(value1,...)",                            description: "Greatest common divisor" });
+    registry.register_eager("LCM",         lcm::lcm_fn,                  FunctionMeta { category: "math",        signature: "LCM(value1,...)",                            description: "Least common multiple" });
 }
