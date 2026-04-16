@@ -3,6 +3,7 @@ pub mod financial;
 pub mod logical;
 pub mod math;
 pub mod operator;
+pub mod parser;
 pub mod statistical;
 pub mod text;
 
@@ -70,6 +71,7 @@ impl Registry {
         statistical::register_statistical(&mut r);
         operator::register_operator(&mut r);
         date::register_date(&mut r);
+        parser::register_parser(&mut r);
         r
     }
 
