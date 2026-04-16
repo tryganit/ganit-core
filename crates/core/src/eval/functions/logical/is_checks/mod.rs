@@ -159,5 +159,5 @@ fn is_date_string(s: &str) -> bool {
     if !(ok_year && ok_month && ok_day) { return false; }
     let month: u32 = parts[1].parse().unwrap_or(0);
     let day: u32   = parts[2].parse().unwrap_or(0);
-    month >= 1 && month <= 12 && day >= 1 && day <= 31
+    (1..=12).contains(&month) && (1..=31).contains(&day)
 }
