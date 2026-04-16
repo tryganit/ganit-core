@@ -5,9 +5,12 @@ pub mod average;
 pub mod averageif;
 pub mod ceiling_floor;
 pub mod countif;
+pub mod countifs;
+pub mod countunique;
 pub mod criterion;
 pub mod exp;
 pub mod fact;
+pub mod factdouble;
 pub mod int_fn;
 pub mod log;
 pub mod mod_fn;
@@ -16,10 +19,14 @@ pub mod product;
 pub mod quotient;
 pub mod rand;
 pub mod round;
+pub mod seriessum;
 pub mod sign;
 pub mod sqrt;
+pub mod sqrtpi;
 pub mod sum;
 pub mod sumif;
+pub mod sumifs;
+pub mod sumsq;
 pub mod trig;
 
 pub fn register_math(registry: &mut Registry) {
@@ -76,4 +83,8 @@ pub fn register_math(registry: &mut Registry) {
     registry.register_eager("COUNTIF",    countif::countif_fn,          FunctionMeta { category: "math",        signature: "COUNTIF(range, criterion)",              description: "Count cells matching criterion" });
     registry.register_eager("SUMIF",      sumif::sumif_fn,              FunctionMeta { category: "math",        signature: "SUMIF(range, criterion, [sum_range])",   description: "Sum cells where range matches criterion" });
     registry.register_eager("AVERAGEIF",  averageif::averageif_fn,      FunctionMeta { category: "statistical", signature: "AVERAGEIF(range, criterion, [avg_range])", description: "Average cells where range matches criterion" });
+    registry.register_eager("SQRTPI",     sqrtpi::sqrtpi_fn,            FunctionMeta { category: "math",        signature: "SQRTPI(n)",                                 description: "Square root of n times pi" });
+    registry.register_eager("SUMSQ",      sumsq::sumsq_fn,              FunctionMeta { category: "math",        signature: "SUMSQ(value1,...)",                          description: "Sum of squares of arguments" });
+    registry.register_eager("FACTDOUBLE", factdouble::factdouble_fn,    FunctionMeta { category: "math",        signature: "FACTDOUBLE(n)",                              description: "Double factorial of a number" });
+    registry.register_eager("SERIESSUM",  seriessum::seriessum_fn,      FunctionMeta { category: "math",        signature: "SERIESSUM(x, n, m, coefficients)",           description: "Sum of a power series" });
 }
