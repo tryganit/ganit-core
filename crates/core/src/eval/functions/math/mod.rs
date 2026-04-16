@@ -2,7 +2,10 @@ use super::super::{FunctionMeta, Registry};
 
 pub mod abs;
 pub mod average;
+pub mod averageif;
 pub mod ceiling_floor;
+pub mod countif;
+pub mod criterion;
 pub mod exp;
 pub mod fact;
 pub mod int_fn;
@@ -16,6 +19,7 @@ pub mod round;
 pub mod sign;
 pub mod sqrt;
 pub mod sum;
+pub mod sumif;
 pub mod trig;
 
 pub fn register_math(registry: &mut Registry) {
@@ -69,4 +73,7 @@ pub fn register_math(registry: &mut Registry) {
     registry.register_eager("FACT",       fact::fact_fn,                FunctionMeta { category: "math",        signature: "FACT(number)",                          description: "Factorial of a number" });
     registry.register_eager("MROUND",     round::mround_fn,             FunctionMeta { category: "math",        signature: "MROUND(number, multiple)",               description: "Round to nearest multiple" });
     registry.register_eager("TRUNC",      round::trunc_fn,              FunctionMeta { category: "math",        signature: "TRUNC(number, digits)",                 description: "Truncate to integer or decimal places" });
+    registry.register_eager("COUNTIF",    countif::countif_fn,          FunctionMeta { category: "math",        signature: "COUNTIF(range, criterion)",              description: "Count cells matching criterion" });
+    registry.register_eager("SUMIF",      sumif::sumif_fn,              FunctionMeta { category: "math",        signature: "SUMIF(range, criterion, [sum_range])",   description: "Sum cells where range matches criterion" });
+    registry.register_eager("AVERAGEIF",  averageif::averageif_fn,      FunctionMeta { category: "statistical", signature: "AVERAGEIF(range, criterion, [avg_range])", description: "Average cells where range matches criterion" });
 }
