@@ -134,6 +134,13 @@ fn values_match(actual: &Value, expected: &Value) -> bool {
     }
 }
 
+/// Returns true if a formula contains volatile functions whose results are
+/// non-deterministic and therefore cannot be verified against a fixed oracle.
+fn is_volatile_formula(formula: &str) -> bool {
+    let upper = formula.to_uppercase();
+    upper.contains("RAND()") || upper.contains("RANDBETWEEN(") || upper.contains("RANDARRAY(")
+}
+
 fn run_fixture(path: &Path) {
     assert!(path.exists(), "fixture not found: {:?}", path);
 
@@ -167,6 +174,11 @@ fn run_fixture(path: &Path) {
                 Some(v) => v,
                 None => continue,
             };
+
+            // Skip volatile functions whose oracle values are non-deterministic.
+            if is_volatile_formula(formula) {
+                continue;
+            }
 
             total += 1;
             let actual = evaluate(formula, &vars);
@@ -244,6 +256,6 @@ conformance_test!(m4_filter_conformance,               "m4", "Filter.xlsx");
 conformance_test!(m4_info_conformance,                 "m4", "Info.xlsx");
 conformance_test!(pending, m4_logical_conformance,     "m4", "Logical.xlsx");
 conformance_test!(m4_lookup_conformance,      "m4", "Lookup.xlsx");
-conformance_test!(pending, m4_math_conformance,        "m4", "Math.xlsx");
-conformance_test!(pending, m4_operator_conformance,    "m4", "Operator.xlsx");
+conformance_test!(m4_math_conformance,        "m4", "Math.xlsx");
+conformance_test!(m4_operator_conformance,    "m4", "Operator.xlsx");
 conformance_test!(pending, m4_web_conformance,         "m4", "Web.xlsx");

@@ -19,6 +19,12 @@ pub mod fact;
 pub mod factdouble;
 pub mod gcd;
 pub mod int_fn;
+pub mod iseven_isodd;
+pub mod subtotal;
+pub mod sequence;
+pub mod randarray;
+pub mod munit;
+pub mod array_fns;
 pub mod lcm;
 pub mod log;
 pub mod mod_fn;
@@ -112,6 +118,12 @@ pub fn register_math(registry: &mut Registry) {
     registry.register_eager("MULTINOMIAL", multinomial::multinomial_fn,  FunctionMeta { category: "math",        signature: "MULTINOMIAL(value1,...)",                    description: "Multinomial coefficient of given arguments" });
     registry.register_eager("GCD",         gcd::gcd_fn,                  FunctionMeta { category: "math",        signature: "GCD(value1,...)",                            description: "Greatest common divisor" });
     registry.register_eager("LCM",         lcm::lcm_fn,                  FunctionMeta { category: "math",        signature: "LCM(value1,...)",                            description: "Least common multiple" });
+    registry.register_eager("ISEVEN", iseven_isodd::iseven_fn, FunctionMeta { category: "math", signature: "ISEVEN(number)",                           description: "Returns TRUE if number is even" });
+    registry.register_eager("ISODD",  iseven_isodd::isodd_fn,  FunctionMeta { category: "math", signature: "ISODD(number)",                            description: "Returns TRUE if number is odd" });
+    registry.register_eager("MUNIT",     munit::munit_fn,       FunctionMeta { category: "math", signature: "MUNIT(dimension)",                           description: "Returns identity matrix of given dimension" });
+    registry.register_eager("SEQUENCE",  sequence::sequence_fn, FunctionMeta { category: "math", signature: "SEQUENCE(rows, [cols], [start], [step])",    description: "Generate a sequence of numbers" });
+    registry.register_eager("RANDARRAY", randarray::randarray_fn, FunctionMeta { category: "math", signature: "RANDARRAY([rows], [cols])",                description: "Array of random numbers" });
+    registry.register_eager("SUBTOTAL",  subtotal::subtotal_fn, FunctionMeta { category: "math", signature: "SUBTOTAL(function_code, ref1, ...)",         description: "Apply function to a list (not supported with arrays)" });
 
     // Special functions
     registry.register_eager("ERF",              special_fn::erf_fn,              FunctionMeta { category: "math", signature: "ERF(lower_limit, [upper_limit])", description: "Error function" });

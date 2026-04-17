@@ -109,3 +109,20 @@ fn display_number_nan_returns_num_error() {
 fn display_number_infinity_returns_num_error() {
     assert_eq!(ganit_core::display_number(f64::INFINITY), "#NUM!");
 }
+
+// Temporary debug test for UNIQUE
+#[test]
+fn debug_unique_counta() {
+    let result = helpers::eval("=UNIQUE({1,2,2,3,3,3},FALSE,FALSE)");
+    println!("UNIQUE result: {:?}", result);
+    
+    let result2 = helpers::eval("=COUNTA(UNIQUE({1,2,2,3,3,3},FALSE,FALSE))");
+    println!("COUNTA(UNIQUE) result: {:?}", result2);
+}
+
+#[test]
+fn debug_counta_array() {
+    // Test COUNTA with a direct array
+    let result = helpers::eval("=COUNTA({1,2,2,3,3,3})");
+    println!("COUNTA direct array result: {:?}", result);
+}
