@@ -38,6 +38,8 @@ fn parse_error_string(s: &str) -> Option<ErrorKind> {
         "#NUM!"   => Some(ErrorKind::Num),
         "#N/A"    => Some(ErrorKind::NA),
         "#NULL!"  => Some(ErrorKind::Null),
+        // Google Sheets generic parse/syntax error — treat as #VALUE! in our engine.
+        "#ERROR!" => Some(ErrorKind::Value),
         _         => None,
     }
 }
@@ -229,7 +231,7 @@ conformance_test!(m2_parser_conformance,               "m2", "Parser.xlsx");
 conformance_test!(m2_statistical_conformance,          "m2", "Statistical.xlsx");
 conformance_test!(pending, m2_text_conformance,        "m2", "Text.xlsx");
 
-conformance_test!(pending, m3_database_conformance,    "m3", "Database.xlsx");
+conformance_test!(m3_database_conformance,    "m3", "Database.xlsx");
 conformance_test!(pending, m3_engineering_conformance, "m3", "Engineering.xlsx");
 conformance_test!(pending, m3_financial_conformance,   "m3", "Financial.xlsx");
 conformance_test!(m3_info_conformance,        "m3", "Info.xlsx");
