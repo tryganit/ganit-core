@@ -134,3 +134,6 @@ pub fn gammaln_fn(args: &[Value]) -> Value {
 pub fn gammaln_precise_fn(args: &[Value]) -> Value {
     gammaln_fn(args)
 }
+
+#[cfg(test)]
+mod tests;

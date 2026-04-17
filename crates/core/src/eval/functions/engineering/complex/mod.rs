@@ -754,3 +754,6 @@ pub fn imsech_fn(args: &[Value]) -> Value {
         }
     }
 }
+
+#[cfg(test)]
+mod tests;
