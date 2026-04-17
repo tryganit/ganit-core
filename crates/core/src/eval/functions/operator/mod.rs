@@ -223,14 +223,7 @@ pub fn concat_fn(args: &[Value]) -> Value {
         Ok(s) => s,
         Err(e) => return e,
     };
-    let result = format!("{}{}", a, b);
-    // The Google Sheets xlsx oracle exports numeric-looking text results (e.g. "12") as
-    // float cells, so the conformance harness expects Number(12.0) for CONCAT(1,2).
-    // Parse-fallback mirrors that until the fixture is regenerated with explicit text cells.
-    if let Ok(n) = result.parse::<f64>() {
-        return Value::Number(n);
-    }
-    Value::Text(result)
+    Value::Text(format!("{}{}", a, b))
 }
 
 pub fn uminus_fn(args: &[Value]) -> Value {
