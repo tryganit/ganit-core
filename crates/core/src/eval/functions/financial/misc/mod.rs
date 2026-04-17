@@ -1098,3 +1098,6 @@ pub fn xirr_fn(args: &[Value]) -> Value {
     }
     Value::Error(ErrorKind::Num)
 }
+
+#[cfg(test)]
+mod tests;

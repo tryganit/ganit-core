@@ -1395,3 +1395,6 @@ pub fn yieldmat_fn(args: &[Value]) -> Value {
     }
     Value::Number(result)
 }
+
+#[cfg(test)]
+mod tests;
