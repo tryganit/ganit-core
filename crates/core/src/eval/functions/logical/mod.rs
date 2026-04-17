@@ -45,4 +45,6 @@ pub fn register_logical(registry: &mut Registry) {
     registry.register_lazy("ISDATE",    is_checks::isdate_fn,        FunctionMeta { category: "logical", signature: "ISDATE(value)",                        description: "True if value is a date" });
     registry.register_lazy("LAMBDA",   lambda::lambda_fn,           FunctionMeta { category: "logical", signature: "LAMBDA(param1, ..., body)",             description: "Create a lambda function" });
     registry.register_lazy("LET",      let_fn::let_fn,              FunctionMeta { category: "logical", signature: "LET(name1, val1, ..., body)",           description: "Bind named values and evaluate body" });
+    registry.register_lazy("SHEETS",    info::sheets_fn,             FunctionMeta { category: "logical", signature: "SHEETS([reference])",                  description: "Number of sheets in a reference or workbook" });
+    registry.register_lazy("ISEMAIL",   is_checks::isemail_fn,       FunctionMeta { category: "logical", signature: "ISEMAIL(value)",                       description: "True if value is a valid email address" });
 }
