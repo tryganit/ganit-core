@@ -37,3 +37,6 @@ fn looks_like_url(s: &str) -> bool {
     // Also accept domain-like strings: contain a dot and no spaces
     !s.contains(' ') && s.contains('.')
 }
+
+#[cfg(test)]
+mod tests;

@@ -15,3 +15,6 @@ pub fn hyperlink_fn(args: &[Value]) -> Value {
         args[0].clone()
     }
 }
+
+#[cfg(test)]
+mod tests;

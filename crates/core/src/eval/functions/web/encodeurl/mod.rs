@@ -41,3 +41,6 @@ fn hex_digit(n: u8) -> char {
         _ => (b'A' + n - 10) as char,
     }
 }
+
+#[cfg(test)]
+mod tests;
