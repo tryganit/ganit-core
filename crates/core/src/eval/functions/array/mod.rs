@@ -76,7 +76,7 @@ fn to_f64(v: &Value) -> Option<f64> {
 
 // ── ROWS ─────────────────────────────────────────────────────────────────────
 
-fn rows_fn(args: &[Value]) -> Value {
+pub(crate) fn rows_fn(args: &[Value]) -> Value {
     if let Some(e) = check_arity(args, 1, 1) {
         return e;
     }
@@ -86,7 +86,7 @@ fn rows_fn(args: &[Value]) -> Value {
 
 // ── COLUMNS ───────────────────────────────────────────────────────────────────
 
-fn columns_fn(args: &[Value]) -> Value {
+pub(crate) fn columns_fn(args: &[Value]) -> Value {
     if let Some(e) = check_arity(args, 1, 1) {
         return e;
     }
@@ -183,7 +183,7 @@ fn index_fn(args: &[Value]) -> Value {
 
 // ── TRANSPOSE ─────────────────────────────────────────────────────────────────
 
-fn transpose_fn(args: &[Value]) -> Value {
+pub(crate) fn transpose_fn(args: &[Value]) -> Value {
     if let Some(e) = check_arity(args, 1, 1) {
         return e;
     }
@@ -201,7 +201,7 @@ fn transpose_fn(args: &[Value]) -> Value {
 
 // ── ARRAY_CONSTRAIN ───────────────────────────────────────────────────────────
 
-fn array_constrain_fn(args: &[Value]) -> Value {
+pub(crate) fn array_constrain_fn(args: &[Value]) -> Value {
     if let Some(e) = check_arity(args, 3, 3) {
         return e;
     }
@@ -309,7 +309,7 @@ fn chooserows_fn(args: &[Value]) -> Value {
 // ── FLATTEN ───────────────────────────────────────────────────────────────────
 // Returns a single-column (ROWS=n, COLS=1) array
 
-fn flatten_fn(args: &[Value]) -> Value {
+pub(crate) fn flatten_fn(args: &[Value]) -> Value {
     if let Some(e) = check_arity(args, 1, 1) {
         return e;
     }
@@ -440,7 +440,7 @@ fn wraprows_fn(args: &[Value]) -> Value {
 
 // ── SORT ──────────────────────────────────────────────────────────────────────
 
-fn sort_fn(args: &[Value]) -> Value {
+pub(crate) fn sort_fn(args: &[Value]) -> Value {
     if let Some(e) = check_arity(args, 1, 4) {
         return e;
     }
@@ -530,7 +530,7 @@ fn sortby_fn(args: &[Value]) -> Value {
 
 // ── UNIQUE ────────────────────────────────────────────────────────────────────
 
-fn unique_fn(args: &[Value]) -> Value {
+pub(crate) fn unique_fn(args: &[Value]) -> Value {
     if let Some(e) = check_arity(args, 1, 3) {
         return e;
     }
@@ -596,7 +596,7 @@ fn unique_fn(args: &[Value]) -> Value {
 
 // ── SUMPRODUCT ────────────────────────────────────────────────────────────────
 
-fn sumproduct_fn(args: &[Value]) -> Value {
+pub(crate) fn sumproduct_fn(args: &[Value]) -> Value {
     if let Some(e) = check_arity(args, 1, usize::MAX) {
         return e;
     }
@@ -1438,3 +1438,6 @@ pub fn register_array(registry: &mut Registry) {
         description: "Creates an array using a LAMBDA for each cell value",
     });
 }
+
+#[cfg(test)]
+mod tests;
