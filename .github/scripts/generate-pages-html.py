@@ -165,7 +165,8 @@ print(f"""<!DOCTYPE html>
     Oracle: Google Sheets &nbsp;·&nbsp;
     ✓ = 100% passing &nbsp;·&nbsp; ⚠ = known deviation &nbsp;·&nbsp;
     Updated: {updated} &nbsp;·&nbsp;
-    <a href="{run_url}">CI run</a>
+    <a href="{run_url}">CI run</a> &nbsp;·&nbsp;
+    <a href="coverage/">Full coverage report</a>
   </footer>
 </body>
 </html>""")
