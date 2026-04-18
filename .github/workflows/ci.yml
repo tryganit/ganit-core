@@ -45,7 +45,9 @@ jobs:
         uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: Generate coverage report
-        run: cargo llvm-cov --workspace --lcov --output-path lcov.info --html --output-dir target/coverage-html
+        run: |
+          cargo llvm-cov --workspace --lcov --output-path lcov.info
+          cargo llvm-cov --workspace --html --output-dir target/coverage-html
 
       - name: Generate conformance report
         run: cargo test -p truecalc-core --test conformance generate_conformance_report -- --nocapture
