@@ -124,3 +124,27 @@ fn coupdays_semiannual_30_360() {
     ];
     assert!(approx(coupdays_fn(&args), 180.0, 1e-4));
 }
+
+// ---------------------------------------------------------------------------
+// PRICE happy path
+// ---------------------------------------------------------------------------
+
+#[test]
+fn price_rate_equals_yield_returns_near_par() {
+    // When rate == yield, PRICE should be near redemption (100)
+    // settlement=45292 (2024-01-01), maturity=46022 (2025-12-31)
+    let args = [
+        Value::Number(45292.0),
+        Value::Number(46022.0),
+        Value::Number(0.05),
+        Value::Number(0.05),
+        Value::Number(100.0),
+        Value::Number(2.0),
+    ];
+    let result = price_fn(&args);
+    if let Value::Number(p) = result {
+        assert!((p - 100.0).abs() < 0.5, "price {} should be near 100", p);
+    } else {
+        panic!("expected Number, got {:?}", result);
+    }
+}
