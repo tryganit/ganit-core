@@ -143,3 +143,14 @@ fn xmatch_invalid_mode_returns_value_error() {
     let lookup = make_1d(vec![n(1.0)]);
     assert_eq!(xmatch_fn(&[n(1.0), lookup, n(99.0)]), Value::Error(ErrorKind::Value));
 }
+
+#[test]
+fn xlookup_invalid_match_mode_returns_not_found_fallback() {
+    let lookup = make_1d(vec![n(1.0)]);
+    let result = make_1d(vec![t("a")]);
+    // mode=99 → falls through to exact match, key not found → uses if_not_found fallback
+    assert_eq!(
+        xlookup_fn(&[n(9.0), lookup, result, t("n/a"), n(99.0)]),
+        t("n/a"),
+    );
+}
