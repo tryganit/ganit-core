@@ -19,5 +19,5 @@
 .worktrees/
 
 # generated docs (except superpowers specs/plans)
-docs/
-!docs/superpowers/
+docs/*
+!docs/superpowers
