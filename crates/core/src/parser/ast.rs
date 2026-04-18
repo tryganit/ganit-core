@@ -68,3 +68,57 @@ impl Expr {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn span_stores_offset_and_length() {
+        let s = Span::new(5, 10);
+        assert_eq!(s.offset, 5);
+        assert_eq!(s.length, 10);
+    }
+
+    #[test]
+    fn expr_number_span() {
+        let e = Expr::Number(1.0, Span::new(0, 3));
+        assert_eq!(e.span().offset, 0);
+        assert_eq!(e.span().length, 3);
+    }
+
+    #[test]
+    fn expr_text_span() {
+        let e = Expr::Text("hello".into(), Span::new(2, 7));
+        assert_eq!(e.span().offset, 2);
+    }
+
+    #[test]
+    fn expr_bool_span() {
+        let e = Expr::Bool(true, Span::new(1, 4));
+        assert_eq!(e.span().offset, 1);
+    }
+
+    #[test]
+    fn expr_function_call_span() {
+        let e = Expr::FunctionCall {
+            name: "SUM".into(),
+            args: vec![],
+            span: Span::new(0, 5),
+        };
+        assert_eq!(e.span().offset, 0);
+        assert_eq!(e.span().length, 5);
+    }
+
+    #[test]
+    fn unary_op_debug() {
+        assert_eq!(format!("{:?}", UnaryOp::Neg), "Neg");
+        assert_eq!(format!("{:?}", UnaryOp::Percent), "Percent");
+    }
+
+    #[test]
+    fn binary_op_debug() {
+        assert_eq!(format!("{:?}", BinaryOp::Add), "Add");
+        assert_eq!(format!("{:?}", BinaryOp::Eq), "Eq");
+    }
+}
