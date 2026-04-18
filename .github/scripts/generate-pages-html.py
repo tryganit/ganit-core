@@ -91,12 +91,15 @@ print(f"""<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Google Sheets Conformance — ganit</title>
+  <title>Test Transparency — ganit</title>
   <style>
     body {{ font-family: system-ui, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; color: #24292f; }}
     h1 {{ font-size: 1.5rem; }}
     h2 {{ font-size: 1.1rem; margin-top: 2rem; color: #57606a; }}
-    .badge {{ display: inline-block; background: {hex_color}; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 1.1rem; font-weight: bold; margin: 8px 0 24px; }}
+    .badges {{ margin: 8px 0 24px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }}
+    .badge {{ display: inline-block; background: {hex_color}; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 1.1rem; font-weight: bold; }}
+    .explainer {{ background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; padding: 12px 16px; margin: 16px 0; font-size: 0.9rem; line-height: 1.6; }}
+    .explainer strong {{ color: #24292f; }}
     table {{ border-collapse: collapse; width: 100%; margin-top: 8px; }}
     th, td {{ border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; }}
     th {{ background: #f6f8fa; }}
@@ -107,9 +110,25 @@ print(f"""<!DOCTYPE html>
   </style>
 </head>
 <body>
-  <h1>Google Sheets Conformance</h1>
-  <div class="badge">{passed}/{total} · {pct}%</div>
-  <p>ganit formula results verified against Google Sheets oracle on every commit to <code>main</code>.</p>
+  <h1>ganit — Test Transparency</h1>
+
+  <h2>Google Sheets Conformance</h2>
+  <div class="badges">
+    <span class="badge">{passed}/{total} · {pct}%</span>
+    <img src="https://img.shields.io/codecov/c/github/tryganit/ganit-core?label=coverage&style=flat-square" alt="Code Coverage" height="22">
+  </div>
+
+  <div class="explainer">
+    <strong>What is Google Sheets conformance?</strong><br>
+    ganit evaluates spreadsheet formulas. To verify correctness, every supported formula is run against
+    a <em>Google Sheets oracle</em> — real Google Sheets spreadsheets that produce the expected output.
+    On every commit to <code>main</code>, ganit re-runs all {total} conformance cases and compares
+    results. A ✓ means ganit matches Google Sheets exactly; ⚠ means a known, intentional deviation
+    (e.g. a locale difference or an unsupported edge case).<br><br>
+    <strong>Property tests</strong> go further: for each formula category, randomly generated inputs
+    are checked against mathematical invariants (e.g. <code>ABS(x) ≥ 0</code> for all x,
+    <code>SQRT(x)² ≈ x</code> for x &gt; 0). Each property runs {CASES:,} random cases per commit.
+  </div>
 
   <h2>Test Coverage by Category</h2>
   <table>
