@@ -1,4 +1,4 @@
-// Test helpers for ganit-core integration tests.
+// Test helpers for truecalc-core integration tests.
 use truecalc_core::{evaluate, Value};
 use std::collections::HashMap;
 

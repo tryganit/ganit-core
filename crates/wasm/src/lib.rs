@@ -10,7 +10,7 @@ use wasm_bindgen::prelude::*;
 
 use truecalc_core::Value;
 
-/// Convert a JSON value (from JS) into a ganit-core Value.
+/// Convert a JSON value (from JS) into a truecalc-core Value.
 fn json_to_value(v: &serde_json::Value) -> Value {
     match v {
         serde_json::Value::Number(n) => n

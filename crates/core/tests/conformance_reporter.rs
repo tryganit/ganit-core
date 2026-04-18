@@ -174,7 +174,7 @@ impl ConformanceReport {
     }
 }
 
-/// Known deviations: cases where ganit intentionally differs from Google Sheets.
+/// Known deviations: cases where truecalc intentionally differs from Google Sheets.
 /// These are excluded from failure counts but documented in the report.
 pub const KNOWN_DEVIATIONS: &[KnownDeviation] = &[
     // Add entries here as they are discovered. Format:
