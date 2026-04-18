@@ -45,7 +45,9 @@ jobs:
         uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: Generate coverage report
-        run: cargo llvm-cov --workspace --lcov --output-path lcov.info
+        run: |
+          cargo llvm-cov --workspace --lcov --output-path lcov.info
+          cargo llvm-cov --workspace --html --output-dir target/coverage-html
 
       - name: Generate conformance report
         run: cargo test -p truecalc-core --test conformance generate_conformance_report -- --nocapture
@@ -118,6 +120,7 @@ jobs:
             target/conformance-report.json \
             "$run_url" "${hex}" "${passed}" "${total}" "${pct}" "${cov_pct}" \
             > /tmp/conformance.html
+          cp -r target/coverage-html /tmp/coverage-html
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin gh-pages 2>/dev/null || true
@@ -125,8 +128,9 @@ jobs:
           echo "$badge_json" > conformance-badge.json
           echo "$cov_badge_json" > coverage-badge.json
           cp /tmp/conformance.html index.html
+          rm -rf coverage && cp -r /tmp/coverage-html coverage
           touch .nojekyll
-          git add conformance-badge.json coverage-badge.json index.html .nojekyll
+          git add conformance-badge.json coverage-badge.json index.html .nojekyll coverage/
           git diff --cached --quiet || git commit -m "chore: update conformance + coverage report [skip ci]"
           git push --force origin gh-pages
         env:
