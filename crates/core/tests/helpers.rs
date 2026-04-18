@@ -1,5 +1,5 @@
 // Test helpers for ganit-core integration tests.
-use ganit_core::{evaluate, Value};
+use truecalc_core::{evaluate, Value};
 use std::collections::HashMap;
 
 /// Convenience: evaluate a formula with no variables.

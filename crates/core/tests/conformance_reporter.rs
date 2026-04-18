@@ -4,7 +4,7 @@
 // Called by the generate_conformance_report test in conformance.rs.
 
 use calamine::{open_workbook, CellErrorType, Data, Reader, Xlsx};
-use ganit_core::{evaluate, ErrorKind, Value};
+use truecalc_core::{evaluate, ErrorKind, Value};
 use std::collections::HashMap;
 use std::path::Path;
 
