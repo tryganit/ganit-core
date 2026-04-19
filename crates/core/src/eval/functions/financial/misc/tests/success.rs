@@ -116,6 +116,96 @@ fn mirr_positive_return() {
 }
 
 // ---------------------------------------------------------------------------
+// PPMT
+// ---------------------------------------------------------------------------
+
+#[test]
+fn ppmt_period_1_interest_and_principal() {
+    // PPMT(10%/12, 1, 12, 10000): period 1 principal on a 12-month 10% loan
+    // PMT ≈ -879.16, IPMT(1) = -(10000 * 0.1/12) = -83.33, PPMT = -795.83
+    let args = [
+        Value::Number(0.1 / 12.0),
+        Value::Number(1.0),
+        Value::Number(12.0),
+        Value::Number(10000.0),
+    ];
+    let result = ppmt_fn(&args);
+    assert!(approx(result.clone(), -795.8255, 1e-3), "got {:?}", result);
+}
+
+#[test]
+fn ppmt_zero_rate_equal_payments() {
+    // PPMT(0, per, 12, 12000) = -1000 regardless of period (zero interest)
+    for per in [1.0, 6.0, 12.0] {
+        let args = [
+            Value::Number(0.0),
+            Value::Number(per),
+            Value::Number(12.0),
+            Value::Number(12000.0),
+        ];
+        let result = ppmt_fn(&args);
+        assert!(approx(result.clone(), -1000.0, 1e-9), "per={} got {:?}", per, result);
+    }
+}
+
+#[test]
+fn ppmt_plus_ipmt_equals_pmt() {
+    // Invariant: PPMT(r, k, n, pv) + IPMT(r, k, n, pv) = PMT(r, n, pv) for any k
+    let rate = Value::Number(0.1 / 12.0);
+    let nper = Value::Number(12.0);
+    let pv = Value::Number(10000.0);
+    for per in [1.0_f64, 5.0, 12.0] {
+        let period = Value::Number(per);
+        let pmt_args = [rate.clone(), period.clone(), nper.clone(), pv.clone()];
+        let ppmt = match ppmt_fn(&pmt_args) { Value::Number(n) => n, v => panic!("ppmt@per={}: {:?}", per, v) };
+        let ipmt = match ipmt_fn(&pmt_args) { Value::Number(n) => n, v => panic!("ipmt@per={}: {:?}", per, v) };
+        // PMT for this loan ≈ -879.16
+        let total = ppmt + ipmt;
+        assert!((total - (-879.1588)).abs() < 1e-3, "per={} ppmt+ipmt={} want -879.1588", per, total);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// XIRR
+// ---------------------------------------------------------------------------
+
+#[test]
+fn xirr_exact_one_year_ten_percent() {
+    // XIRR([-1000, 1100], [2023-01-01, 2024-01-01]) = 10%
+    // 44927 = Excel serial for 2023-01-01, 45292 = 2024-01-01 (365 days apart)
+    let args = [
+        Value::Array(vec![Value::Number(-1000.0), Value::Number(1100.0)]),
+        Value::Array(vec![Value::Number(44927.0), Value::Number(45292.0)]),
+    ];
+    let result = xirr_fn(&args);
+    assert!(approx(result.clone(), 0.1, 1e-6), "got {:?}", result);
+}
+
+#[test]
+fn xirr_two_year_ten_percent() {
+    // XIRR([-1000, 1210], [2023-01-01, 2025-01-01]) = 10%
+    // 45657 = 44927 + 730 (two 365-day years)
+    let args = [
+        Value::Array(vec![Value::Number(-1000.0), Value::Number(1210.0)]),
+        Value::Array(vec![Value::Number(44927.0), Value::Number(45657.0)]),
+    ];
+    let result = xirr_fn(&args);
+    assert!(approx(result.clone(), 0.1, 1e-6), "got {:?}", result);
+}
+
+#[test]
+fn xirr_with_explicit_guess() {
+    // Same as xirr_exact_one_year_ten_percent but with guess=0.05
+    let args = [
+        Value::Array(vec![Value::Number(-1000.0), Value::Number(1100.0)]),
+        Value::Array(vec![Value::Number(44927.0), Value::Number(45292.0)]),
+        Value::Number(0.05),
+    ];
+    let result = xirr_fn(&args);
+    assert!(approx(result.clone(), 0.1, 1e-6), "got {:?}", result);
+}
+
+// ---------------------------------------------------------------------------
 // XNPV
 // ---------------------------------------------------------------------------
 

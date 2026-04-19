@@ -1,10 +1,14 @@
 use super::super::{
     array_constrain_fn, flatten_fn, rows_fn, columns_fn,
-    sort_fn, transpose_fn, unique_fn,
+    sort_fn, sumproduct_fn, transpose_fn, unique_fn,
 };
 use crate::types::Value;
 
 fn num(n: f64) -> Value { Value::Number(n) }
+
+fn flat(ns: &[f64]) -> Value {
+    Value::Array(ns.iter().map(|&n| num(n)).collect())
+}
 
 fn col(ns: &[f64]) -> Value {
     Value::Array(ns.iter().map(|&n| Value::Array(vec![num(n)])).collect())
@@ -104,4 +108,46 @@ fn constrain_larger_than_array() {
 fn flatten_scalar() {
     // 1-element → from_2d returns flat single-element Array
     assert_eq!(flatten_fn(&[num(5.0)]), Value::Array(vec![num(5.0)]));
+}
+
+// ── SUMPRODUCT: additional cases ──────────────────────────────────────────────
+
+#[test]
+fn sumproduct_three_arrays() {
+    // 1*4*7 + 2*5*8 + 3*6*9 = 28 + 80 + 162 = 270
+    assert_eq!(
+        sumproduct_fn(&[
+            flat(&[1.0, 2.0, 3.0]),
+            flat(&[4.0, 5.0, 6.0]),
+            flat(&[7.0, 8.0, 9.0]),
+        ]),
+        num(270.0)
+    );
+}
+
+#[test]
+fn sumproduct_single_element_arrays() {
+    // SUMPRODUCT([5], [3]) = 15
+    assert_eq!(
+        sumproduct_fn(&[flat(&[5.0]), flat(&[3.0])]),
+        num(15.0)
+    );
+}
+
+#[test]
+fn sumproduct_with_zeros() {
+    // Any element zero → entire term is zero
+    assert_eq!(
+        sumproduct_fn(&[flat(&[0.0, 2.0, 3.0]), flat(&[1.0, 0.0, 5.0])]),
+        num(15.0) // 0*1 + 2*0 + 3*5
+    );
+}
+
+#[test]
+fn sumproduct_negative_values() {
+    // (-1)*1 + (-2)*(-2) + 3*3 = -1 + 4 + 9 = 12
+    assert_eq!(
+        sumproduct_fn(&[flat(&[-1.0, -2.0, 3.0]), flat(&[1.0, -2.0, 3.0])]),
+        num(12.0)
+    );
 }

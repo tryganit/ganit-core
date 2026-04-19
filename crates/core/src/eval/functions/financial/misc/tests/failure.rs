@@ -80,6 +80,87 @@ fn fvschedule_too_few_args() {
 }
 
 // ---------------------------------------------------------------------------
+// PPMT failures
+// ---------------------------------------------------------------------------
+
+#[test]
+fn ppmt_too_few_args() {
+    let args = [Value::Number(0.1), Value::Number(1.0), Value::Number(12.0)];
+    assert_eq!(ppmt_fn(&args), Value::Error(ErrorKind::NA));
+}
+
+#[test]
+fn ppmt_too_many_args() {
+    let args = [
+        Value::Number(0.1), Value::Number(1.0), Value::Number(12.0),
+        Value::Number(10000.0), Value::Number(0.0), Value::Number(0.0), Value::Number(0.0),
+    ];
+    assert_eq!(ppmt_fn(&args), Value::Error(ErrorKind::NA));
+}
+
+#[test]
+fn ppmt_period_zero_returns_num() {
+    let args = [
+        Value::Number(0.1 / 12.0),
+        Value::Number(0.0),
+        Value::Number(12.0),
+        Value::Number(10000.0),
+    ];
+    assert_eq!(ppmt_fn(&args), Value::Error(ErrorKind::Num));
+}
+
+#[test]
+fn ppmt_period_exceeds_nper_returns_num() {
+    let args = [
+        Value::Number(0.1 / 12.0),
+        Value::Number(13.0),
+        Value::Number(12.0),
+        Value::Number(10000.0),
+    ];
+    assert_eq!(ppmt_fn(&args), Value::Error(ErrorKind::Num));
+}
+
+#[test]
+fn ppmt_non_numeric_pv_returns_value_error() {
+    let args = [
+        Value::Number(0.1 / 12.0),
+        Value::Number(1.0),
+        Value::Number(12.0),
+        Value::Text("ten thousand".to_string()),
+    ];
+    assert_eq!(ppmt_fn(&args), Value::Error(ErrorKind::Value));
+}
+
+// ---------------------------------------------------------------------------
+// XIRR failures
+// ---------------------------------------------------------------------------
+
+#[test]
+fn xirr_too_few_args() {
+    let args = [Value::Array(vec![Value::Number(-1000.0), Value::Number(1100.0)])];
+    assert_eq!(xirr_fn(&args), Value::Error(ErrorKind::NA));
+}
+
+#[test]
+fn xirr_single_value_returns_num() {
+    // Fewer than 2 values → #NUM!
+    let args = [
+        Value::Array(vec![Value::Number(-1000.0)]),
+        Value::Array(vec![Value::Number(44927.0)]),
+    ];
+    assert_eq!(xirr_fn(&args), Value::Error(ErrorKind::Num));
+}
+
+#[test]
+fn xirr_mismatched_lengths_returns_num() {
+    let args = [
+        Value::Array(vec![Value::Number(-1000.0), Value::Number(1100.0), Value::Number(200.0)]),
+        Value::Array(vec![Value::Number(44927.0), Value::Number(45292.0)]),
+    ];
+    assert_eq!(xirr_fn(&args), Value::Error(ErrorKind::Num));
+}
+
+// ---------------------------------------------------------------------------
 // XNPV failures
 // ---------------------------------------------------------------------------
 

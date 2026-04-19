@@ -2,6 +2,7 @@ use crate::evaluate;
 use crate::eval::functions::lookup::{
     index_match::match_fn,
     lookup_fn::{lookup_fn, xmatch_fn},
+    vlookup::vlookup_fn,
 };
 use crate::types::{ErrorKind, Value};
 use std::collections::HashMap;
@@ -20,6 +21,68 @@ fn n(v: f64) -> Value {
 
 fn t(s: &str) -> Value {
     Value::Text(s.to_string())
+}
+
+fn make_2d(rows: Vec<Vec<Value>>) -> Value {
+    Value::Array(rows.into_iter().map(Value::Array).collect())
+}
+
+// ---------------------------------------------------------------------------
+// VLOOKUP approximate match edge cases
+// ---------------------------------------------------------------------------
+
+#[test]
+fn vlookup_approx_below_minimum_returns_na() {
+    // Nothing in the first column is <= 0.5, so result is #N/A
+    let range = make_2d(vec![
+        vec![n(1.0), t("a")],
+        vec![n(3.0), t("b")],
+        vec![n(5.0), t("c")],
+    ]);
+    assert_eq!(vlookup_fn(&[n(0.5), range, n(2.0), Value::Bool(true)]), Value::Error(ErrorKind::NA));
+}
+
+#[test]
+fn vlookup_approx_above_maximum_returns_last_row() {
+    // 100 > all keys; largest <= 100 is 5 → "c"
+    let range = make_2d(vec![
+        vec![n(1.0), t("a")],
+        vec![n(3.0), t("b")],
+        vec![n(5.0), t("c")],
+    ]);
+    assert_eq!(vlookup_fn(&[n(100.0), range, n(2.0), Value::Bool(true)]), t("c"));
+}
+
+#[test]
+fn vlookup_approx_exact_key_match() {
+    // Key 3 exists exactly → returns "b", not "a" or "c"
+    let range = make_2d(vec![
+        vec![n(1.0), t("a")],
+        vec![n(3.0), t("b")],
+        vec![n(5.0), t("c")],
+    ]);
+    assert_eq!(vlookup_fn(&[n(3.0), range, n(2.0), Value::Bool(true)]), t("b"));
+}
+
+#[test]
+fn vlookup_default_is_sorted_true() {
+    // When 4th arg is omitted, is_sorted defaults to true (approximate match)
+    let range = make_2d(vec![
+        vec![n(1.0), t("a")],
+        vec![n(3.0), t("b")],
+        vec![n(5.0), t("c")],
+    ]);
+    assert_eq!(vlookup_fn(&[n(2.0), range, n(2.0)]), t("a"));
+}
+
+#[test]
+fn vlookup_approx_col_index_1_returns_key() {
+    // col_index=1 returns the matched key value itself
+    let range = make_2d(vec![
+        vec![n(10.0), n(100.0)],
+        vec![n(20.0), n(200.0)],
+    ]);
+    assert_eq!(vlookup_fn(&[n(15.0), range, n(1.0), Value::Bool(true)]), n(10.0));
 }
 
 // MATCH boundary cases
