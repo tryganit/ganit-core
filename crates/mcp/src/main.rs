@@ -115,6 +115,7 @@ fn dispatch_tool(name: &str, args: &JsonValue) -> JsonValue {
         "explain" => tool_explain(args),
         "batch_evaluate" => tool_batch_evaluate(args),
         "list_functions" => tool_list_functions(),
+        "get_stats" => tool_get_stats(),
         _ => json!({ "error": format!("Unknown tool: {}", name) }),
     }
 }
@@ -197,6 +198,25 @@ fn tool_list_functions() -> JsonValue {
         .collect();
     entries.sort_by_key(|e| e["name"].as_str().unwrap_or("").to_owned());
     json!({ "functions": entries })
+}
+
+fn tool_get_stats() -> JsonValue {
+    let registry = Registry::new();
+    let mut by_category: std::collections::BTreeMap<&str, u32> = std::collections::BTreeMap::new();
+    let mut total: u32 = 0;
+    for (_name, meta) in registry.list_functions() {
+        *by_category.entry(meta.category).or_insert(0) += 1;
+        total += 1;
+    }
+    let categories: Vec<JsonValue> = by_category
+        .iter()
+        .map(|(cat, count)| json!({ "category": cat, "count": count }))
+        .collect();
+    json!({
+        "version": env!("CARGO_PKG_VERSION"),
+        "total_functions": total,
+        "by_category": categories
+    })
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -307,6 +327,11 @@ fn tools_list() -> JsonValue {
         {
             "name": "list_functions",
             "description": "Return the catalogue of supported spreadsheet functions.",
+            "inputSchema": { "type": "object", "properties": {} }
+        },
+        {
+            "name": "get_stats",
+            "description": "Return the total number of supported functions, the library version, and a per-category breakdown.",
             "inputSchema": { "type": "object", "properties": {} }
         }
     ])
