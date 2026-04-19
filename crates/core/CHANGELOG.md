@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.8](https://github.com/truecalc/core/compare/truecalc-core-v0.4.6...truecalc-core-v0.4.8) - 2026-04-19
+
+### Other
+
+- Merge pull request #426 from truecalc/feat/coverage-array-operator-tests
+- cover uncovered array functions and operator overflow paths
+- add property tests for 7 missing categories
+- *(operator)* add tests for comparison and unary operators
+
 ## [0.4.7](https://github.com/truecalc/core/compare/truecalc-core-v0.4.6...truecalc-core-v0.4.7) - 2026-04-19
 
 ### Other
