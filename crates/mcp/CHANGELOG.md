@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.9](https://github.com/truecalc/core/compare/truecalc-mcp-v0.4.8...truecalc-mcp-v0.4.9) - 2026-04-19
+
+### Added
+
+- *(mcp)* add get_stats tool returning version and per-category function counts
+
 ## [0.4.8](https://github.com/truecalc/core/compare/truecalc-mcp-v0.4.7...truecalc-mcp-v0.4.8) - 2026-04-19
 
 ### Other
