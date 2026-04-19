@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.7](https://github.com/truecalc/core/compare/truecalc-core-v0.4.6...truecalc-core-v0.4.7) - 2026-04-19
+
+### Other
+
+- add property tests for 7 missing categories
+- *(operator)* add tests for comparison and unary operators
+
 ## [0.4.6](https://github.com/truecalc/core/compare/truecalc-core-v0.4.5...truecalc-core-v0.4.6) - 2026-04-18
 
 ### Other
