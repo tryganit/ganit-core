@@ -273,6 +273,65 @@ fn run_tsv_fixture(path: &Path) {
     }
 }
 
+/// Non-panicking variant: prints FAIL rows but does not abort the test.
+/// Used for bugs.tsv where failures are expected and intentional.
+fn run_tsv_fixture_report(path: &Path) {
+    assert!(path.exists(), "fixture not found: {:?}", path);
+
+    let vars: HashMap<String, Value> = HashMap::new();
+    let mut pass = 0usize;
+    let mut fail = 0usize;
+
+    let mut rdr = csv::ReaderBuilder::new()
+        .delimiter(b'\t')
+        .has_headers(true)
+        .from_path(path)
+        .unwrap_or_else(|e| panic!("failed to open {:?}: {}", path, e));
+
+    for (row_idx, result) in rdr.records().enumerate() {
+        let record = result.unwrap_or_else(|e| panic!("bad row {} in {:?}: {}", row_idx + 2, path, e));
+
+        if record.len() < 5 {
+            continue;
+        }
+
+        let desc           = record[0].trim();
+        let formula        = record[1].trim();
+        let expected_str   = &record[2];
+        let _test_category = record[3].trim();
+        let expected_type  = record[4].trim();
+
+        if formula.is_empty() || expected_str.trim().is_empty() {
+            continue;
+        }
+
+        if is_volatile_formula(formula) {
+            continue;
+        }
+
+        let expected = match parse_expected(expected_str, expected_type) {
+            Some(v) => v,
+            None => continue,
+        };
+
+        let actual = evaluate(formula, &vars);
+
+        if values_match(&actual, &expected, expected_type) {
+            pass += 1;
+        } else {
+            fail += 1;
+            println!(
+                "  FAIL  row {}  {desc}\n        formula:  {formula}\n        expected: {expected:?}\n        actual:   {actual:?}",
+                row_idx + 2,
+            );
+        }
+    }
+
+    println!(
+        "bugs.tsv: {pass} passed, {fail} FAILED (failures are known bugs -- they will flip to PASS when fixed)"
+    );
+}
+
 // ---------------------------------------------------------------------------
 // one test per TSV fixture file
 // ---------------------------------------------------------------------------
@@ -305,6 +364,19 @@ conformance_tsv_test!(web_conformance,         "web.tsv");
 #[ignore = "financial fixtures are pending implementation"]
 fn financial_conformance() {
     run_tsv_fixture(&fixture("financial.tsv"));
+}
+
+/// Known-bug regression baseline (T2.2).
+///
+/// Each row here represents a confirmed bug.  The test deliberately does NOT
+/// panic on failures — failures are the expected outcome until the
+/// corresponding fix lands.  When a bug is fixed, its row will start
+/// passing; the test will still succeed (pass count goes up, fail count
+/// goes down).  Remove fixed rows from this file or move them to the
+/// appropriate category TSV once the fix is verified.
+#[test]
+fn bugs_conformance() {
+    run_tsv_fixture_report(&fixture("bugs.tsv"));
 }
 
 // ---------------------------------------------------------------------------

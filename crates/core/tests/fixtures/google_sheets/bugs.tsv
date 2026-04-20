@@ -1,0 +1,25 @@
+description	formula_text	expected_value	test_category	expected_type
+SUBTOTAL sum inline array	=SUBTOTAL(9,{1,2,3})	6	basic	number
+SUBTOTAL average inline array	=SUBTOTAL(1,{1,2,3})	2	basic	number
+SUBTOTAL count inline array	=SUBTOTAL(2,{1,2,3})	3	basic	number
+SUMIFS one condition inline	=SUMIFS({10,20,30},{1,2,3},">1")	50	basic	number
+AVERAGEIFS one condition inline	=AVERAGEIFS({10,20,30},{1,2,3},">1")	25	basic	number
+MAXIFS one condition inline	=MAXIFS({10,20,30},{1,2,3},">1")	30	basic	number
+MINIFS one condition inline	=MINIFS({10,20,30},{1,2,3},">1")	20	basic	number
+T.TEST paired constant diff	=T.TEST({1,2,3},{4,5,6},2,1)	0	basic	number
+UNIQUE exactly_once TRUE	=UNIQUE({1,2,2,3},FALSE,TRUE)	{1,3}	basic	array
+SORT 1D descending	=SORT({3,1,2},1,-1)	{3,2,1}	basic	array
+SORTBY descending	=SORTBY({3,1,2},{2,1,3},-1)	{3,2,1}	basic	array
+SORTN top 3	=SORTN({5,3,1,4,2},3)	{1,2,3}	basic	array
+XLOOKUP wildcard match_mode=2	=XLOOKUP("b*",{"a","ba","bc"},{1,2,3},,2)	2	basic	number
+XMATCH wildcard match_mode=2	=XMATCH("b*",{"a","ba","bc"},2)	2	basic	number
+MATCH wildcard match_type=0	=MATCH("b*",{"a","ba","bc"},0)	2	basic	number
+TEXT time hh:mm:ss	=TEXT(0.5,"hh:mm:ss")	12:00:00	basic	string
+VALUE comma-formatted	=VALUE("1,234.56")	1234.56	basic	number
+VALUE percentage	=VALUE("12%")	0.12	basic	number
+VALUE currency	=VALUE("$42")	42	basic	number
+BETA.INV three-arg default bounds	=BETA.INV(0.5,2,2)	0.5	basic	number
+DSUM inline 2D array	=DSUM({"Name","Sales";"A",100;"B",200},"Sales",{"Sales",">100"})	200	basic	number
+DAVERAGE inline 2D array	=DAVERAGE({"Name","Sales";"A",100;"B",200},"Sales",{"Sales",">100"})	200	basic	number
+COLUMN array input	=COLUMN({1,2,3})	{1,2,3}	basic	array
+ROW array input	=ROW({1;2;3})	{1,2,3}	basic	array
