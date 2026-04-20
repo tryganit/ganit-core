@@ -30,7 +30,10 @@ impl PlatformArg {
 }
 
 #[derive(Debug, Parser)]
-#[command(name = "xtask", about = "Fixture generation and oracle evaluation tasks")]
+#[command(
+    name = "xtask",
+    about = "Fixture generation and oracle evaluation tasks"
+)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -66,7 +69,11 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::GenerateFixtures { platform, category, all } => {
+        Commands::GenerateFixtures {
+            platform,
+            category,
+            all,
+        } => {
             if !all && category.is_none() {
                 bail!("Specify --all or --category <name>");
             }
@@ -118,7 +125,12 @@ fn run_generate_fixtures(platform: Platform, category: Option<&str>, all: bool) 
 
         let file_path = out_dir.join(format!("{}.tsv", cat));
         generate::write_tsv(&cases, &file_path)?;
-        println!("wrote {} ({} cases) → {}", cat, cases.len(), file_path.display());
+        println!(
+            "wrote {} ({} cases) → {}",
+            cat,
+            cases.len(),
+            file_path.display()
+        );
     }
 
     Ok(())
