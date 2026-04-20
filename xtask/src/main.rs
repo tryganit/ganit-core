@@ -91,9 +91,9 @@ fn main() -> Result<()> {
             if !all && category.is_none() {
                 bail!("Specify --all or --category <name>");
             }
-            let api_key = std::env::var("GOOGLE_SHEETS_API_KEY")
-                .context("GOOGLE_SHEETS_API_KEY env var not set")?;
-            run_oracle_evaluate(platform.to_platform(), category.as_deref(), all, &api_key)?;
+            let web_app_url = std::env::var("GAS_ORACLE_URL")
+                .context("GAS_ORACLE_URL env var not set (set it to the Apps Script web app URL)")?;
+            run_oracle_evaluate(platform.to_platform(), category.as_deref(), all, &web_app_url)?;
         }
     }
 
@@ -130,13 +130,13 @@ fn run_oracle_evaluate(
     platform: Platform,
     category: Option<&str>,
     all: bool,
-    api_key: &str,
+    web_app_url: &str,
 ) -> Result<()> {
     let input_dir = PathBuf::from("target/fixture-gen").join(platform.dir_name());
     let output_dir = PathBuf::from("crates/core/tests/fixtures").join(platform.dir_name());
     std::fs::create_dir_all(&output_dir)?;
 
-    let oracle = oracle_sheets::SheetsOracle::new(api_key.to_string());
+    let oracle = oracle_sheets::SheetsOracle::new(web_app_url.to_owned());
 
     let categories: &[&str] = &[
         "math",

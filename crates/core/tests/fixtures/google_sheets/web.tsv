@@ -1,24 +1,31 @@
 description	formula_text	expected_value	test_category	expected_type
-space -> %20	=ENCODEURL("hello world")	hello%20world	basic	string
-special chars encoded	=ENCODEURL("a+b=c&d")	a%2Bb%3Dc%26d	basic	string
-no special chars -> unchanged	=ENCODEURL("hello")	hello	basic	string
-empty string -> empty	=ENCODEURL("")		basic	string
-percent sign -> %25	=ENCODEURL("100%")	100%25	basic	string
-slash encoded	=ENCODEURL("a/b")	a%2Fb	edge	string
-nested: LEN of encoded space = 12	=LEN(ENCODEURL("hello world"))	13	nested	number
-error: no args -> #N/A	=ENCODEURL()	#N/A	error	error
-with label -> returns label	=HYPERLINK("https://example.com","Click here")	Click here	basic	string
-no label -> returns url	=HYPERLINK("https://example.com")	https://example.com	basic	string
-LEN of label = 5	=LEN(HYPERLINK("https://example.com","Click"))	5	nested	number
-empty label -> empty string	=HYPERLINK("https://example.com","")		basic	string
-numeric label coerced to text	=HYPERLINK("https://example.com",42)	42	coercion	number
-label with spaces -> returns label	=HYPERLINK("https://example.com","Go here now")	Go here now	basic	string
-error: no args -> #N/A	=HYPERLINK()	#N/A	error	error
-https url -> TRUE	=ISURL("https://example.com")	TRUE	basic	boolean
-http url -> TRUE	=ISURL("http://example.com")	TRUE	basic	boolean
-ftp url -> TRUE	=ISURL("ftp://example.com")	TRUE	basic	boolean
-plain text -> FALSE	=ISURL("not a url")	FALSE	basic	boolean
-empty string -> FALSE	=ISURL("")	FALSE	basic	boolean
-no scheme -> FALSE	=ISURL("example.com")	TRUE	basic	boolean
-number -> FALSE	=ISURL(42)	FALSE	coercion	boolean
-error: no args -> #N/A	=ISURL()	#N/A	error	error
+ENCODEURL space -> %20	"=ENCODEURL(""hello world"")"	hello%20world	basic	string
+ENCODEURL special chars encoded	"=ENCODEURL(""a+b=c&d"")"	a%2Bb%3Dc%26d	basic	string
+ENCODEURL no special chars -> unchanged	"=ENCODEURL(""hello"")"	hello	basic	string
+ENCODEURL empty string -> empty	"=ENCODEURL("""")"		basic	string
+ENCODEURL percent sign -> %25	"=ENCODEURL(""100%"")"	100%25	basic	string
+ENCODEURL slash encoded	"=ENCODEURL(""a/b"")"	a%2Fb	edge	string
+ENCODEURL LEN of encoded space = 13	"=LEN(ENCODEURL(""hello world""))"	13	nested	number
+ENCODEURL no args -> #N/A	=ENCODEURL()	#N/A	error	error
+ENCODEURL number arg coercion	=ENCODEURL(42)	42	coercion	string
+ENCODEURL unicode chars	"=ENCODEURL(""caf\u00e9"")"	caf%5Cu00e9	edge	string
+HYPERLINK with label -> returns label	"=HYPERLINK(""https://example.com"",""Click here"")"	Click here	basic	string
+HYPERLINK no label -> returns url	"=HYPERLINK(""https://example.com"")"	https://example.com	basic	string
+HYPERLINK LEN of label = 5	"=LEN(HYPERLINK(""https://example.com"",""Click""))"	5	nested	number
+HYPERLINK empty label -> empty string	"=HYPERLINK(""https://example.com"","""")"		basic	string
+HYPERLINK numeric label coerced to text	"=HYPERLINK(""https://example.com"",42)"	42	coercion	number
+HYPERLINK label with spaces -> returns label	"=HYPERLINK(""https://example.com"",""Go here now"")"	Go here now	basic	string
+HYPERLINK no args -> #N/A	=HYPERLINK()	#N/A	error	error
+HYPERLINK ISTEXT of label result	"=ISTEXT(HYPERLINK(""https://example.com"",""label""))"	true	nested	boolean
+HYPERLINK http url	"=HYPERLINK(""http://example.com"",""link"")"	link	basic	string
+HYPERLINK label is boolean	"=HYPERLINK(""https://example.com"",TRUE)"	true	coercion	boolean
+ISURL https url -> TRUE	"=ISURL(""https://example.com"")"	true	basic	boolean
+ISURL http url -> TRUE	"=ISURL(""http://example.com"")"	true	basic	boolean
+ISURL ftp url -> TRUE	"=ISURL(""ftp://example.com"")"	true	basic	boolean
+ISURL plain text -> FALSE	"=ISURL(""not a url"")"	false	basic	boolean
+ISURL empty string -> FALSE	"=ISURL("""")"	false	basic	boolean
+ISURL number -> FALSE	=ISURL(42)	false	coercion	boolean
+ISURL no args -> #N/A	=ISURL()	#N/A	error	error
+ISURL domain only	"=ISURL(""example.com"")"	true	basic	boolean
+IF(ISURL url, 1, 0)	"=IF(ISURL(""https://example.com""),1,0)"	1	nested	number
+AND(ISURL https, ISURL http)	"=AND(ISURL(""https://a.com""),ISURL(""http://b.com""))"	true	nested	boolean

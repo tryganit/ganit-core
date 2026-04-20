@@ -2,24 +2,103 @@ description	formula_text	expected_value	test_category	expected_type
 SUBTOTAL sum inline array	=SUBTOTAL(9,{1,2,3})	6	basic	number
 SUBTOTAL average inline array	=SUBTOTAL(1,{1,2,3})	2	basic	number
 SUBTOTAL count inline array	=SUBTOTAL(2,{1,2,3})	3	basic	number
-SUMIFS one condition inline	=SUMIFS({10,20,30},{1,2,3},">1")	50	basic	number
-AVERAGEIFS one condition inline	=AVERAGEIFS({10,20,30},{1,2,3},">1")	25	basic	number
-MAXIFS one condition inline	=MAXIFS({10,20,30},{1,2,3},">1")	30	basic	number
-MINIFS one condition inline	=MINIFS({10,20,30},{1,2,3},">1")	20	basic	number
+SUMIFS one condition inline	"=SUMIFS({10,20,30},{1,2,3},"">1"")"	50	basic	number
+AVERAGEIFS one condition inline	"=AVERAGEIFS({10,20,30},{1,2,3},"">1"")"	25	basic	number
+MAXIFS one condition inline	"=MAXIFS({10,20,30},{1,2,3},"">1"")"	30	basic	number
+MINIFS one condition inline	"=MINIFS({10,20,30},{1,2,3},"">1"")"	20	basic	number
 T.TEST paired constant diff	=T.TEST({1,2,3},{4,5,6},2,1)	0	basic	number
 UNIQUE exactly_once TRUE	=UNIQUE({1,2,2,3},FALSE,TRUE)	{1,3}	basic	array
 SORT 1D descending	=SORT({3,1,2},1,-1)	{3,2,1}	basic	array
 SORTBY descending	=SORTBY({3,1,2},{2,1,3},-1)	{3,2,1}	basic	array
 SORTN top 3	=SORTN({5,3,1,4,2},3)	{1,2,3}	basic	array
-XLOOKUP wildcard match_mode=2	=XLOOKUP("b*",{"a","ba","bc"},{1,2,3},,2)	2	basic	number
-XMATCH wildcard match_mode=2	=XMATCH("b*",{"a","ba","bc"},2)	2	basic	number
-MATCH wildcard match_type=0	=MATCH("b*",{"a","ba","bc"},0)	2	basic	number
-TEXT time hh:mm:ss	=TEXT(0.5,"hh:mm:ss")	12:00:00	basic	string
-VALUE comma-formatted	=VALUE("1,234.56")	1234.56	basic	number
-VALUE percentage	=VALUE("12%")	0.12	basic	number
-VALUE currency	=VALUE("$42")	42	basic	number
+XLOOKUP wildcard match_mode=2	"=XLOOKUP(""b*"",{""a"",""ba"",""bc""},{1,2,3},,2)"	2	basic	number
+XMATCH wildcard match_mode=2	"=XMATCH(""b*"",{""a"",""ba"",""bc""},2)"	2	basic	number
+MATCH wildcard match_type=0	"=MATCH(""b*"",{""a"",""ba"",""bc""},0)"	2	basic	number
+TEXT time hh:mm:ss	"=TEXT(0.5,""hh:mm:ss"")"	12:00:00	basic	string
+VALUE comma-formatted	"=VALUE(""1,234.56"")"	1234.56	basic	number
+VALUE percentage	"=VALUE(""12%"")"	0.12	basic	number
+VALUE currency	"=VALUE(""$42"")"	42	basic	number
 BETA.INV three-arg default bounds	=BETA.INV(0.5,2,2)	0.5	basic	number
-DSUM inline 2D array	=DSUM({"Name","Sales";"A",100;"B",200},"Sales",{"Sales",">100"})	200	basic	number
-DAVERAGE inline 2D array	=DAVERAGE({"Name","Sales";"A",100;"B",200},"Sales",{"Sales",">100"})	200	basic	number
+DSUM inline 2D array	"=DSUM({""Name"",""Sales"";""A"",100;""B"",200},""Sales"",{""Sales"","">100""})"	200	basic	number
+DAVERAGE inline 2D array	"=DAVERAGE({""Name"",""Sales"";""A"",100;""B"",200},""Sales"",{""Sales"","">100""})"	200	basic	number
 COLUMN array input	=COLUMN({1,2,3})	{1,2,3}	basic	array
 ROW array input	=ROW({1;2;3})	{1,2,3}	basic	array
+ERF zero	=ERF(0)	0	engineering	number
+COMPLEX real only	=COMPLEX(3,0)	3	engineering	string
+IMCONJUGATE pure real	"=IMCONJUGATE(""5"")"	5	engineering	string
+IMSQRT basic	"=IMSQRT(""-1"")"	6.12323399573677E-17+i	engineering	string
+IMPOWER basic	"=IMPOWER(""3+4i"",2)"	-7+24i	engineering	string
+IMEXP basic	"=IMEXP(""1"")"	2.71828182845905	engineering	string
+IMLN basic	"=IMLN(""1"")"	0	engineering	string
+IMLOG10 basic	"=IMLOG10(""10"")"	1	engineering	string
+IMLOG2 basic	"=IMLOG2(""2"")"	1	engineering	string
+IMSIN basic	"=IMSIN(""1+i"")"	1.29845758141598+0.634963914784736i	engineering	string
+IMCOS basic	"=IMCOS(""1+i"")"	0.833730025131149-0.988897705762865i	engineering	string
+IMTAN basic	"=IMTAN(""1+i"")"	0.271752585319512+1.08392332733869i	engineering	string
+IMCOT basic	"=IMCOT(""1+i"")"	0.217621561854403-0.868014142895925i	engineering	string
+IMCSC basic	"=IMCSC(""1+i"")"	0.621518017170429-0.303931001628426i	engineering	string
+IMSEC basic	"=IMSEC(""1+i"")"	0.498337030555187+0.591083841721045i	engineering	string
+IMSINH basic	"=IMSINH(""1+i"")"	0.634963914784736+1.29845758141598i	engineering	string
+IMCOSH basic	"=IMCOSH(""1+i"")"	0.833730025131149+0.988897705762865i	engineering	string
+IMCSCH basic	"=IMCSCH(""1+i"")"	0.303931001628426-0.621518017170429i	engineering	string
+IMSECH basic	"=IMSECH(""1+i"")"	0.498337030555187-0.591083841721045i	engineering	string
+XLOOKUP wildcard match_mode=2 BUG-12	"=XLOOKUP(""b*"",{""a"",""ba"",""bc""},{1,2,3},,2)"	2	lookup	number
+XLOOKUP wildcard match_mode=2 matches second	"=XLOOKUP(""b*"",{""x"",""ba"",""bc""},{1,2,3},,2)"	2	lookup	number
+XLOOKUP wildcard match_mode=2 prefix a	"=XLOOKUP(""a*"",{""a"",""ba"",""bc""},{1,2,3},,2)"	1	lookup	number
+XMATCH approx match_mode=1 sorted asc	=XMATCH(2.5,{1,2,3,4,5},1)	3	lookup	number
+XMATCH wildcard match_mode=2 BUG-13	"=XMATCH(""b*"",{""a"",""ba"",""bc""},2)"	2	lookup	number
+XMATCH wildcard match_mode=2 prefix x	"=XMATCH(""x*"",{""x1"",""x2"",""y""},2)"	1	lookup	number
+XMATCH reverse approx search_mode=-1 BUG-13	=XMATCH(3.5,{1,2,3,4,5},-1)	3	lookup	number
+MATCH wildcard match_type=0 BUG-14	"=MATCH(""b*"",{""a"",""ba"",""bc""},0)"	2	lookup	number
+MATCH wildcard question mark match_type=0	"=MATCH(""b?"",{""a"",""ba"",""bc""},0)"	2	lookup	number
+ROW no argument returns 1	=ROW()	79	lookup	number
+TEXT date format	"=TEXT(45000,""YYYY-MM-DD"")"	2023-03-15	text	string
+TEXT currency format	"=TEXT(1234.5,""$#,##0.00"")"	$1,234.50	text	string
+TEXT time hh:mm:ss (BUG-16)	"=TEXT(0.5,""hh:mm:ss"")"	12:00:00	text	string
+TEXT time h:mm AM/PM (BUG-16)	"=TEXT(0.5,""h:mm AM/PM"")"	12:00 PM	text	string
+TEXT time hh:mm (BUG-16)	"=TEXT(0.75,""hh:mm"")"	18:00	text	string
+VALUE comma-formatted (BUG-17)	"=VALUE(""1,234.56"")"	1234.56	text	number
+VALUE percent (BUG-17)	"=VALUE(""12%"")"	0.12	text	number
+VALUE dollar (BUG-17)	"=VALUE(""$42"")"	42	text	number
+SPLIT basic	"=SPLIT(""a,b,c"","","")"	a	text	string
+SPLIT by each char	"=SPLIT(""a,b;c"","",;"")"	a	text	string
+TEXT scientific	"=TEXT(0.000012345,""0.00E+00"")"	1.23E-05	text	string
+SPLIT space delimiter	"=SPLIT(""hello world"","" "")"	hello	text	string
+SPLIT empty parts removed	"=SPLIT(""a,,b"","","")"	a	text	string
+REGEXEXTRACT group	"=REGEXEXTRACT(""hello123world"",""([0-9]+)"")"	123	text	string
+SUBSTITUTE instance 3	"=SUBSTITUTE(""aaaaaa"",""aa"",""X"",3)"	aaXaa	text	string
+SEARCH tilde escape	"=SEARCH(""~?"",""hello?"")"	6	text	number
+TEXT negative currency	"=TEXT(-1234.5,""$#,##0.00"")"	-$1,234.50	text	string
+SPLIT no match	"=SPLIT(""hello"","","")"	hello	text	string
+SUMPRODUCT with condition	=SUMPRODUCT(({1,2,3}>1)*{10,20,30})	50	nested	number
+PRODUCT array	=PRODUCT({2,3,4})	24	basic	number
+MMULT row vector by col vector	=MMULT({1,2,3},{1;2;3})	14	basic	number
+MINVERSE singular error	=MINVERSE({1,2;2,4})	#NUM!	error	error
+SEQUENCE single cell	=SEQUENCE(1,1,5,1)	5	edge	number
+ROMAN classic style	=ROMAN(1,0)	I	basic	string
+ISBETWEEN text values	"=ISBETWEEN(""b"",""a"",""c"")"	true	basic	boolean
+SUMPRODUCT boolean array	=SUMPRODUCT({TRUE,FALSE,TRUE}*{1,2,3})	4	coercion	number
+SEQUENCE 3 cols	=SEQUENCE(1,5)	1	basic	number
+MINVERSE 1x1	=MINVERSE({4})	0.25	edge	number
+ROMAN 499 simplified	=ROMAN(499,1)	LDVLIV	basic	string
+ROMAN 499 very simplified	=ROMAN(499,4)	ID	basic	string
+MODE.MULT basic	=MODE.MULT({1,2,2,3,3})	#REF!	statistical	error
+BETADIST 3-arg	=BETADIST(0.5,2,2)	0.49999999999999956	statistical	number
+BETA.INV 3-arg default lo/hi BUG-19	=BETA.INV(0.5,2,2)	0.5000000000000001	statistical	number
+BETA.INV p=0.1 a=1 b=2	=BETA.INV(0.1,1,2)	0.05131670194948612	statistical	number
+BETA.INV p=0.9 a=5 b=2	=BETA.INV(0.9,5,2)	0.9074047410868713	statistical	number
+FREQUENCY basic	=FREQUENCY({1,2,3,4,5,6},{2,4})	#REF!	statistical	error
+FREQUENCY data=[79,85,78,85,50] bins=[70,79,89]	=FREQUENCY({79,85,78,85,50},{70,79,89})	#REF!	statistical	error
+GROWTH basic	=GROWTH({2,4,8,16},{1,2,3,4})	2.0000000000000004	statistical	number
+LOGEST basic	=LOGEST({2,4,8,16},{1,2,3,4})	1.9999999999999996	statistical	number
+LINEST basic	=LINEST({2,4,6,8},{1,2,3,4})	1.9999999999999996	statistical	number
+BETADIST a=1 b=5 x=0.1	=BETADIST(0.1,1,5)	0.4095099999999993	statistical	number
+BETADIST a=5 b=1 x=0.9	=BETADIST(0.9,5,1)	0.5904900000000007	statistical	number
+BETA.INV p=0.5 a=1 b=1	=BETA.INV(0.5,1,1)	0.49999999999999956	statistical	number
+BETA.INV p=0.5 a=5 b=5	=BETA.INV(0.5,5,5)	0.5000000000000001	statistical	number
+FREQUENCY single bin	=FREQUENCY({1,2,3,4,5},{3})	#REF!	statistical	error
+GROWTH with prediction	=GROWTH({2,4,8},{1,2,3},{4})	15.99999999999999	statistical	number
+LINEST intercept=TRUE stats=FALSE	=LINEST({2,4,6,8},{1,2,3,4},TRUE,FALSE)	1.9999999999999996	statistical	number
+BETA.INV p=0.01 a=2 b=5 explicit	=BETA.INV(0.01,2,5,0,1)	0.02676319114275505	statistical	number
+HYPGEOM.DIST ns=15 s=2 M=10 N=20 exact	=HYPGEOM.DIST(2,15,10,20,FALSE)	#NUM!	statistical	error
+HYPGEOM.DIST ns=15 s=2 M=10 N=20 cumulative	=HYPGEOM.DIST(2,15,10,20,TRUE)	#NUM!	statistical	error

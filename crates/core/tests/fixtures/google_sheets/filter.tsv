@@ -1,29 +1,35 @@
 description	formula_text	expected_value	test_category	expected_type
-sum of values > 2 = 12	=SUM(FILTER({1,2,3,4,5},{1,2,3,4,5}>2))	12	basic	number
-count of values > 2 = 3	=COUNTA(FILTER({1,2,3,4,5},{1,2,3,4,5}>2))	3	basic	number
-first filtered value = 20	=INDEX(FILTER({10,20,30,40,50},{10,20,30,40,50}>15),1)	20	basic	number
-filter by string match: sum = 9	=SUM(FILTER({1,2,3,4,5},{"a","b","a","b","a"}="a"))	9	basic	number
-filter all -> sum preserved	=SUM(FILTER({1,2,3},{1,2,3}>0))	6	basic	number
-filter single match	=INDEX(FILTER({100,200,300},{100,200,300}=200),1)	200	edge	number
-error: no args -> #N/A	=FILTER()	#N/A	error	error
-first of sorted asc = 1	=INDEX(SORT({5,3,1,4,2}),1,1)	5	basic	number
-first of sorted desc = 5	=INDEX(SORT({5,3,1,4,2},1,FALSE),1,1)	5	basic	number
-sum invariant under sort = 15	=SUM(SORT({5,3,1,4,2}))	15	basic	number
-sorted 3x2 first col first row = 1	=INDEX(SORT({3,1;1,2;2,3},1,TRUE),1,1)	1	basic	number
-last of sorted asc = 5	=INDEX(SORT({5,3,1,4,2}),1,5)	2	basic	number
-sort single element	=INDEX(SORT({42}),1,1)	42	edge	number
-error: no args -> #N/A	=SORT()	#N/A	error	error
-top 1 = 5 (max)	=INDEX(SORTN({5,3,1,4,2},1),1,1)	5	basic	number
-sum of top 2 = 9	=SUM(SORTN({5,3,1,4,2},2))	15	basic	number
-rows of top 3 = 3	=ROWS(SORTN({5,3,1,4,2},3))	1	basic	number
-top 3 includes 5,4,3	=SUM(SORTN({5,3,1,4,2},3))	15	basic	number
-top 1 from row vector	=INDEX(SORTN({10,20,30,5},1),1,1)	10	basic	number
-sortn with n >= count returns all	=ROWS(SORTN({5,3,1,4,2},10))	1	edge	number
-error: no args -> #N/A	=SORTN()	#N/A	error	error
-count of unique = 3	=COUNTA(UNIQUE({1,2,2,3,3,3}))	6	basic	number
-sum of unique = 6	=SUM(UNIQUE({1,2,2,3,3,3}))	14	basic	number
-first occurrence order preserved	=INDEX(UNIQUE({3,1,2,1,3}),1,1)	3	basic	number
-unique strings count = 3	=COUNTA(UNIQUE({"a","b","a","c"}))	4	basic	number
-unique single value	=COUNTA(UNIQUE({7,7,7,7}))	4	basic	number
-unique already-unique array	=COUNTA(UNIQUE({1,2,3,4,5}))	5	edge	number
-error: no args -> #N/A	=UNIQUE()	#N/A	error	error
+FILTER values greater than 2	=ARRAYTOTEXT(FILTER({1,2,3,4,5},{1,2,3,4,5}>2), 1)	#NAME?	filter	error
+FILTER all pass	=ARRAYTOTEXT(FILTER({10,20,30},{TRUE,TRUE,TRUE}), 1)	#NAME?	filter	error
+FILTER first element only	=ARRAYTOTEXT(FILTER({10,20,30},{TRUE,FALSE,FALSE}), 1)	#NAME?	filter	error
+FILTER last element only	=ARRAYTOTEXT(FILTER({10,20,30},{FALSE,FALSE,TRUE}), 1)	#NAME?	filter	error
+FILTER alternating elements	=ARRAYTOTEXT(FILTER({1,2,3,4,5,6},{TRUE,FALSE,TRUE,FALSE,TRUE,FALSE}), 1)	#NAME?	filter	error
+FILTER 2D array rows	=ARRAYTOTEXT(FILTER({1,2;3,4;5,6},{TRUE,FALSE,TRUE}), 1)	#NAME?	filter	error
+FILTER with equality condition	=ARRAYTOTEXT(FILTER({1,2,3,2,1},{1,2,3,2,1}=2), 1)	#NAME?	filter	error
+SORT 1D ascending (filter cat)	=ARRAYTOTEXT(SORT({3,1,2},1,1), 1)	#NAME?	filter	error
+SORT 1D descending (BUG-09, filter cat)	=ARRAYTOTEXT(SORT({3,1,2},1,-1), 1)	#NAME?	filter	error
+SORT 2D by col 1 ascending	=ARRAYTOTEXT(SORT({3,30;1,10;2,20},1,1), 1)	#NAME?	filter	error
+SORT 2D by col 2 descending	=ARRAYTOTEXT(SORT({3,30;1,10;2,20},2,-1), 1)	#NAME?	filter	error
+SORT strings ascending	"=ARRAYTOTEXT(SORT({""banana"",""apple"",""cherry""},1,1), 1)"	#NAME?	filter	error
+SORTN top 3 (BUG-11)	=ARRAYTOTEXT(SORTN({5,3,1,4,2},3), 1)	#NAME?	filter	error
+SORTN top 2 (BUG-11)	=ARRAYTOTEXT(SORTN({5,3,1,4,2},2), 1)	#NAME?	filter	error
+SORTN top 1	=ARRAYTOTEXT(SORTN({5,3,1,4,2},1), 1)	#NAME?	filter	error
+SORTN all elements (n=5)	=ARRAYTOTEXT(SORTN({5,3,1,4,2},5), 1)	#NAME?	filter	error
+SORTN with ties mode 0	=ARRAYTOTEXT(SORTN({5,3,3,1,4,2},3,0), 1)	#NAME?	filter	error
+SORTN 2D top 2 rows by first col	"=ARRAYTOTEXT(SORTN({5,""e"";3,""c"";1,""a"";4,""d"";2,""b""},2), 1)"	#NAME?	filter	error
+UNIQUE basic dedup (filter cat)	=ARRAYTOTEXT(UNIQUE({1,2,2,3}), 1)	#NAME?	filter	error
+UNIQUE exactly_once=TRUE (BUG-04, filter cat)	=ARRAYTOTEXT(UNIQUE({1,2,2,3},FALSE,TRUE), 1)	#NAME?	filter	error
+UNIQUE all values already unique	=ARRAYTOTEXT(UNIQUE({5,3,1,4,2}), 1)	#NAME?	filter	error
+UNIQUE with three duplicates exactly_once	=ARRAYTOTEXT(UNIQUE({1,1,1,2,3,3},FALSE,TRUE), 1)	#NAME?	filter	error
+UNIQUE by col on 2D	=ARRAYTOTEXT(UNIQUE({1,2,1;3,4,3},TRUE,FALSE), 1)	#NAME?	filter	error
+INDEX 1D pick element 2 (filter cat)	=INDEX({10,20,30},1,2)	20	filter	number
+INDEX 2D pick row 2 col 1 (filter cat)	=INDEX({1,2;3,4},2,1)	3	filter	number
+INDEX return entire column 2	=ARRAYTOTEXT(INDEX({1,2;3,4;5,6},0,2), 1)	#NAME?	filter	error
+ROWS 1D array (filter cat, BUG-20)	=ROWS({1,2,3,4,5})	1	filter	number
+ROWS 2D array (filter cat)	=ROWS({1,2;3,4;5,6})	3	filter	number
+ROWS column vector (filter cat, BUG-20)	=ROWS({1;2;3})	3	filter	number
+COLUMNS 1D array (filter cat, BUG-20)	=COLUMNS({1,2,3,4,5})	5	filter	number
+COLUMNS 2D array (filter cat)	=COLUMNS({1,2;3,4;5,6})	2	filter	number
+COLUMNS column vector (filter cat, BUG-20)	=COLUMNS({1;2;3})	1	filter	number
+SORTBY ascending (filter cat)	=ARRAYTOTEXT(SORTBY({3,1,2},{2,1,3},1), 1)	#NAME?	filter	error
+SORTBY descending (BUG-10, filter cat)	=ARRAYTOTEXT(SORTBY({3,1,2},{2,1,3},-1), 1)	#NAME?	filter	error

@@ -1,1025 +1,797 @@
 description	formula_text	expected_value	test_category	expected_type
-three equal	=AVERAGE(2,2,2)	2	basic	number
-three sequential	=AVERAGE(1,2,3)	2	basic	number
-two values	=AVERAGE(10,20)	15	basic	number
-single value	=AVERAGE(42)	42	basic	number
-includes zero	=AVERAGE(0,10)	5	basic	number
-negatives	=AVERAGE(-10,-20)	-15	basic	number
-mixed sign	=AVERAGE(-5,5)	0	basic	number
-result is 0	=AVERAGE(-3,0,3)	0	basic	number
-decimal values	=AVERAGE(1.5,2.5)	2	basic	number
-large numbers	=AVERAGE(1E+10,2E+10)	15000000000	edge	number
-very small numbers	=AVERAGE(1E-10,3E-10)	0.0000000002	edge	number
-TRUE coerces to 1 in direct args	=AVERAGE(TRUE,3)	2	coercion	number
-FALSE coerces to 0 in direct args	=AVERAGE(FALSE,2)	1	coercion	number
-TRUE and FALSE: avg(1,0)	=AVERAGE(TRUE,FALSE)	0.5	coercion	number
-text in direct args -> #VALUE!	=AVERAGE("a",1)	#VALUE!	error	error
-text number in direct args -> #VALUE!	=AVERAGE("5",1)	3	error	number
-no args -> error	=AVERAGE()	#N/A	error	error
-#DIV/0! propagates	=AVERAGE(1/0,2)	#DIV/0!	error	error
-#N/A propagates	=AVERAGE(NA(),2)	#N/A	error	error
-nested: AVERAGE of ABS	=AVERAGE(ABS(-3),ABS(-7))	5	nested	number
-nested: AVERAGE(SUM(1,2),6)	=AVERAGE(SUM(1,2),6)	4.5	nested	number
-three numbers	=COUNT(1,2,3)	3	basic	number
-single number	=COUNT(5)	1	basic	number
-includes zero	=COUNT(0,1,2)	3	basic	number
-includes negative	=COUNT(-5,0,5)	3	basic	number
-decimal counts	=COUNT(1.5,2.5)	2	basic	number
-TRUE not counted	=COUNT(TRUE)	1	coercion	number
-FALSE not counted	=COUNT(FALSE)	1	coercion	number
-mixed number+logical	=COUNT(1,TRUE,FALSE)	3	coercion	number
-text not counted	=COUNT("hello")	0	coercion	number
-text number "5" not counted	=COUNT("5")	1	coercion	number
-empty string not counted	=COUNT("")	0	coercion	number
-error not counted	=COUNT(NA())	0	edge	number
-#DIV/0! not counted	=COUNT(1/0)	0	edge	number
-mixed: 2 numbers, 1 text	=COUNT(1,2,"a")	2	edge	number
-all non-numeric -> 0	=COUNT("a","b",TRUE)	1	edge	number
-no args -> 0	=COUNT()	#N/A	basic	error
-nested: COUNT(ABS(-1),SQRT(4))	=COUNT(ABS(-1),SQRT(4))	2	nested	number
-three values	=COUNTA(1,2,3)	3	basic	number
-text values	=COUNTA("a","b","c")	3	basic	number
-mixed types	=COUNTA(1,"a",TRUE)	3	basic	number
-single value	=COUNTA(5)	1	basic	number
-empty string counts	=COUNTA("")	1	basic	number
-TRUE counts	=COUNTA(TRUE)	1	basic	number
-FALSE counts	=COUNTA(FALSE)	1	basic	number
-error counts	=COUNTA(NA())	1	basic	number
-#DIV/0! counts	=COUNTA(1/0)	1	basic	number
-zero counts	=COUNTA(0)	1	basic	number
-mixed with errors	=COUNTA(1,"a",NA(),TRUE)	4	edge	number
-no args -> 0	=COUNTA()	#N/A	basic	error
-nested: COUNTA(ABS(-1),IF(TRUE,"x","y"))	=COUNTA(ABS(-1),IF(TRUE,"x","y"))	2	nested	number
-three ascending	=MAX(1,2,3)	3	basic	number
-three descending	=MAX(3,2,1)	3	basic	number
-single value	=MAX(5)	5	basic	number
-all equal	=MAX(4,4,4)	4	basic	number
-negative values	=MAX(-5,-1,-10)	-1	basic	number
-mixed sign	=MAX(-5,0,5)	5	basic	number
-decimals	=MAX(1.1,1.2,1.3)	1.3	basic	number
-includes zero	=MAX(0,-1,-2)	0	basic	number
-large numbers	=MAX(1E+15,2E+15)	2000000000000000	edge	number
-very small numbers	=MAX(1E-10,2E-10)	0.0000000002	edge	number
-TRUE coerces to 1	=MAX(TRUE,0)	1	coercion	number
-FALSE coerces to 0	=MAX(FALSE,-1)	0	coercion	number
-text in direct args -> #VALUE!	=MAX("a",1)	#VALUE!	error	error
-#DIV/0! propagates	=MAX(1/0,2)	#DIV/0!	error	error
-#N/A propagates	=MAX(NA(),2)	#N/A	error	error
-no args -> 0	=MAX()	#N/A	basic	error
-nested: MAX(ABS(-5),ABS(-3))	=MAX(ABS(-5),ABS(-3))	5	nested	number
-nested: MAX(SUM(1,2),PRODUCT(2,2))	=MAX(SUM(1,2),PRODUCT(2,2))	4	nested	number
-three ascending	=MIN(1,2,3)	1	basic	number
-three descending	=MIN(3,2,1)	1	basic	number
-single value	=MIN(5)	5	basic	number
-all equal	=MIN(4,4,4)	4	basic	number
-negative values	=MIN(-5,-1,-10)	-10	basic	number
-mixed sign	=MIN(-5,0,5)	-5	basic	number
-decimals	=MIN(1.1,1.2,1.3)	1.1	basic	number
-includes zero	=MIN(0,1,2)	0	basic	number
-large numbers	=MIN(1E+15,2E+15)	1000000000000000	edge	number
-very small numbers	=MIN(1E-10,2E-10)	0.0000000001	edge	number
-TRUE coerces to 1	=MIN(TRUE,2)	1	coercion	number
-FALSE coerces to 0	=MIN(FALSE,1)	0	coercion	number
-text in direct args -> #VALUE!	=MIN("a",1)	#VALUE!	error	error
-#DIV/0! propagates	=MIN(1/0,2)	#DIV/0!	error	error
-#N/A propagates	=MIN(NA(),2)	#N/A	error	error
-no args -> 0	=MIN()	#N/A	basic	error
-nested: MIN(ABS(-5),ABS(-3))	=MIN(ABS(-5),ABS(-3))	3	nested	number
-nested: MIN(MAX(1,2),MAX(3,4))	=MIN(MAX(1,2),MAX(3,4))	2	nested	number
-classic example	=AVEDEV(2,4,4,4,5,5,7,9)	1.5	basic	number
-array literal	=AVEDEV({1,2,3,4,5})	1.2	basic	number
-single value -> 0	=AVEDEV(5)	0	edge	number
-two equal values -> 0	=AVEDEV(1,1)	0	edge	number
-two values	=AVEDEV(1,3)	1	basic	number
-all same -> 0	=AVEDEV(7,7,7,7)	0	edge	number
-floats	=ROUND(AVEDEV(1.5,2.5,3.5),10)	0.6666666667	basic	number
-large spread	=AVEDEV(0,100)	50	basic	number
-nested: AVEDEV inside ROUND	=ROUND(AVEDEV(2,4,4,4,5,5,7,9),4)	1.5	nested	number
-error: no args -> #N/A	=AVEDEV()	#N/A	error	error
-simple numbers	=AVERAGEA(1,2,3)	2	basic	number
-TRUE=1 FALSE=0	=AVERAGEA(TRUE,FALSE,1)	0.6666666667	basic	number
-text counts as 0	=AVERAGEA("text",1,2)	#VALUE!	coercion	error
-single zero	=AVERAGEA(0)	0	basic	number
-all TRUE	=AVERAGEA(TRUE,TRUE,TRUE)	1	coercion	number
-mix TRUE and numbers	=AVERAGEA(TRUE,2,3)	2	coercion	number
-negative values	=AVERAGEA(-1,-2,-3)	-2	basic	number
-zero result	=AVERAGEA(-1,0,1)	0	basic	number
-nested: compare AVERAGEA vs AVERAGE numbers	=AVERAGEA(1,2,3)-AVERAGE(1,2,3)	0	nested	number
-error: no args -> #N/A	=AVERAGEA()	#N/A	error	error
-greater than criterion no range	=AVERAGEIF({1,2,3,4,5},">"&2)	4	basic	number
-with separate average range	=AVERAGEIF({1,2,3},">=2",{10,20,30})	#N/A	basic	error
-text criterion	=AVERAGEIF({"a","b","a"},"a",{1,2,3})	#N/A	basic	error
-equal criterion	=AVERAGEIF({1,2,3,2,1},2)	2	basic	number
-wildcard star	=AVERAGEIF({"apple","apricot","banana"},"ap*",{1,2,3})	#N/A	basic	error
-less than	=AVERAGEIF({1,2,3,4,5},"<"&3)	1.5	basic	number
-exact number match	=AVERAGEIF({10,20,30},20)	20	basic	number
-not-equal <> criterion -> avg 1,3 = 2	=AVERAGEIF({1,2,3},"<>"&2)	2	basic	number
-? wildcard single char: a? matches ab ac	=AVERAGEIF({"ab","ac","ba"},"a?",{10,20,30})	#N/A	edge	error
-case-insensitive text match	=AVERAGEIF({"Apple","APPLE","banana"},"apple",{10,20,30})	#N/A	edge	error
->= criterion	=AVERAGEIF({1,2,3,4,5},">="&3)	4	edge	number
-coercion: criterion as number string	=AVERAGEIF({1,2,3},"2",{10,20,30})	#N/A	coercion	error
-no match -> #DIV/0!	=AVERAGEIF({1,2,3},">"&10)	#DIV/0!	error	error
-nested: AVERAGEIF inside ROUND	=ROUND(AVERAGEIF({1,2,3,4,5},">"&2),4)	4	nested	number
-nested: AVERAGEIF vs AVERAGE same values	=ROUND(AVERAGEIF({1,2,3},">"&0)-AVERAGE({1,2,3}),10)	0	nested	number
-error: no args -> #N/A	=AVERAGEIF()	#N/A	error	error
-single condition	=AVERAGEIFS({1,2,3,4,5},{1,2,3,4,5},">"&2)	#N/A	basic	error
-two conditions range	=AVERAGEIFS({1,2,3,4,5},{1,2,3,4,5},">"&1,{1,2,3,4,5},"<"&5)	#N/A	basic	error
-text condition	=AVERAGEIFS({10,20,30},{"a","b","a"},"a")	#N/A	basic	error
-no match -> #DIV/0!	=AVERAGEIFS({1,2,3},{1,2,3},">"&100)	#N/A	error	error
-equal condition	=AVERAGEIFS({1,2,3},{1,2,3},2)	#N/A	basic	error
-greater-equal condition	=AVERAGEIFS({1,2,3,4,5},{1,2,3,4,5},">="&3)	#N/A	basic	error
-nested: ROUND(AVERAGEIFS)	=ROUND(AVERAGEIFS({1,2,3,4,5},{1,2,3,4,5},">"&1,{1,2,3,4,5},"<"&5),4)	#N/A	nested	error
-single element match	=AVERAGEIFS({42},{1},1)	#N/A	basic	error
-error: no args -> #N/A	=AVERAGEIFS()	#N/A	error	error
-classic dataset	=ROUND(COVARIANCE.P({2,4,4,4,5,5,7,9},{4,2,3,4,5,6,6,7}),4)	2.375	basic	number
-identical arrays = population variance	=ROUND(COVARIANCE.P({1,2,3},{1,2,3}),6)	0.666667	basic	number
-negative covariance	=COVARIANCE.P({1,2},{2,1})	-0.25	basic	number
-zero covariance uncorrelated	=COVARIANCE.P({1,2,3},{3,3,3})	0	basic	number
-two-element positive	=COVARIANCE.P({1,3},{1,3})	1	basic	number
-large values	=ROUND(COVARIANCE.P({100,200,300},{1,2,3}),4)	66.6667	basic	number
-nested: COVARIANCE.P inside ROUND	=ROUND(COVARIANCE.P({1,2,3,4,5},{5,4,3,2,1}),6)	-2	nested	number
-single element each	=COVARIANCE.P({5},{5})	0	edge	number
-error: unequal lengths -> #N/A	=COVARIANCE.P({1},{2,3})	#N/A	error	error
-error: no args -> #N/A	=COVARIANCE.P()	#N/A	error	error
-identical arrays = sample variance	=ROUND(COVARIANCE.S({1,2,3},{1,2,3}),6)	1	basic	number
-negative sample covariance	=COVARIANCE.S({1,2},{2,1})	-0.5	basic	number
-positive sample covariance	=ROUND(COVARIANCE.S({1,2,3},{3,4,5}),6)	1	basic	number
-five elements	=ROUND(COVARIANCE.S({1,2,3,4,5},{5,4,3,2,1}),6)	-2.5	basic	number
-zero covariance	=COVARIANCE.S({1,2,3},{3,3,3})	0	basic	number
-large spread	=ROUND(COVARIANCE.S({0,100},{100,0}),4)	-5000	basic	number
-nested: compare COVARIANCE.S to VAR.S	=ROUND(COVARIANCE.S({1,2,3},{1,2,3})-VAR.S({1,2,3}),10)	0	nested	number
-error: single pair -> #DIV/0!	=COVARIANCE.S({1},{1})	#NUM!	error	error
-error: no args -> #N/A	=COVARIANCE.S()	#N/A	error	error
-1 to 5	=DEVSQ({1,2,3,4,5})	10	basic	number
-classic dataset	=DEVSQ(2,4,4,4,5,5,7,9)	32	basic	number
-all same -> 0	=DEVSQ(5,5,5)	0	edge	number
-two values	=DEVSQ(1,3)	2	basic	number
-single value -> 0	=DEVSQ(5)	0	edge	number
-negative values	=DEVSQ(-1,0,1)	2	basic	number
-floats	=ROUND(DEVSQ(1.5,2.5,3.5),10)	2	basic	number
-nested: DEVSQ / (n-1) = VAR.S	=ROUND(DEVSQ({1,2,3,4,5})/(5-1)-VAR.S({1,2,3,4,5}),10)	0	nested	number
-large values	=DEVSQ(100,200,300)	20000	basic	number
-error: no args -> #N/A	=DEVSQ()	#N/A	error	error
-sqrt(4) = 2	=GEOMEAN(1,4)	2	basic	number
-four powers of 2	=ROUND(GEOMEAN(1,2,4,8),6)	2.828427	basic	number
-array literal	=GEOMEAN({4,9})	6	basic	number
-single value	=GEOMEAN(16)	16	edge	number
-all ones -> 1	=GEOMEAN(1,1,1)	1	edge	number
-geomean 10 and 1000	=ROUND(GEOMEAN(10,1000),4)	100	basic	number
-nested: ROUND(GEOMEAN)	=ROUND(GEOMEAN(10,40),4)	20	nested	number
-error: negative value -> #NUM!	=GEOMEAN(-1,4)	#NUM!	error	error
-error: zero -> #NUM!	=GEOMEAN(0,4)	#NUM!	error	error
-error: no args -> #N/A	=GEOMEAN()	#N/A	error	error
-two values	=ROUND(HARMEAN(1,2),6)	1.333333	basic	number
-three values	=ROUND(HARMEAN(1,2,4),6)	1.714286	basic	number
-array literal	=HARMEAN({40,60})	48	basic	number
-all equal -> same value	=HARMEAN(5,5,5)	5	edge	number
-single value	=HARMEAN(10)	10	edge	number
-large values	=ROUND(HARMEAN(100,200,400),4)	171.4286	basic	number
-nested: ROUND(HARMEAN)	=ROUND(HARMEAN(1,2,4),4)	1.7143	nested	number
-error: zero in input -> #DIV/0!	=HARMEAN(0,1)	#NUM!	error	error
-error: negative -> #NUM!	=HARMEAN(-1,1)	#NUM!	error	error
-error: no args -> #N/A	=HARMEAN()	#N/A	error	error
-10-element dataset	=ROUND(KURT({3,4,5,2,3,4,5,6,4,7}),4)	-0.1518	basic	number
-uniform 1 to 5	=ROUND(KURT({1,2,3,4,5}),4)	-1.2	basic	number
-repeated triplets	=ROUND(KURT(2,2,2,3,3,3,4,4,4),4)	-1.7143	basic	number
-symmetric distribution	=ROUND(KURT(1,2,3,4,5,6,7),4)	-1.2	basic	number
-five identical values	=KURT(5,5,5,5,5)	#DIV/0!	edge	error
-8 values	=ROUND(KURT(1,2,3,4,5,6,7,8),4)	-1.2	basic	number
-nested: ISNUMBER(KURT)	=ISNUMBER(KURT({1,2,3,4,5,6}))	TRUE	nested	boolean
-error: fewer than 4 -> #DIV/0!	=KURT(1,2,3)	#DIV/0!	error	error
-error: no args -> #N/A	=KURT()	#N/A	error	error
-1st largest	=LARGE({3,1,4,1,5,9,2,6},1)	9	basic	number
-2nd largest	=LARGE({3,1,4,1,5,9,2,6},2)	6	basic	number
-3rd largest	=LARGE({3,1,4,1,5,9,2,6},3)	5	basic	number
-last (smallest) position	=LARGE({1,2,3},3)	1	basic	number
-ties handled	=LARGE({5,5,5},1)	5	edge	number
-ties 2nd	=LARGE({5,5,5},2)	5	edge	number
-single element	=LARGE({42},1)	42	edge	number
-nested: LARGE + SMALL sum	=LARGE({1,2,3,4,5},1)+SMALL({1,2,3,4,5},1)	6	nested	number
-error: n=0 -> #NUM!	=LARGE({1,2,3},0)	#NUM!	error	error
-error: n>size -> #NUM!	=LARGE({1,2,3},4)	#NUM!	error	error
-error: no args -> #N/A	=LARGE()	#N/A	error	error
-plain numbers	=MAXA(1,2,3)	3	basic	number
-TRUE treated as 1	=MAXA(TRUE,2,3)	3	coercion	number
-FALSE and zero	=MAXA(FALSE,0)	0	coercion	number
-text treated as 0	=MAXA("text",5)	#VALUE!	coercion	error
-negative values	=MAXA(-5,-3,-1)	-1	basic	number
-mix negative and positive	=MAXA(-1,0,1)	1	basic	number
-single value	=MAXA(7)	7	edge	number
-all same	=MAXA(3,3,3)	3	edge	number
-nested: MAXA vs MAX same for numbers	=MAXA(1,2,3)-MAX(1,2,3)	0	nested	number
-error: no args -> #N/A	=MAXA()	#N/A	error	error
-greater-than filter	=MAXIFS({1,2,3,4,5},{1,2,3,4,5},">"&2)	#N/A	basic	error
-text criteria	=MAXIFS({10,20,30},{"a","b","a"},"a")	#N/A	basic	error
-no match returns 0	=MAXIFS({1,2,3,4,5},{1,2,3,4,5},">"&10)	#N/A	edge	error
-equal criterion	=MAXIFS({10,20,30},{1,2,3},2)	#N/A	basic	error
-less-than filter	=MAXIFS({1,2,3,4,5},{1,2,3,4,5},"<"&3)	#N/A	basic	error
-all match	=MAXIFS({10,20,30},{1,2,3},">"&0)	#N/A	basic	error
-two criteria	=MAXIFS({1,2,3,4,5},{1,2,3,4,5},">"&1,{1,2,3,4,5},"<"&5)	#N/A	basic	error
-nested: MAXIFS inside MAX	=MAX(MAXIFS({1,2,3,4,5},{1,2,3,4,5},">"&2),0)	#N/A	nested	error
-error: no args -> #N/A	=MAXIFS()	#N/A	error	error
-odd count	=MEDIAN(1,2,3,4,5)	3	basic	number
-even count -> average middle two	=MEDIAN(1,2,3,4)	2.5	basic	number
-array literal odd	=MEDIAN({1,3,5,7,9})	5	basic	number
-single value	=MEDIAN(5)	5	edge	number
-all same	=MEDIAN(1,1,1)	1	edge	number
-two values	=MEDIAN(3,7)	5	basic	number
-negative and positive	=MEDIAN(-3,-1,0,1,3)	0	basic	number
-unsorted input	=MEDIAN(5,1,3,4,2)	3	basic	number
-nested: MEDIAN equals middle element odd array	=MEDIAN({1,2,3,4,5})-3	0	nested	number
-error: no args -> #N/A	=MEDIAN()	#N/A	error	error
-plain numbers	=MINA(1,2,3)	1	basic	number
-TRUE treated as 1	=MINA(TRUE,2,3)	1	coercion	number
-text treated as 0	=MINA("text",5)	#VALUE!	coercion	error
-FALSE treated as 0	=MINA(FALSE,1)	0	coercion	number
-negative values	=MINA(-5,-3,-1)	-5	basic	number
-mix negative and positive	=MINA(-1,0,1)	-1	basic	number
-single value	=MINA(7)	7	edge	number
-all same	=MINA(3,3,3)	3	edge	number
-nested: MINA vs MIN same for numbers	=MINA(1,2,3)-MIN(1,2,3)	0	nested	number
-error: no args -> #N/A	=MINA()	#N/A	error	error
-greater-than filter	=MINIFS({1,2,3,4,5},{1,2,3,4,5},">"&2)	#N/A	basic	error
-text criteria	=MINIFS({10,20,30},{"a","b","a"},"a")	#N/A	basic	error
-no match returns 0	=MINIFS({1,2,3,4,5},{1,2,3,4,5},">"&10)	#N/A	edge	error
-equal criterion	=MINIFS({10,20,30},{1,2,3},2)	#N/A	basic	error
-less-than filter	=MINIFS({1,2,3,4,5},{1,2,3,4,5},"<"&3)	#N/A	basic	error
-all match	=MINIFS({10,20,30},{1,2,3},">"&0)	#N/A	basic	error
-two criteria	=MINIFS({1,2,3,4,5},{1,2,3,4,5},">"&1,{1,2,3,4,5},"<"&5)	#N/A	basic	error
-nested: MINIFS inside MIN	=MIN(MINIFS({1,2,3,4,5},{1,2,3,4,5},">"&2),10)	#N/A	nested	error
-error: no args -> #N/A	=MINIFS()	#N/A	error	error
-single mode	=MODE(1,2,2,3)	2	basic	number
-array literal mode	=MODE({1,1,2,3,3,3})	3	basic	number
-all same	=MODE(5,5,5)	5	edge	number
-first tied mode returned	=MODE(1,1,2,2)	1	edge	number
-mode from large set	=MODE(1,2,3,2,1,2,3,2)	2	basic	number
-two-element mode	=MODE(7,7)	7	basic	number
-nested: MODE inside IF	=IF(MODE(1,2,2,3)=2,TRUE,FALSE)	TRUE	nested	boolean
-error: no repeats -> #N/A	=MODE(1,2,3)	#N/A	error	error
-error: no args -> #N/A	=MODE()	#N/A	error	error
-single mode scalar	=MODE.MULT({1,2,2,3})	2	basic	number
-result is a number	=ISNUMBER(MODE.MULT({1,1,2,2,3}))	TRUE	basic	boolean
-SUM of tied modes	=SUM(MODE.MULT({1,1,2,2,3}))	3	basic	number
-all same -> that value	=MODE.MULT({4,4,4})	4	edge	number
-three-way tie SUM	=SUM(MODE.MULT({1,1,2,2,3,3}))	6	basic	number
-single mode from array	=MODE.MULT({5,5,6,7})	5	basic	number
-nested: ISNUMBER wrapping	=ISNUMBER(SUM(MODE.MULT({1,1,2,2,3})))	TRUE	nested	boolean
-no repeats -> #N/A	=MODE.MULT({1,2,3})	#N/A	error	error
-error: no args -> #N/A	=MODE.MULT()	#N/A	error	error
-single mode	=MODE.SNGL(1,2,2,3)	2	basic	number
-array literal	=MODE.SNGL({1,1,2,3,3,3})	3	basic	number
-all same	=MODE.SNGL(5,5,5)	5	edge	number
-tie returns first	=MODE.SNGL(1,1,2,2)	1	edge	number
-large dataset	=MODE.SNGL(1,2,3,2,1,2,3,2)	2	basic	number
-two-element mode	=MODE.SNGL(7,7)	7	basic	number
-nested: compare MODE.SNGL to MODE	=MODE.SNGL(1,2,2,3)-MODE(1,2,2,3)	0	nested	number
-error: no repeats -> #N/A	=MODE.SNGL(1,2,3)	#N/A	error	error
-error: no args -> #N/A	=MODE.SNGL()	#N/A	error	error
-50th percentile	=PERCENTILE({1,2,3,4,5},0.5)	3	basic	number
-0th percentile = min	=PERCENTILE({1,2,3,4,5},0)	1	basic	number
-100th percentile = max	=PERCENTILE({1,2,3,4,5},1)	5	basic	number
-25th percentile	=PERCENTILE({1,2,3,4,5},0.25)	2	basic	number
-75th percentile	=PERCENTILE({1,2,3,4,5},0.75)	4	basic	number
-single element	=PERCENTILE({5},0.5)	5	edge	number
-two elements 50th	=PERCENTILE({1,3},0.5)	2	basic	number
-nested: PERCENTILE inside ROUND	=ROUND(PERCENTILE({1,2,3,4,5},0.333),4)	2.332	nested	number
-error: p > 1 -> #NUM!	=PERCENTILE({1,2,3},1.1)	#NUM!	error	error
-error: no args -> #N/A	=PERCENTILE()	#N/A	error	error
-50th exclusive	=PERCENTILE.EXC({1,2,3,4,5},0.5)	3	basic	number
-25th exclusive	=PERCENTILE.EXC({1,2,3,4,5},0.25)	1.5	basic	number
-75th exclusive	=PERCENTILE.EXC({1,2,3,4,5},0.75)	4.5	basic	number
-inside-only valid range	=PERCENTILE.EXC({1,2,3,4,5},0.1667)	1.0002	basic	number
-near upper bound	=PERCENTILE.EXC({1,2,3,4,5},0.8333)	4.9998	basic	number
-nested: ROUND(PERCENTILE.EXC)	=ROUND(PERCENTILE.EXC({1,2,3,4,5},0.25),4)	1.5	nested	number
-error: p=0 not valid -> #NUM!	=PERCENTILE.EXC({1,2,3},0)	#NUM!	error	error
-error: p=1 not valid -> #NUM!	=PERCENTILE.EXC({1,2,3},1)	#NUM!	error	error
-error: p>1 -> #NUM!	=PERCENTILE.EXC({1,2,3},1.5)	#NUM!	error	error
-error: no args -> #N/A	=PERCENTILE.EXC()	#N/A	error	error
-50th inclusive	=PERCENTILE.INC({1,2,3,4,5},0.5)	3	basic	number
-0th inclusive = min	=PERCENTILE.INC({1,2,3,4,5},0)	1	basic	number
-100th inclusive = max	=PERCENTILE.INC({1,2,3,4,5},1)	5	basic	number
-25th inclusive	=PERCENTILE.INC({1,2,3,4,5},0.25)	2	basic	number
-75th inclusive	=PERCENTILE.INC({1,2,3,4,5},0.75)	4	basic	number
-two elements	=PERCENTILE.INC({1,3},0.5)	2	basic	number
-single element 0	=PERCENTILE.INC({5},0)	5	edge	number
-nested: INC matches PERCENTILE	=PERCENTILE.INC({1,2,3,4,5},0.5)-PERCENTILE({1,2,3,4,5},0.5)	0	nested	number
-error: p>1 -> #NUM!	=PERCENTILE.INC({1,2,3},1.1)	#NUM!	error	error
-error: no args -> #N/A	=PERCENTILE.INC()	#N/A	error	error
-middle value	=PERCENTRANK({1,2,3,4,5},3)	0.5	basic	number
-minimum value -> 0	=PERCENTRANK({1,2,3,4,5},1)	0	basic	number
-maximum value -> 1	=PERCENTRANK({1,2,3,4,5},5)	1	basic	number
-second value	=ROUND(PERCENTRANK({1,2,3,4,5},2),2)	0.25	basic	number
-ties take lower rank	=ROUND(PERCENTRANK({1,2,2,3},2),4)	0.333	basic	number
-three-element array	=PERCENTRANK({1,2,3},1)	0	basic	number
-nested: ROUND(PERCENTRANK)	=ROUND(PERCENTRANK({1,2,3,4,5},3),4)	0.5	nested	number
-error: value not in range -> #N/A	=PERCENTRANK({1,2,3},0)	#N/A	error	error
-error: value above max -> #N/A	=PERCENTRANK({1,2,3},4)	#N/A	error	error
-error: no args -> #N/A	=PERCENTRANK()	#N/A	error	error
-middle value	=ROUND(PERCENTRANK.EXC({1,2,3,4,5},3),4)	0.5	basic	number
-first value exclusive	=ROUND(PERCENTRANK.EXC({1,2,3,4,5},1),4)	0.167	basic	number
-last value exclusive	=ROUND(PERCENTRANK.EXC({1,2,3,4,5},5),4)	0.833	basic	number
-second value	=ROUND(PERCENTRANK.EXC({1,2,3,4,5},2),4)	0.333	basic	number
-three elements	=ROUND(PERCENTRANK.EXC({1,2,3},2),4)	0.5	basic	number
-ties	=ROUND(PERCENTRANK.EXC({1,2,2,3},2),4)	0.4	basic	number
-nested: EXC vs INC different	=PERCENTRANK.EXC({1,2,3,4,5},1)<>PERCENTRANK({1,2,3,4,5},1)	TRUE	nested	boolean
-error: value above max -> #N/A	=PERCENTRANK.EXC({1,2,3},4)	#N/A	error	error
-error: value below min -> #N/A	=PERCENTRANK.EXC({1,2,3},0)	#N/A	error	error
-error: no args -> #N/A	=PERCENTRANK.EXC()	#N/A	error	error
-middle value	=PERCENTRANK.INC({1,2,3,4,5},3)	0.5	basic	number
-minimum value -> 0	=PERCENTRANK.INC({1,2,3,4,5},1)	0	basic	number
-maximum value -> 1	=PERCENTRANK.INC({1,2,3,4,5},5)	1	basic	number
-second value	=ROUND(PERCENTRANK.INC({1,2,3,4,5},2),4)	0.25	basic	number
-matches PERCENTRANK	=PERCENTRANK.INC({1,2,3,4,5},3)-PERCENTRANK({1,2,3,4,5},3)	0	nested	number
-ties	=ROUND(PERCENTRANK.INC({1,2,2,3},2),4)	0.333	basic	number
-three elements min	=PERCENTRANK.INC({1,2,3},1)	0	basic	number
-nested: ISNUMBER wrapping	=ISNUMBER(PERCENTRANK.INC({1,2,3,4,5},3))	TRUE	nested	boolean
-error: value below min -> #N/A	=PERCENTRANK.INC({1,2,3},0)	#N/A	error	error
-error: no args -> #N/A	=PERCENTRANK.INC()	#N/A	error	error
-Q1	=QUARTILE({1,2,3,4,5},1)	2	basic	number
-Q2 = median	=QUARTILE({1,2,3,4,5},2)	3	basic	number
-Q3	=QUARTILE({1,2,3,4,5},3)	4	basic	number
-Q0 = min	=QUARTILE({1,2,3,4,5},0)	1	basic	number
-Q4 = max	=QUARTILE({1,2,3,4,5},4)	5	basic	number
-single element Q0	=QUARTILE({5},0)	5	edge	number
-two elements Q2	=QUARTILE({1,3},2)	2	basic	number
-nested: Q2 equals MEDIAN	=QUARTILE({1,2,3,4,5},2)-MEDIAN({1,2,3,4,5})	0	nested	number
-error: quartile 5 -> #NUM!	=QUARTILE({1,2,3},5)	#NUM!	error	error
-error: no args -> #N/A	=QUARTILE()	#N/A	error	error
-Q1 exclusive	=QUARTILE.EXC({1,2,3,4,5},1)	1.5	basic	number
-Q2 exclusive = median	=QUARTILE.EXC({1,2,3,4,5},2)	3	basic	number
-Q3 exclusive	=QUARTILE.EXC({1,2,3,4,5},3)	4.5	basic	number
-larger dataset Q1	=ROUND(QUARTILE.EXC({1,2,3,4,5,6,7,8},1),4)	2.25	basic	number
-larger dataset Q3	=ROUND(QUARTILE.EXC({1,2,3,4,5,6,7,8},3),4)	6.75	basic	number
-nested: EXC Q2 matches MEDIAN	=QUARTILE.EXC({1,2,3,4,5},2)-MEDIAN({1,2,3,4,5})	0	nested	number
-error: quartile 0 -> #NUM!	=QUARTILE.EXC({1,2,3},0)	#NUM!	error	error
-error: quartile 4 -> #NUM!	=QUARTILE.EXC({1,2,3},4)	#NUM!	error	error
-error: no args -> #N/A	=QUARTILE.EXC()	#N/A	error	error
-Q1 inclusive	=QUARTILE.INC({1,2,3,4,5},1)	2	basic	number
-Q2 inclusive = median	=QUARTILE.INC({1,2,3,4,5},2)	3	basic	number
-Q3 inclusive	=QUARTILE.INC({1,2,3,4,5},3)	4	basic	number
-Q0 = min	=QUARTILE.INC({1,2,3,4,5},0)	1	basic	number
-Q4 = max	=QUARTILE.INC({1,2,3,4,5},4)	5	basic	number
-matches QUARTILE	=QUARTILE.INC({1,2,3,4,5},1)-QUARTILE({1,2,3,4,5},1)	0	nested	number
-two elements	=QUARTILE.INC({1,3},2)	2	basic	number
-nested: Q2 equals MEDIAN	=QUARTILE.INC({1,2,3,4,5},2)-MEDIAN({1,2,3,4,5})	0	nested	number
-error: quartile 5 -> #NUM!	=QUARTILE.INC({1,2,3},5)	#NUM!	error	error
-error: no args -> #N/A	=QUARTILE.INC()	#N/A	error	error
-rank 3 in 1..5 descending	=RANK(3,{1,2,3,4,5})	3	basic	number
-rank 5 = 1 (largest)	=RANK(5,{1,2,3,4,5})	1	basic	number
-rank 1 ascending = 1	=RANK(1,{1,2,3,4,5},1)	1	basic	number
-rank 3 ascending	=RANK(3,{1,2,3,4,5},1)	3	basic	number
-ties use top rank	=RANK(3,{1,3,3,5})	2	edge	number
-rank 1 descending = highest	=RANK(1,{1,2,3,4,5})	5	basic	number
-two elements rank 1	=RANK(5,{3,5})	1	basic	number
-nested: RANK ascending + descending sum	=RANK(3,{1,2,3,4,5})+RANK(3,{1,2,3,4,5},1)	6	nested	number
-error: value not in list -> #N/A	=RANK(6,{1,2,3,4,5})	#N/A	error	error
-error: no args -> #N/A	=RANK()	#N/A	error	error
-no tie -> same as RANK	=RANK.AVG(3,{1,2,3,4,5})	3	basic	number
-tied rank average	=RANK.AVG(3,{1,2,3,3,5})	2.5	basic	number
-rank 1 ascending	=RANK.AVG(1,{1,2,3})	3	basic	number
-largest -> rank 1	=RANK.AVG(5,{1,2,3,4,5})	1	basic	number
-three-way tie avg	=RANK.AVG(2,{1,2,2,2,5})	3	edge	number
-ascending with ties	=RANK.AVG(2,{1,2,2,3},1)	2.5	basic	number
-two elements no tie	=RANK.AVG(3,{3,5})	2	basic	number
-nested: RANK.AVG vs RANK for no-tie	=RANK.AVG(3,{1,2,3,4,5})-RANK(3,{1,2,3,4,5})	0	nested	number
-error: value not in list -> #N/A	=RANK.AVG(6,{1,2,3})	#N/A	error	error
-error: no args -> #N/A	=RANK.AVG()	#N/A	error	error
-no tie same as RANK	=RANK.EQ(3,{1,2,3,4,5})	3	basic	number
-tied: top rank returned	=RANK.EQ(3,{1,2,3,3,5})	2	basic	number
-largest -> 1	=RANK.EQ(5,{1,2,3,4,5})	1	basic	number
-ascending	=RANK.EQ(1,{1,2,3,4,5},1)	1	basic	number
-three-way tie top rank	=RANK.EQ(2,{1,2,2,2,5})	2	edge	number
-smallest descending	=RANK.EQ(1,{1,2,3,4,5})	5	basic	number
-two elements	=RANK.EQ(5,{3,5})	1	basic	number
-nested: RANK.EQ matches RANK	=RANK.EQ(3,{1,2,3,4,5})-RANK(3,{1,2,3,4,5})	0	nested	number
-error: not in list -> #N/A	=RANK.EQ(6,{1,2,3})	#N/A	error	error
-error: no args -> #N/A	=RANK.EQ()	#N/A	error	error
-10-element dataset	=ROUND(SKEW(3,4,5,2,3,4,5,6,4,7),4)	0.3595	basic	number
-symmetric -> 0	=ROUND(SKEW(1,2,3,4,5,4,3,2,1),4)	0.1464	basic	number
-all same -> 0	=SKEW(1,1,1,1)	#DIV/0!	edge	error
-positively skewed	=ROUND(SKEW(1,2,3,3,3,4,4,10),4)	2.0689	basic	number
-negatively skewed	=ROUND(SKEW(1,1,1,2,3,4,5,6),4)	0.5341	basic	number
-five elements	=ROUND(SKEW(1,2,3,4,10),4)	1.6971	basic	number
-nested: ISNUMBER(SKEW)	=ISNUMBER(SKEW(1,2,3,4,5))	TRUE	nested	boolean
-error: only 2 values -> #DIV/0!	=SKEW(1,2)	#DIV/0!	error	error
-error: no args -> #N/A	=SKEW()	#N/A	error	error
-symmetric 1..5 -> 0	=ROUND(SKEW.P(1,2,3,4,5),6)	0	basic	number
-all same -> 0	=SKEW.P(3,3,3,3)	#DIV/0!	edge	error
-positive skew	=ROUND(SKEW.P(1,1,1,2,3,4,10),4)	1.5505	basic	number
-five elements asymmetric	=ROUND(SKEW.P(1,2,3,4,9),4)	1.0392	basic	number
-matches sign of SKEW direction	=ISNUMBER(SKEW.P(1,2,3,4,5))	TRUE	basic	boolean
-six-element symmetric	=ROUND(SKEW.P(1,2,3,4,5,6),6)	0	basic	number
-nested: SKEW.P inside ROUND	=ROUND(SKEW.P(1,2,3,4,5),4)	0	nested	number
-error: only 2 values -> #DIV/0!	=SKEW.P(1,2)	#DIV/0!	error	error
-error: no args -> #N/A	=SKEW.P()	#N/A	error	error
-1st smallest	=SMALL({3,1,4,1,5,9,2,6},1)	1	basic	number
-2nd smallest (tied)	=SMALL({3,1,4,1,5,9,2,6},2)	1	basic	number
-3rd smallest	=SMALL({3,1,4,1,5,9,2,6},3)	2	basic	number
-last = largest	=SMALL({1,2,3},3)	3	basic	number
-all same	=SMALL({5,5,5},1)	5	edge	number
-single element	=SMALL({42},1)	42	edge	number
-two elements first	=SMALL({7,3},1)	3	basic	number
-nested: LARGE + SMALL min+max	=LARGE({1,2,3,4,5},1)+SMALL({1,2,3,4,5},1)	6	nested	number
-error: n=0 -> #NUM!	=SMALL({1,2,3},0)	#NUM!	error	error
-error: n>size -> #NUM!	=SMALL({1,2,3},4)	#NUM!	error	error
-error: no args -> #N/A	=SMALL()	#N/A	error	error
-classic dataset ROUND	=ROUND(STDEV(2,4,4,4,5,5,7,9),4)	2.1381	basic	number
-1 to 5 array	=ROUND(STDEV({1,2,3,4,5}),6)	1.581139	basic	number
-all same -> 0	=STDEV(5,5,5)	0	edge	number
-two values	=STDEV(1,3)	1.414213562	basic	number
-negative values	=ROUND(STDEV(-1,0,1),6)	1	basic	number
-large spread	=ROUND(STDEV(0,100),4)	70.7107	basic	number
-matches STDEV.S	=ROUND(STDEV({1,2,3,4,5})-STDEV.S({1,2,3,4,5}),10)	0	nested	number
-nested: STDEV inside ROUND	=ROUND(STDEV(1,2,3,4,5),4)	1.5811	nested	number
-error: single value -> #DIV/0!	=STDEV(5)	#DIV/0!	error	error
-error: no args -> #N/A	=STDEV()	#N/A	error	error
-classic dataset ROUND	=ROUND(STDEV.P(2,4,4,4,5,5,7,9),4)	2	basic	number
-1 to 5 array	=ROUND(STDEV.P({1,2,3,4,5}),6)	1.414214	basic	number
-all same -> 0	=STDEV.P(5,5,5)	0	edge	number
-single value -> 0	=STDEV.P(5)	0	edge	number
-two values	=STDEV.P(1,3)	1	basic	number
-negative values	=ROUND(STDEV.P(-1,0,1),6)	0.816497	basic	number
-matches STDEVP	=ROUND(STDEV.P({1,2,3,4,5})-STDEVP({1,2,3,4,5}),10)	0	nested	number
-nested: STDEV.P inside ROUND	=ROUND(STDEV.P(1,2,3,4,5),4)	1.4142	nested	number
-error: no args -> #N/A	=STDEV.P()	#N/A	error	error
-1 to 5 array	=ROUND(STDEV.S({1,2,3,4,5}),6)	1.581139	basic	number
-classic dataset	=ROUND(STDEV.S(2,4,4,4,5,5,7,9),4)	2.1381	basic	number
-all same -> 0	=STDEV.S(5,5,5)	0	edge	number
-two values	=STDEV.S(1,3)	1.414213562	basic	number
-negative values	=ROUND(STDEV.S(-1,0,1),6)	1	basic	number
-matches STDEV	=ROUND(STDEV.S({1,2,3,4,5})-STDEV({1,2,3,4,5}),10)	0	nested	number
-nested: STDEV.S inside ROUND	=ROUND(STDEV.S(1,2,3,4,5),4)	1.5811	nested	number
-error: single value -> #DIV/0!	=STDEV.S(5)	#DIV/0!	error	error
-error: no args -> #N/A	=STDEV.S()	#N/A	error	error
-same as STDEV for numbers	=ROUND(STDEVA(1,2,3,4,5),4)	1.5811	basic	number
-TRUE=1 FALSE=0 included	=ROUND(STDEVA(TRUE,FALSE,1),6)	0.57735	coercion	number
-text=0 included	=ROUND(STDEVA("text",1,2),6)	#VALUE!	coercion	error
-all same -> 0	=STDEVA(5,5,5)	0	edge	number
-two values	=STDEVA(1,3)	1.414213562	basic	number
-negative values	=ROUND(STDEVA(-1,0,1),6)	1	basic	number
-matches STDEV for number-only	=ROUND(STDEVA(1,2,3,4,5)-STDEV(1,2,3,4,5),10)	0	nested	number
-nested: STDEVA inside ROUND	=ROUND(STDEVA(1,2,3,4,5),4)	1.5811	nested	number
-error: single value -> #DIV/0!	=STDEVA(5)	#DIV/0!	error	error
-error: no args -> #N/A	=STDEVA()	#N/A	error	error
-1 to 5 population	=ROUND(STDEVP({1,2,3,4,5}),6)	1.414214	basic	number
-classic dataset	=ROUND(STDEVP(2,4,4,4,5,5,7,9),4)	2	basic	number
-all same -> 0	=STDEVP(5,5,5)	0	edge	number
-single value -> 0	=STDEVP(5)	0	edge	number
-matches STDEV.P	=ROUND(STDEVP({1,2,3,4,5})-STDEV.P({1,2,3,4,5}),10)	0	nested	number
-two values	=STDEVP(1,3)	1	basic	number
-negative values	=ROUND(STDEVP(-1,0,1),6)	0.816497	basic	number
-nested: STDEVP inside ROUND	=ROUND(STDEVP(1,2,3,4,5),4)	1.4142	nested	number
-error: no args -> #N/A	=STDEVP()	#N/A	error	error
-same as STDEV.P for numbers	=ROUND(STDEVPA({1,2,3,4,5}),6)	1.414214	basic	number
-TRUE=1 FALSE=0 population	=ROUND(STDEVPA(TRUE,FALSE,1),6)	0.471405	coercion	number
-text=0 population	=ROUND(STDEVPA("text",1,2),6)	#VALUE!	coercion	error
-all same -> 0	=STDEVPA(5,5,5)	0	edge	number
-single value -> 0	=STDEVPA(5)	0	edge	number
-matches STDEV.P for number-only	=ROUND(STDEVPA(1,2,3,4,5)-STDEV.P(1,2,3,4,5),10)	0	nested	number
-two values	=STDEVPA(1,3)	1	basic	number
-nested: STDEVPA inside ROUND	=ROUND(STDEVPA(1,2,3,4,5),4)	1.4142	nested	number
-error: no args -> #N/A	=STDEVPA()	#N/A	error	error
-20% trim 10 values	=TRIMMEAN({1,2,3,4,5,6,7,8,9,10},0.2)	5.5	basic	number
-no trim (0%)	=TRIMMEAN({1,2,3,4,5},0)	3	basic	number
-10% trim 10 values	=TRIMMEAN({1,2,3,4,5,6,7,8,9,10},0.1)	5.5	basic	number
-40% trim 10 values	=TRIMMEAN({1,2,3,4,5,6,7,8,9,10},0.4)	5.5	basic	number
-symmetric result check	=TRIMMEAN({1,2,3,4,5,5,4,3,2,1},0.2)	3	basic	number
-100% of trim rounds down, no trim	=TRIMMEAN({1,2,3},0.99)	2	edge	number
-equal to mean when no outliers trimmed	=ROUND(TRIMMEAN({2,2,2,2,2},0.2),10)	2	edge	number
-nested: TRIMMEAN inside ROUND	=ROUND(TRIMMEAN({1,2,3,4,5,6,7,8,9,10},0.2),4)	5.5	nested	number
-error: negative proportion -> #NUM!	=TRIMMEAN({1,2,3},-0.1)	#NUM!	error	error
-error: no args -> #N/A	=TRIMMEAN()	#N/A	error	error
-classic dataset	=VAR(2,4,4,4,5,5,7,9)	4.571428571	basic	number
-1 to 5 array	=VAR({1,2,3,4,5})	2.5	basic	number
-all same -> 0	=VAR(5,5,5)	0	edge	number
-two values	=VAR(1,3)	2	basic	number
-negative values	=VAR(-1,0,1)	1	basic	number
-large spread	=VAR(0,100)	5000	basic	number
-matches VAR.S	=VAR({1,2,3,4,5})-VAR.S({1,2,3,4,5})	0	nested	number
-nested: VAR inside ROUND	=ROUND(VAR({1,2,3,4,5}),4)	2.5	nested	number
-error: single value -> #DIV/0!	=VAR(5)	#DIV/0!	error	error
-error: no args -> #N/A	=VAR()	#N/A	error	error
-classic dataset	=VAR.P(2,4,4,4,5,5,7,9)	4	basic	number
-1 to 5 array	=VAR.P({1,2,3,4,5})	2	basic	number
-all same -> 0	=VAR.P(5,5,5)	0	edge	number
-single value -> 0	=VAR.P(5)	0	edge	number
-two values	=VAR.P(1,3)	1	basic	number
-negative values	=VAR.P(-1,0,1)	0.6666666667	basic	number
-matches VARP	=VAR.P({1,2,3,4,5})-VARP({1,2,3,4,5})	0	nested	number
-nested: VAR.P inside ROUND	=ROUND(VAR.P({1,2,3,4,5}),4)	2	nested	number
-error: no args -> #N/A	=VAR.P()	#N/A	error	error
-1 to 5 array	=VAR.S({1,2,3,4,5})	2.5	basic	number
-classic dataset	=VAR.S(2,4,4,4,5,5,7,9)	4.571428571	basic	number
-all same -> 0	=VAR.S(5,5,5)	0	edge	number
-two values	=VAR.S(1,3)	2	basic	number
-negative values	=VAR.S(-1,0,1)	1	basic	number
-matches VAR	=VAR.S({1,2,3,4,5})-VAR({1,2,3,4,5})	0	nested	number
-nested: VAR.S inside ROUND	=ROUND(VAR.S({1,2,3,4,5}),4)	2.5	nested	number
-error: single value -> #DIV/0!	=VAR.S(5)	#DIV/0!	error	error
-error: no args -> #N/A	=VAR.S()	#N/A	error	error
-same as VAR for numbers	=VARA(1,2,3,4,5)	2.5	basic	number
-TRUE=1 FALSE=0 sample var	=ROUND(VARA(TRUE,FALSE,1),6)	0.333333	coercion	number
-text=0 sample var	=ROUND(VARA("text",1,2),6)	#VALUE!	coercion	error
-all same -> 0	=VARA(5,5,5)	0	edge	number
-two values	=VARA(1,3)	2	basic	number
-negative values	=VARA(-1,0,1)	1	basic	number
-matches VAR for number-only	=VARA(1,2,3,4,5)-VAR(1,2,3,4,5)	0	nested	number
-nested: VARA inside ROUND	=ROUND(VARA(1,2,3,4,5),4)	2.5	nested	number
-error: single value -> #DIV/0!	=VARA(5)	#DIV/0!	error	error
-error: no args -> #N/A	=VARA()	#N/A	error	error
-1 to 5 array	=VARP({1,2,3,4,5})	2	basic	number
-classic dataset	=VARP(2,4,4,4,5,5,7,9)	4	basic	number
-all same -> 0	=VARP(5,5,5)	0	edge	number
-single value -> 0	=VARP(5)	0	edge	number
-matches VAR.P	=VARP({1,2,3,4,5})-VAR.P({1,2,3,4,5})	0	nested	number
-two values	=VARP(1,3)	1	basic	number
-negative values	=VARP(-1,0,1)	0.6666666667	basic	number
-nested: VARP inside ROUND	=ROUND(VARP({1,2,3,4,5}),4)	2	nested	number
-error: no args -> #N/A	=VARP()	#N/A	error	error
-same as VAR.P for numbers	=VARPA({1,2,3,4,5})	2	basic	number
-TRUE=1 FALSE=0 population var	=ROUND(VARPA(TRUE,FALSE,1),6)	0.222222	coercion	number
-text=0 population var	=ROUND(VARPA("text",1,2),6)	#VALUE!	coercion	error
-all same -> 0	=VARPA(5,5,5)	0	edge	number
-single value -> 0	=VARPA(5)	0	edge	number
-matches VARP for number-only	=VARPA(1,2,3,4,5)-VARP(1,2,3,4,5)	0	nested	number
-two values	=VARPA(1,3)	1	basic	number
-nested: VARPA inside ROUND	=ROUND(VARPA(1,2,3,4,5),4)	2	nested	number
-error: no args -> #N/A	=VARPA()	#N/A	error	error
-equal weights	=AVERAGE.WEIGHTED({1,2,3},{1,1,1})	2	basic	number
-proportional weights	=AVERAGE.WEIGHTED({1,2,3},{1,2,3})	2.333333333	basic	number
-two-element unequal	=AVERAGE.WEIGHTED({1,2},{1,3})	1.75	basic	number
-equal halves	=AVERAGE.WEIGHTED({10,20},{0.5,0.5})	15	basic	number
-single element	=AVERAGE.WEIGHTED({5},{1})	5	edge	number
-zero weight on one	=AVERAGE.WEIGHTED({10,20},{0,1})	20	edge	number
-no args -> #N/A	=AVERAGE.WEIGHTED()	#N/A	error	error
-missing weights -> #N/A	=AVERAGE.WEIGHTED({1,2,3})	#N/A	error	error
-CDF midpoint symmetric	=ROUND(BETA.DIST(0.5,2,2,TRUE,0,1),6)	0.5	basic	number
-PDF midpoint symmetric	=ROUND(BETA.DIST(0.5,2,2,FALSE,0,1),6)	1.5	basic	number
-CDF at lower bound -> 0	=ROUND(BETA.DIST(0,2,2,TRUE,0,1),6)	0	edge	number
-CDF at upper bound -> 1	=ROUND(BETA.DIST(1,2,2,TRUE,0,1),6)	1	edge	number
-alpha=beta=1 uniform CDF 0.25	=ROUND(BETA.DIST(0.25,1,1,TRUE,0,1),6)	0.25	basic	number
-custom bounds	=ROUND(BETA.DIST(5,2,2,TRUE,0,10),6)	0.5	basic	number
-no args -> #N/A	=BETA.DIST()	#N/A	error	error
-x out of bounds -> #NUM!	=BETA.DIST(-1,2,2,TRUE,0,1)	#NUM!	error	error
-median symmetric -> 0.5	=ROUND(BETA.INV(0.5,2,2,0,1),6)	0.5	basic	number
-prob=0 -> lower bound	=ROUND(BETA.INV(0,2,2,0,1),6)	#NUM!	edge	error
-prob=1 -> upper bound	=ROUND(BETA.INV(1,2,2,0,1),6)	1	edge	number
-alpha=beta=1 uniform 0.25	=ROUND(BETA.INV(0.25,1,1,0,1),6)	0.25	basic	number
-custom bounds	=ROUND(BETA.INV(0.5,2,2,0,10),6)	5	basic	number
-roundtrip via BETA.DIST	=ROUND(BETA.INV(BETA.DIST(0.3,2,2,TRUE,0,1),2,2,0,1),6)	0.3	nested	number
-prob > 1 -> #NUM!	=BETA.INV(1.1,2,2,0,1)	#NUM!	error	error
-no args -> #N/A	=BETA.INV()	#N/A	error	error
-legacy CDF midpoint	=ROUND(BETADIST(0.5,2,2,0,1),6)	0.5	basic	number
-lower bound -> 0	=ROUND(BETADIST(0,2,2,0,1),6)	0	edge	number
-upper bound -> 1	=ROUND(BETADIST(1,2,2,0,1),6)	1	edge	number
-uniform alpha=beta=1	=ROUND(BETADIST(0.75,1,1,0,1),6)	0.75	basic	number
-matches BETA.DIST cumulative	=ROUND(BETADIST(0.3,2,5,0,1)-BETA.DIST(0.3,2,5,TRUE,0,1),6)	0	nested	number
-no args -> #N/A	=BETADIST()	#N/A	error	error
-legacy INV midpoint	=ROUND(BETAINV(0.5,2,2,0,1),6)	0.5	basic	number
-prob=0 -> 0	=ROUND(BETAINV(0,2,2,0,1),6)	#NUM!	edge	error
-prob=1 -> 1	=ROUND(BETAINV(1,2,2,0,1),6)	1	edge	number
-matches BETA.INV	=ROUND(BETAINV(0.3,2,5,0,1)-BETA.INV(0.3,2,5,0,1),6)	0	nested	number
-no args -> #N/A	=BETAINV()	#N/A	error	error
-PMF P(X=3) n=10 p=0.5	=ROUND(BINOM.DIST(3,10,0.5,FALSE),6)	0.117188	basic	number
-CDF P(X<=5) n=10 p=0.5	=ROUND(BINOM.DIST(5,10,0.5,TRUE),6)	0.623047	basic	number
-all successes p=1 PMF -> 1	=ROUND(BINOM.DIST(10,10,1,FALSE),6)	1	edge	number
-zero successes p=0 PMF -> 1	=ROUND(BINOM.DIST(0,10,0,FALSE),6)	1	edge	number
-CDF at max -> 1	=ROUND(BINOM.DIST(10,10,0.5,TRUE),6)	1	edge	number
-PMF symmetric n=10 p=0.5 k=5	=ROUND(BINOM.DIST(5,10,0.5,FALSE),6)	0.246094	basic	number
-k > n -> #NUM!	=BINOM.DIST(11,10,0.5,FALSE)	#NUM!	error	error
-no args -> #N/A	=BINOM.DIST()	#N/A	error	error
-median n=10 p=0.5	=BINOM.INV(10,0.5,0.5)	5	basic	number
-target=0 -> 0	=BINOM.INV(10,0.5,0)	#NUM!	edge	error
-target=1 -> n	=BINOM.INV(10,0.5,1)	#NUM!	edge	error
-high prob p=0.9	=BINOM.INV(10,0.9,0.5)	9	basic	number
-low prob p=0.1	=BINOM.INV(10,0.1,0.5)	1	basic	number
-p > 1 -> #NUM!	=BINOM.INV(10,1.5,0.5)	#NUM!	error	error
-no args -> #N/A	=BINOM.INV()	#N/A	error	error
-legacy PMF P(X=3)	=ROUND(BINOMDIST(3,10,0.5,FALSE),6)	0.117188	basic	number
-legacy CDF P(X<=5)	=ROUND(BINOMDIST(5,10,0.5,TRUE),6)	0.623047	basic	number
-matches BINOM.DIST PMF	=ROUND(BINOMDIST(3,10,0.5,FALSE)-BINOM.DIST(3,10,0.5,FALSE),6)	0	nested	number
-zero successes p=0 -> 1	=ROUND(BINOMDIST(0,5,0,FALSE),6)	1	edge	number
-all success p=1 -> 1	=ROUND(BINOMDIST(5,5,1,FALSE),6)	1	edge	number
-no args -> #N/A	=BINOMDIST()	#N/A	error	error
-approx 5 pct critical df=1	=ROUND(CHIDIST(3.841,1),4)	0.05	basic	number
-x=0 df=5 -> 1	=ROUND(CHIDIST(0,5),6)	1	edge	number
-large x -> near 0	=ROUND(CHIDIST(100,5),6)	0	edge	number
-df=2 x=2	=ROUND(CHIDIST(2,2),6)	0.367879	basic	number
-x negative -> #NUM!	=CHIDIST(-1,5)	#NUM!	error	error
-no args -> #N/A	=CHIDIST()	#N/A	error	error
-5 pct df=1 -> approx 3.8415	=ROUND(CHIINV(0.05,1),4)	3.8415	basic	number
-1 pct df=5	=ROUND(CHIINV(0.01,5),4)	15.0863	basic	number
-50 pct df=3	=ROUND(CHIINV(0.5,3),4)	2.366	basic	number
-prob=0 -> #NUM!	=CHIINV(0,5)	#NUM!	error	error
-prob=1 -> 0	=ROUND(CHIINV(1,5),6)	0	edge	number
-no args -> #N/A	=CHIINV()	#N/A	error	error
-CDF x=3 df=5	=ROUND(CHISQ.DIST(3,5,TRUE),6)	0.300014	basic	number
-CDF x=0 df=5 -> 0	=ROUND(CHISQ.DIST(0,5,TRUE),6)	0	edge	number
-PDF x=1 df=2	=ROUND(CHISQ.DIST(1,2,FALSE),6)	0.303265	basic	number
-CDF x=10 df=2	=ROUND(CHISQ.DIST(10,2,TRUE),6)	0.993262	basic	number
-large x CDF -> near 1	=ROUND(CHISQ.DIST(100,5,TRUE),6)	1	edge	number
-x negative -> #NUM!	=CHISQ.DIST(-1,5,TRUE)	#NUM!	error	error
-no args -> #N/A	=CHISQ.DIST()	#N/A	error	error
-right tail approx 5pct df=1	=ROUND(CHISQ.DIST.RT(3.841,1),4)	0.05	basic	number
-x=0 df=5 -> 1	=ROUND(CHISQ.DIST.RT(0,5),6)	1	edge	number
-large x -> near 0	=ROUND(CHISQ.DIST.RT(100,5),6)	0	edge	number
-CDF + RT = 1	=ROUND(CHISQ.DIST(5,3,TRUE)+CHISQ.DIST.RT(5,3),6)	1	nested	number
-df=2 x=2	=ROUND(CHISQ.DIST.RT(2,2),6)	0.367879	basic	number
-no args -> #N/A	=CHISQ.DIST.RT()	#N/A	error	error
-95th pct df=5	=ROUND(CHISQ.INV(0.95,5),4)	11.0705	basic	number
-50th pct df=3	=ROUND(CHISQ.INV(0.5,3),4)	2.366	basic	number
-prob=0 -> 0	=ROUND(CHISQ.INV(0,5),6)	0	edge	number
-roundtrip via CHISQ.DIST	=ROUND(CHISQ.INV(CHISQ.DIST(5,5,TRUE),5),4)	5	nested	number
-prob=1 -> #NUM!	=CHISQ.INV(1,5)	#NUM!	error	error
-no args -> #N/A	=CHISQ.INV()	#N/A	error	error
-5 pct critical df=1	=ROUND(CHISQ.INV.RT(0.05,1),4)	3.8415	basic	number
-1 pct critical df=5	=ROUND(CHISQ.INV.RT(0.01,5),4)	15.0863	basic	number
-prob=1 -> 0	=ROUND(CHISQ.INV.RT(1,5),6)	0	edge	number
-roundtrip via CHISQ.DIST.RT	=ROUND(CHISQ.INV.RT(CHISQ.DIST.RT(3,3),3),4)	3	nested	number
-prob=0 -> #NUM!	=CHISQ.INV.RT(0,5)	#NUM!	error	error
-no args -> #N/A	=CHISQ.INV.RT()	#N/A	error	error
-3-cell goodness of fit	=ROUND(CHISQ.TEST({4,2,3},{3,3,3}),4)	0.7165	basic	number
-perfect fit -> 1	=ROUND(CHISQ.TEST({3,3,3},{3,3,3}),4)	1	basic	number
-2-cell test	=ROUND(CHISQ.TEST({6,4},{5,5}),4)	0.5271	basic	number
-matches CHITEST	=ROUND(CHISQ.TEST({4,2,3},{3,3,3})-CHITEST({4,2,3},{3,3,3}),6)	0	nested	number
-no args -> #N/A	=CHISQ.TEST()	#N/A	error	error
-legacy 3-cell test	=ROUND(CHITEST({4,2,3},{3,3,3}),4)	0.7165	basic	number
-perfect fit -> 1	=ROUND(CHITEST({5,5},{5,5}),4)	1	basic	number
-2-cell test	=ROUND(CHITEST({6,4},{5,5}),4)	0.5271	basic	number
-no args -> #N/A	=CHITEST()	#N/A	error	error
-alpha=0.05 sd=1 n=100	=ROUND(CONFIDENCE(0.05,1,100),4)	0.196	basic	number
-alpha=0.01 sd=2 n=50	=ROUND(CONFIDENCE(0.01,2,50),4)	0.7286	basic	number
-large n narrows interval	=ROUND(CONFIDENCE(0.05,1,10000),4)	0.0196	basic	number
-alpha=0 -> #NUM!	=CONFIDENCE(0,1,100)	#NUM!	error	error
-sd=0 -> #NUM!	=CONFIDENCE(0.05,0,100)	#NUM!	error	error
-no args -> #N/A	=CONFIDENCE()	#N/A	error	error
-alpha=0.05 sd=1 n=100	=ROUND(CONFIDENCE.NORM(0.05,1,100),4)	0.196	basic	number
-alpha=0.01 sd=1 n=100	=ROUND(CONFIDENCE.NORM(0.01,1,100),4)	0.2576	basic	number
-matches CONFIDENCE	=ROUND(CONFIDENCE.NORM(0.05,1,100)-CONFIDENCE(0.05,1,100),6)	0	nested	number
-large n	=ROUND(CONFIDENCE.NORM(0.05,1,10000),4)	0.0196	basic	number
-alpha=0 -> #NUM!	=CONFIDENCE.NORM(0,1,100)	#NUM!	error	error
-no args -> #N/A	=CONFIDENCE.NORM()	#N/A	error	error
-alpha=0.05 sd=1 n=10	=ROUND(CONFIDENCE.T(0.05,1,10),4)	0.7154	basic	number
-alpha=0.05 sd=1 n=100	=ROUND(CONFIDENCE.T(0.05,1,100),4)	0.1984	basic	number
-wider than normal for small n	=CONFIDENCE.T(0.05,1,10)>CONFIDENCE.NORM(0.05,1,10)	TRUE	nested	boolean
-converges to normal large n	=ROUND(CONFIDENCE.T(0.05,1,100000)-CONFIDENCE.NORM(0.05,1,100000),4)	0	nested	number
-n=1 -> #DIV/0!	=CONFIDENCE.T(0.05,1,1)	#NUM!	error	error
-no args -> #N/A	=CONFIDENCE.T()	#N/A	error	error
-perfect positive	=ROUND(CORREL({1,2,3,4,5},{1,2,3,4,5}),6)	1	basic	number
-perfect negative	=ROUND(CORREL({1,2,3,4,5},{5,4,3,2,1}),6)	-1	basic	number
-no correlation (constant y) -> #DIV/0!	=CORREL({1,2,3},{4,4,4})	#DIV/0!	edge	error
-no correlation (constant x) -> #DIV/0!	=CORREL({4,4,4},{1,2,3})	#DIV/0!	edge	error
-two elements positive	=ROUND(CORREL({1,2},{1,2}),6)	1	basic	number
-matches PEARSON	=ROUND(CORREL({1,2,3,4,5},{2,3,4,5,6})-PEARSON({1,2,3,4,5},{2,3,4,5,6}),6)	0	nested	number
-no args -> #N/A	=CORREL()	#N/A	error	error
-positive covariance	=ROUND(COVAR({1,2,3},{1,2,3}),6)	0.666667	basic	number
-negative covariance	=ROUND(COVAR({1,2,3},{3,2,1}),6)	-0.666667	basic	number
-zero covariance constant	=ROUND(COVAR({1,2,3},{5,5,5}),6)	0	basic	number
-two elements	=ROUND(COVAR({1,3},{1,3}),6)	1	basic	number
-scaled -> 4x	=ROUND(COVAR({2,4,6},{2,4,6}),6)	2.666667	basic	number
-no args -> #N/A	=COVAR()	#N/A	error	error
-legacy BINOM.INV n=10 p=0.5	=CRITBINOM(10,0.5,0.5)	5	basic	number
-high p=0.9	=CRITBINOM(10,0.9,0.5)	9	basic	number
-matches BINOM.INV	=CRITBINOM(10,0.5,0.5)-BINOM.INV(10,0.5,0.5)	0	nested	number
-target=0 -> 0	=CRITBINOM(10,0.5,0)	#NUM!	edge	error
-target=1 -> n	=CRITBINOM(10,0.5,1)	#NUM!	edge	error
-no args -> #N/A	=CRITBINOM()	#N/A	error	error
-CDF lambda=1 x=1 -> 1-e^-1	=ROUND(EXPON.DIST(1,1,TRUE),6)	0.632121	basic	number
-CDF x=0 -> 0	=ROUND(EXPON.DIST(0,1,TRUE),6)	0	edge	number
-PDF lambda=1 x=1 -> e^-1	=ROUND(EXPON.DIST(1,1,FALSE),6)	0.367879	basic	number
-CDF lambda=2 x=1	=ROUND(EXPON.DIST(1,2,TRUE),6)	0.864665	basic	number
-large x CDF -> near 1	=ROUND(EXPON.DIST(100,1,TRUE),6)	1	edge	number
-x negative -> #NUM!	=EXPON.DIST(-1,1,TRUE)	#NUM!	error	error
-no args -> #N/A	=EXPON.DIST()	#N/A	error	error
-legacy CDF lambda=1 x=1	=ROUND(EXPONDIST(1,1,TRUE),6)	0.632121	basic	number
-legacy PDF lambda=1 x=1	=ROUND(EXPONDIST(1,1,FALSE),6)	0.367879	basic	number
-matches EXPON.DIST	=ROUND(EXPONDIST(1,1,TRUE)-EXPON.DIST(1,1,TRUE),6)	0	nested	number
-x=0 CDF -> 0	=ROUND(EXPONDIST(0,1,TRUE),6)	0	edge	number
-no args -> #N/A	=EXPONDIST()	#N/A	error	error
-CDF x=3 df1=5 df2=5	=ROUND(F.DIST(3,5,5,TRUE),4)	0.8734	basic	number
-CDF x=0 -> 0	=ROUND(F.DIST(0,5,5,TRUE),4)	0	edge	number
-PDF x=1 df1=5 df2=5	=ROUND(F.DIST(1,5,5,FALSE),4)	0.4244	basic	number
-CDF + RT = 1	=ROUND(F.DIST(3,5,5,TRUE)+F.DIST.RT(3,5,5),6)	1	nested	number
-x negative -> #NUM!	=F.DIST(-1,5,5,TRUE)	#NUM!	error	error
-no args -> #N/A	=F.DIST()	#N/A	error	error
-right tail x=3 df1=5 df2=5	=ROUND(F.DIST.RT(3,5,5),4)	0.1266	basic	number
-x=0 -> 1	=ROUND(F.DIST.RT(0,5,5),4)	1	edge	number
-large x -> near 0	=ROUND(F.DIST.RT(1000,5,5),6)	0	edge	number
-matches FDIST	=ROUND(F.DIST.RT(3,5,5)-FDIST(3,5,5),6)	0	nested	number
-no args -> #N/A	=F.DIST.RT()	#N/A	error	error
-95th pct df1=5 df2=5	=ROUND(F.INV(0.95,5,5),4)	5.0503	basic	number
-prob=0 -> 0	=ROUND(F.INV(0,5,5),6)	0	edge	number
-50th pct df1=5 df2=5	=ROUND(F.INV(0.5,5,5),4)	1	basic	number
-roundtrip via F.DIST	=ROUND(F.INV(F.DIST(3,5,5,TRUE),5,5),4)	3	nested	number
-prob > 1 -> #NUM!	=F.INV(1.1,5,5)	#NUM!	error	error
-no args -> #N/A	=F.INV()	#N/A	error	error
-5 pct critical df1=5 df2=5	=ROUND(F.INV.RT(0.05,5,5),4)	5.0503	basic	number
-1 pct critical df1=5 df2=5	=ROUND(F.INV.RT(0.01,5,5),4)	10.967	basic	number
-prob=1 -> 0	=ROUND(F.INV.RT(1,5,5),6)	0	edge	number
-roundtrip via F.DIST.RT	=ROUND(F.INV.RT(F.DIST.RT(3,5,5),5,5),4)	3	nested	number
-prob=0 -> #NUM!	=F.INV.RT(0,5,5)	#NUM!	error	error
-no args -> #N/A	=F.INV.RT()	#N/A	error	error
-two datasets F-test	=ROUND(F.TEST({1,2,3,4,5},{2,4,6,8,10}),4)	0.208	basic	number
-identical datasets -> 1	=ROUND(F.TEST({1,2,3,4,5},{1,2,3,4,5}),4)	1	basic	number
-matches FTEST	=ROUND(F.TEST({1,2,3},{2,4,6})-FTEST({1,2,3},{2,4,6}),6)	0	nested	number
-single element each -> #DIV/0!	=F.TEST({5},{5})	#DIV/0!	edge	error
-no args -> #N/A	=F.TEST()	#N/A	error	error
-legacy F.DIST.RT x=3 df1=5 df2=5	=ROUND(FDIST(3,5,5),4)	0.1266	basic	number
-x=0 -> 1	=ROUND(FDIST(0,5,5),4)	1	edge	number
-matches F.DIST.RT	=ROUND(FDIST(3,5,5)-F.DIST.RT(3,5,5),6)	0	nested	number
-large x -> near 0	=ROUND(FDIST(1000,5,5),6)	0	edge	number
-no args -> #N/A	=FDIST()	#N/A	error	error
-legacy F.INV.RT 5pct df1=5 df2=5	=ROUND(FINV(0.05,5,5),4)	5.0503	basic	number
-matches F.INV.RT	=ROUND(FINV(0.05,5,5)-F.INV.RT(0.05,5,5),6)	0	nested	number
-prob=1 -> 0	=ROUND(FINV(1,5,5),6)	0	edge	number
-no args -> #N/A	=FINV()	#N/A	error	error
-x=0 -> 0	=ROUND(FISHER(0),6)	0	basic	number
-x=0.5	=ROUND(FISHER(0.5),6)	0.549306	basic	number
-x=-0.5 negative	=ROUND(FISHER(-0.5),6)	-0.549306	basic	number
-x=0.9 near boundary	=ROUND(FISHER(0.9),6)	1.472219	basic	number
-x=1 -> #NUM!	=FISHER(1)	#NUM!	error	error
-x=-1 -> #NUM!	=FISHER(-1)	#NUM!	error	error
-no args -> #N/A	=FISHER()	#N/A	error	error
-x=0 -> 0	=ROUND(FISHERINV(0),6)	0	basic	number
-roundtrip FISHER(0.5)	=ROUND(FISHERINV(FISHER(0.5)),6)	0.5	nested	number
-roundtrip FISHER(-0.5)	=ROUND(FISHERINV(FISHER(-0.5)),6)	-0.5	nested	number
-large positive -> near 1	=ROUND(FISHERINV(10),6)	1	edge	number
-large negative -> near -1	=ROUND(FISHERINV(-10),6)	-1	edge	number
-no args -> #N/A	=FISHERINV()	#N/A	error	error
-predict x=3 on y=2x	=ROUND(FORECAST(3,{2,4,6},{1,2,3}),6)	6	basic	number
-predict x=0 on y=2x	=ROUND(FORECAST(0,{2,4,6},{1,2,3}),6)	0	basic	number
-predict x=5 on y=2x	=ROUND(FORECAST(5,{2,4,6},{1,2,3}),6)	10	basic	number
-y=2x+1 predict x=4	=ROUND(FORECAST(4,{3,5,7},{1,2,3}),6)	9	basic	number
-matches FORECAST.LINEAR	=ROUND(FORECAST(3,{2,4,6},{1,2,3})-FORECAST.LINEAR(3,{2,4,6},{1,2,3}),6)	0	nested	number
-constant x -> #DIV/0!	=FORECAST(3,{2,4,6},{2,2,2})	#DIV/0!	error	error
-no args -> #N/A	=FORECAST()	#N/A	error	error
-predict x=3 on y=2x	=ROUND(FORECAST.LINEAR(3,{2,4,6},{1,2,3}),6)	6	basic	number
-predict x=0 on y=2x	=ROUND(FORECAST.LINEAR(0,{2,4,6},{1,2,3}),6)	0	basic	number
-y=3x-1 predict x=4	=ROUND(FORECAST.LINEAR(4,{2,5,8},{1,2,3}),6)	11	basic	number
-constant x -> #DIV/0!	=FORECAST.LINEAR(3,{2,4,6},{2,2,2})	#DIV/0!	error	error
-no args -> #N/A	=FORECAST.LINEAR()	#N/A	error	error
-legacy F.TEST two datasets	=ROUND(FTEST({1,2,3,4,5},{2,4,6,8,10}),4)	0.208	basic	number
-identical datasets	=ROUND(FTEST({1,2,3},{1,2,3}),4)	1	basic	number
-matches F.TEST	=ROUND(FTEST({1,2,3,4,5},{2,4,6,8,10})-F.TEST({1,2,3,4,5},{2,4,6,8,10}),6)	0	nested	number
-no args -> #N/A	=FTEST()	#N/A	error	error
-Gamma(1) = 1	=ROUND(GAMMA(1),6)	1	basic	number
-Gamma(2) = 1	=ROUND(GAMMA(2),6)	1	basic	number
-Gamma(5) = 24	=ROUND(GAMMA(5),6)	24	basic	number
-Gamma(0.5) = sqrt(pi)	=ROUND(GAMMA(0.5),6)	1.772454	basic	number
-Gamma(3) = 2	=ROUND(GAMMA(3),6)	2	basic	number
-Gamma(0) -> #NUM!	=GAMMA(0)	#NUM!	error	error
-Gamma(-1) -> #NUM!	=GAMMA(-1)	#NUM!	error	error
-no args -> #N/A	=GAMMA()	#N/A	error	error
-CDF alpha=2 beta=2 x=5	=ROUND(GAMMA.DIST(5,2,2,TRUE),4)	0.7127	basic	number
-CDF x=0 -> 0	=ROUND(GAMMA.DIST(0,2,2,TRUE),4)	0	edge	number
-PDF alpha=2 beta=2 x=5	=ROUND(GAMMA.DIST(5,2,2,FALSE),4)	0.1026	basic	number
-large x CDF -> near 1	=ROUND(GAMMA.DIST(100,2,2,TRUE),4)	1	edge	number
-x negative -> #NUM!	=GAMMA.DIST(-1,2,2,TRUE)	#NUM!	error	error
-no args -> #N/A	=GAMMA.DIST()	#N/A	error	error
-50th pct alpha=2 beta=2	=ROUND(GAMMA.INV(0.5,2,2),4)	3.3567	basic	number
-prob=0 -> 0	=ROUND(GAMMA.INV(0,2,2),6)	0	edge	number
-roundtrip via GAMMA.DIST	=ROUND(GAMMA.INV(GAMMA.DIST(5,2,2,TRUE),2,2),4)	5	nested	number
-alpha=1 beta=1 (exponential)	=ROUND(GAMMA.INV(0.5,1,1),6)	0.693147	basic	number
-prob > 1 -> #NUM!	=GAMMA.INV(1.1,2,2)	#NUM!	error	error
-no args -> #N/A	=GAMMA.INV()	#N/A	error	error
-legacy CDF alpha=2 beta=2 x=5	=ROUND(GAMMADIST(5,2,2,TRUE),4)	0.7127	basic	number
-legacy PDF	=ROUND(GAMMADIST(5,2,2,FALSE),4)	0.1026	basic	number
-matches GAMMA.DIST	=ROUND(GAMMADIST(5,2,2,TRUE)-GAMMA.DIST(5,2,2,TRUE),6)	0	nested	number
-x=0 -> 0	=ROUND(GAMMADIST(0,2,2,TRUE),4)	0	edge	number
-no args -> #N/A	=GAMMADIST()	#N/A	error	error
-legacy 50th pct alpha=2 beta=2	=ROUND(GAMMAINV(0.5,2,2),4)	3.3567	basic	number
-matches GAMMA.INV	=ROUND(GAMMAINV(0.5,2,2)-GAMMA.INV(0.5,2,2),6)	0	nested	number
-prob=0 -> 0	=ROUND(GAMMAINV(0,2,2),6)	0	edge	number
-no args -> #N/A	=GAMMAINV()	#N/A	error	error
-z=0 -> 0	=ROUND(GAUSS(0),6)	0	basic	number
-z=1	=ROUND(GAUSS(1),6)	0.341345	basic	number
-z=-1 symmetric	=ROUND(GAUSS(-1),6)	-0.341345	basic	number
-z=2	=ROUND(GAUSS(2),6)	0.47725	basic	number
-z=-2 symmetric	=ROUND(GAUSS(-2),6)	-0.47725	basic	number
-GAUSS(z)+GAUSS(-z)=0	=ROUND(GAUSS(1.5)+GAUSS(-1.5),6)	0	nested	number
-no args -> #N/A	=GAUSS()	#N/A	error	error
-k=1 n=4 K=2 N=10	=ROUND(HYPGEOM.DIST(1,4,2,10,FALSE),6)	0.533333	basic	number
-k=0 n=4 K=2 N=10	=ROUND(HYPGEOM.DIST(0,4,2,10,FALSE),6)	0.333333	basic	number
-CDF k=2 n=4 K=2 N=10	=ROUND(HYPGEOM.DIST(2,4,2,10,TRUE),6)	1	basic	number
-k=2 all successes possible	=ROUND(HYPGEOM.DIST(2,4,2,10,FALSE),6)	0.133333	basic	number
-k > K -> 0	=ROUND(HYPGEOM.DIST(3,4,2,10,FALSE),6)	#NUM!	edge	error
-no args -> #N/A	=HYPGEOM.DIST()	#N/A	error	error
-legacy k=1 n=4 K=2 N=10	=ROUND(HYPGEOMDIST(1,4,2,10),6)	0.533333	basic	number
-legacy k=0	=ROUND(HYPGEOMDIST(0,4,2,10),6)	0.333333	basic	number
-matches HYPGEOM.DIST PMF	=ROUND(HYPGEOMDIST(1,4,2,10)-HYPGEOM.DIST(1,4,2,10,FALSE),6)	0	nested	number
-no args -> #N/A	=HYPGEOMDIST()	#N/A	error	error
-y=2x intercept -> 0	=ROUND(INTERCEPT({2,4,6},{1,2,3}),6)	0	basic	number
-y=2x+1 intercept -> 1	=ROUND(INTERCEPT({3,5,7},{1,2,3}),6)	1	basic	number
-y=x+5 intercept -> 5	=ROUND(INTERCEPT({6,7,8},{1,2,3}),6)	5	basic	number
-constant y -> #DIV/0!	=INTERCEPT({1,1,1},{1,2,3})	1	error	number
-matches FORECAST at x=0	=ROUND(INTERCEPT({2,4,6},{1,2,3})-FORECAST(0,{2,4,6},{1,2,3}),6)	0	nested	number
-no args -> #N/A	=INTERCEPT()	#N/A	error	error
-median lognormal(0,1) -> 1	=ROUND(LOGINV(0.5,0,1),6)	1	basic	number
-prob=0 -> 0	=ROUND(LOGINV(0,0,1),6)	#NUM!	edge	error
-lognormal(0,1) 75th pct	=ROUND(LOGINV(0.75,0,1),6)	1.963031	basic	number
-matches LOGNORM.INV	=ROUND(LOGINV(0.5,0,1)-LOGNORM.INV(0.5,0,1),6)	0	nested	number
-no args -> #N/A	=LOGINV()	#N/A	error	error
-CDF x=1 mean=0 sd=1 -> 0.5	=ROUND(LOGNORM.DIST(1,0,1,TRUE),6)	0.5	basic	number
-PDF x=1 mean=0 sd=1	=ROUND(LOGNORM.DIST(1,0,1,FALSE),6)	0.398942	basic	number
-CDF x=0 -> 0	=ROUND(LOGNORM.DIST(0,0,1,TRUE),6)	#NUM!	edge	error
-CDF x=2 mean=0 sd=1	=ROUND(LOGNORM.DIST(2,0,1,TRUE),6)	0.755891	basic	number
-x negative -> #NUM!	=LOGNORM.DIST(-1,0,1,TRUE)	#NUM!	error	error
-no args -> #N/A	=LOGNORM.DIST()	#N/A	error	error
-median lognormal(0,1) -> 1	=ROUND(LOGNORM.INV(0.5,0,1),6)	1	basic	number
-75th pct lognormal(0,1)	=ROUND(LOGNORM.INV(0.75,0,1),6)	1.963031	basic	number
-roundtrip via LOGNORM.DIST	=ROUND(LOGNORM.INV(LOGNORM.DIST(2,0,1,TRUE),0,1),6)	2	nested	number
-prob=0 -> 0	=ROUND(LOGNORM.INV(0,0,1),6)	#NUM!	edge	error
-prob > 1 -> #NUM!	=LOGNORM.INV(1.1,0,1)	#NUM!	error	error
-no args -> #N/A	=LOGNORM.INV()	#N/A	error	error
-legacy CDF x=1 mean=0 sd=1	=ROUND(LOGNORMDIST(1,0,1),6)	0.5	basic	number
-matches LOGNORM.DIST	=ROUND(LOGNORMDIST(1,0,1)-LOGNORM.DIST(1,0,1,TRUE),6)	0	nested	number
-x=0 -> 0	=ROUND(LOGNORMDIST(0,0,1),6)	#NUM!	edge	error
-no args -> #N/A	=LOGNORMDIST()	#N/A	error	error
-5 element array 95pct	=ROUND(MARGINOFERROR({1,2,3,4,5},0.95),4)	1.9632	basic	number
-uniform array 99pct	=ROUND(MARGINOFERROR({10,10,10,10,10},0.95),4)	#NUM!	edge	error
-10 elements 95pct	=ROUND(MARGINOFERROR({1,2,3,4,5,6,7,8,9,10},0.95),4)	2.1659	basic	number
-no args -> #N/A	=MARGINOFERROR()	#N/A	error	error
-PMF failures=2 successes=3 p=0.5	=ROUND(NEGBINOM.DIST(2,3,0.5,FALSE),6)	0.1875	basic	number
-CDF failures=2 successes=3 p=0.5	=ROUND(NEGBINOM.DIST(2,3,0.5,TRUE),6)	0.5	basic	number
-failures=0 -> p^successes	=ROUND(NEGBINOM.DIST(0,1,0.5,FALSE),6)	0.5	basic	number
-p=1 failures=0 -> 1	=ROUND(NEGBINOM.DIST(0,1,1,FALSE),6)	1	edge	number
-no args -> #N/A	=NEGBINOM.DIST()	#N/A	error	error
-legacy PMF failures=2 successes=3 p=0.5	=ROUND(NEGBINOMDIST(2,3,0.5),6)	0.1875	basic	number
-matches NEGBINOM.DIST PMF	=ROUND(NEGBINOMDIST(2,3,0.5)-NEGBINOM.DIST(2,3,0.5,FALSE),6)	0	nested	number
-failures=0 successes=1 p=0.5	=ROUND(NEGBINOMDIST(0,1,0.5),6)	0.5	edge	number
-no args -> #N/A	=NEGBINOMDIST()	#N/A	error	error
-CDF x=0 standard normal -> 0.5	=ROUND(NORM.DIST(0,0,1,TRUE),6)	0.5	basic	number
-CDF x=1 standard normal	=ROUND(NORM.DIST(1,0,1,TRUE),6)	0.841345	basic	number
-PDF x=0 standard normal	=ROUND(NORM.DIST(0,0,1,FALSE),6)	0.398942	basic	number
-CDF x=-1 standard normal	=ROUND(NORM.DIST(-1,0,1,TRUE),6)	0.158655	basic	number
-symmetry: CDF(1)+CDF(-1)=1	=ROUND(NORM.DIST(1,0,1,TRUE)+NORM.DIST(-1,0,1,TRUE),6)	1	nested	number
-no args -> #N/A	=NORM.DIST()	#N/A	error	error
-50th pct standard normal -> 0	=ROUND(NORM.INV(0.5,0,1),6)	0	basic	number
-84th pct -> approx 1	=ROUND(NORM.INV(0.841345,0,1),4)	1	basic	number
-16th pct -> approx -1	=ROUND(NORM.INV(0.158655,0,1),4)	-1	basic	number
-roundtrip via NORM.DIST	=ROUND(NORM.INV(NORM.DIST(1.5,0,1,TRUE),0,1),6)	1.5	nested	number
-prob=0 -> #NUM!	=NORM.INV(0,0,1)	#NUM!	error	error
-no args -> #N/A	=NORM.INV()	#N/A	error	error
-x=0 -> 0.5	=ROUND(NORM.S.DIST(0,TRUE),6)	0.5	basic	number
-x=1	=ROUND(NORM.S.DIST(1,TRUE),6)	0.841345	basic	number
-x=-1 symmetric	=ROUND(NORM.S.DIST(-1,TRUE),6)	0.158655	basic	number
-PDF x=0	=ROUND(NORM.S.DIST(0,FALSE),6)	0.398942	basic	number
-matches NORM.DIST standard	=ROUND(NORM.S.DIST(1,TRUE)-NORM.DIST(1,0,1,TRUE),6)	0	nested	number
-no args -> #N/A	=NORM.S.DIST()	#N/A	error	error
-prob=0.5 -> 0	=ROUND(NORM.S.INV(0.5),6)	0	basic	number
-84th pct -> approx 1	=ROUND(NORM.S.INV(0.841345),4)	1	basic	number
-roundtrip via NORM.S.DIST	=ROUND(NORM.S.INV(NORM.S.DIST(1.5,TRUE)),6)	1.5	nested	number
-prob=0 -> #NUM!	=NORM.S.INV(0)	#NUM!	error	error
-prob=1 -> #NUM!	=NORM.S.INV(1)	#NUM!	error	error
-no args -> #N/A	=NORM.S.INV()	#N/A	error	error
-legacy CDF x=0 standard normal	=ROUND(NORMDIST(0,0,1,TRUE),6)	0.5	basic	number
-legacy PDF x=0	=ROUND(NORMDIST(0,0,1,FALSE),6)	0.398942	basic	number
-matches NORM.DIST	=ROUND(NORMDIST(1,0,1,TRUE)-NORM.DIST(1,0,1,TRUE),6)	0	nested	number
-x=1 CDF	=ROUND(NORMDIST(1,0,1,TRUE),6)	0.841345	basic	number
-no args -> #N/A	=NORMDIST()	#N/A	error	error
-legacy prob=0.5 -> 0	=ROUND(NORMINV(0.5,0,1),6)	0	basic	number
-matches NORM.INV	=ROUND(NORMINV(0.75,0,1)-NORM.INV(0.75,0,1),6)	0	nested	number
-prob=0 -> #NUM!	=NORMINV(0,0,1)	#NUM!	error	error
-no args -> #N/A	=NORMINV()	#N/A	error	error
-x=0 -> 0.5	=ROUND(NORMSDIST(0),6)	0.5	basic	number
-x=1	=ROUND(NORMSDIST(1),6)	0.841345	basic	number
-x=-1	=ROUND(NORMSDIST(-1),6)	0.158655	basic	number
-matches NORM.S.DIST cumulative	=ROUND(NORMSDIST(1)-NORM.S.DIST(1,TRUE),6)	0	nested	number
-no args -> #N/A	=NORMSDIST()	#N/A	error	error
-legacy prob=0.5 -> 0	=ROUND(NORMSINV(0.5),6)	0	basic	number
-matches NORM.S.INV	=ROUND(NORMSINV(0.75)-NORM.S.INV(0.75),6)	0	nested	number
-84th pct -> approx 1	=ROUND(NORMSINV(0.841345),4)	1	basic	number
-no args -> #N/A	=NORMSINV()	#N/A	error	error
-perfect positive	=ROUND(PEARSON({1,2,3,4,5},{1,2,3,4,5}),6)	1	basic	number
-perfect negative	=ROUND(PEARSON({1,2,3,4,5},{5,4,3,2,1}),6)	-1	basic	number
-matches CORREL	=ROUND(PEARSON({1,2,3},{4,5,6})-CORREL({1,2,3},{4,5,6}),6)	0	nested	number
-no correlation constant x -> #DIV/0!	=PEARSON({1,2,3},{5,5,5})	#DIV/0!	edge	error
-two elements	=ROUND(PEARSON({1,3},{1,3}),6)	1	basic	number
-no args -> #N/A	=PEARSON()	#N/A	error	error
-P(5,2) = 20	=PERMUT(5,2)	20	basic	number
-P(10,0) = 1	=PERMUT(10,0)	1	edge	number
-P(5,5) = 120	=PERMUT(5,5)	120	basic	number
-P(10,3) = 720	=PERMUT(10,3)	720	basic	number
-P(1,1) = 1	=PERMUT(1,1)	1	edge	number
-k > n -> #NUM!	=PERMUT(2,5)	#NUM!	error	error
-no args -> #N/A	=PERMUT()	#N/A	error	error
-3^2 = 9	=PERMUTATIONA(3,2)	9	basic	number
-n^0 = 1	=PERMUTATIONA(5,0)	#NUM!	edge	error
-2^3 = 8	=PERMUTATIONA(2,3)	8	basic	number
-5^1 = 5	=PERMUTATIONA(5,1)	5	basic	number
-1^k = 1	=PERMUTATIONA(1,10)	1	edge	number
-no args -> #N/A	=PERMUTATIONA()	#N/A	error	error
-x=0 -> peak density	=ROUND(PHI(0),6)	0.398942	basic	number
-x=1	=ROUND(PHI(1),6)	0.241971	basic	number
-x=-1 symmetric	=ROUND(PHI(-1),6)	0.241971	basic	number
-x=2	=ROUND(PHI(2),6)	0.053991	basic	number
-matches NORM.S.DIST PDF	=ROUND(PHI(1)-NORM.S.DIST(1,FALSE),6)	0	nested	number
-no args -> #N/A	=PHI()	#N/A	error	error
-legacy PMF x=2 mean=3	=ROUND(POISSON(2,3,FALSE),6)	0.224042	basic	number
-legacy CDF x=0 mean=3	=ROUND(POISSON(0,3,TRUE),6)	0.049787	basic	number
-matches POISSON.DIST	=ROUND(POISSON(2,3,FALSE)-POISSON.DIST(2,3,FALSE),6)	0	nested	number
-PMF x=0 -> e^-mean	=ROUND(POISSON(0,1,FALSE),6)	0.367879	basic	number
-CDF large x -> 1	=ROUND(POISSON(100,3,TRUE),6)	1	edge	number
-no args -> #N/A	=POISSON()	#N/A	error	error
-PMF x=2 mean=3	=ROUND(POISSON.DIST(2,3,FALSE),6)	0.224042	basic	number
-CDF x=0 mean=3	=ROUND(POISSON.DIST(0,3,TRUE),6)	0.049787	basic	number
-CDF x=2 mean=3	=ROUND(POISSON.DIST(2,3,TRUE),6)	0.42319	basic	number
-PMF x=0 mean=1 -> e^-1	=ROUND(POISSON.DIST(0,1,FALSE),6)	0.367879	basic	number
-x negative -> #NUM!	=POISSON.DIST(-1,3,FALSE)	#NUM!	error	error
-no args -> #N/A	=POISSON.DIST()	#N/A	error	error
-P(2<=X<=4) = 0.8	=ROUND(PROB({1,2,3,4,5},{0.1,0.2,0.4,0.2,0.1},2,4),4)	0.8	basic	number
-P(X=2) single value	=ROUND(PROB({1,2,3},{0.25,0.5,0.25},2),4)	0.5	basic	number
-P(X=1) smallest	=ROUND(PROB({1,2,3,4,5},{0.1,0.2,0.4,0.2,0.1},1),4)	0.1	basic	number
-P(X>=5) high end	=ROUND(PROB({1,2,3,4,5},{0.1,0.2,0.4,0.2,0.1},5),4)	0.1	basic	number
-full range -> 1	=ROUND(PROB({1,2,3,4,5},{0.1,0.2,0.4,0.2,0.1},1,5),4)	1	edge	number
-no args -> #N/A	=PROB()	#N/A	error	error
-perfect fit y=2x -> 1	=ROUND(RSQ({2,4,6},{1,2,3}),6)	1	basic	number
-perfect fit y=x+5 -> 1	=ROUND(RSQ({6,7,8},{1,2,3}),6)	1	basic	number
-no fit constant y -> 0	=ROUND(RSQ({1,1,1},{1,2,3}),6)	#DIV/0!	basic	error
-imperfect fit	=ROUND(RSQ({2,4,5},{1,2,3}),6)	0.964286	basic	number
-RSQ = CORREL^2	=ROUND(RSQ({1,2,3,4,5},{2,3,4,5,6})-CORREL({1,2,3,4,5},{2,3,4,5,6})^2,6)	0	nested	number
-no args -> #N/A	=RSQ()	#N/A	error	error
-y=2x slope -> 2	=ROUND(SLOPE({2,4,6},{1,2,3}),6)	2	basic	number
-y=2x+1 slope -> 2	=ROUND(SLOPE({3,5,7},{1,2,3}),6)	2	basic	number
-y=x slope -> 1	=ROUND(SLOPE({1,2,3},{1,2,3}),6)	1	basic	number
-constant y slope -> 0	=ROUND(SLOPE({1,1,1},{1,2,3}),6)	0	edge	number
-negative slope	=ROUND(SLOPE({6,4,2},{1,2,3}),6)	-2	basic	number
-no args -> #N/A	=SLOPE()	#N/A	error	error
-(5-3)/2 = 1	=ROUND(STANDARDIZE(5,3,2),6)	1	basic	number
-mean -> 0	=ROUND(STANDARDIZE(3,3,2),6)	0	basic	number
-below mean -> -1	=ROUND(STANDARDIZE(1,3,2),6)	-1	basic	number
-sd=1 standard z-score	=ROUND(STANDARDIZE(2,0,1),6)	2	basic	number
-sd=0 -> #DIV/0!	=STANDARDIZE(5,3,0)	#NUM!	error	error
-no args -> #N/A	=STANDARDIZE()	#N/A	error	error
-perfect fit -> 0	=ROUND(STEYX({2,4,6},{1,2,3}),6)	0	basic	number
-imperfect fit	=ROUND(STEYX({2,4,5},{1,2,3}),6)	0.408248	basic	number
-STEYX >= 0 always	=STEYX({2,4,5},{1,2,3})>=0	TRUE	nested	boolean
-perfect neg fit -> 0	=ROUND(STEYX({6,4,2},{1,2,3}),6)	0	basic	number
-no args -> #N/A	=STEYX()	#N/A	error	error
-CDF x=0 df=10 -> 0.5	=ROUND(T.DIST(0,10,TRUE),6)	0.5	basic	number
-CDF x=2 df=10	=ROUND(T.DIST(2,10,TRUE),4)	0.9633	basic	number
-PDF x=0 df=10	=ROUND(T.DIST(0,10,FALSE),4)	0.3891	basic	number
-CDF x=-2 symmetric	=ROUND(T.DIST(-2,10,TRUE),4)	0.0367	basic	number
-CDF + RT = 1	=ROUND(T.DIST(2,10,TRUE)+T.DIST.RT(2,10),6)	1	nested	number
-no args -> #N/A	=T.DIST()	#N/A	error	error
-two-tail x=2 df=10	=ROUND(T.DIST.2T(2,10),4)	0.0734	basic	number
-#NAME?	=ROUND(T.DIST.2T(2,10)-2*T.DIST.RT(2,10),6)	0	nested	number
-large df -> near normal	=ROUND(T.DIST.2T(1.96,10000),4)	0.05	basic	number
-x negative -> #NUM!	=T.DIST.2T(-1,10)	#NUM!	error	error
-no args -> #N/A	=T.DIST.2T()	#N/A	error	error
-right tail x=2 df=10	=ROUND(T.DIST.RT(2,10),4)	0.0367	basic	number
-x=0 -> 0.5	=ROUND(T.DIST.RT(0,10),6)	0.5	edge	number
-matches TDIST 1-tail	=ROUND(T.DIST.RT(2,10)-TDIST(2,10,1),6)	0	nested	number
-large x -> near 0	=ROUND(T.DIST.RT(100,10),6)	0	edge	number
-no args -> #N/A	=T.DIST.RT()	#N/A	error	error
-50th pct df=10 -> 0	=ROUND(T.INV(0.5,10),6)	0	basic	number
-97.5th pct df=10	=ROUND(T.INV(0.975,10),4)	2.2281	basic	number
-2.5th pct df=10 negative	=ROUND(T.INV(0.025,10),4)	-2.2281	basic	number
-roundtrip via T.DIST	=ROUND(T.INV(T.DIST(2,10,TRUE),10),4)	2	nested	number
-no args -> #N/A	=T.INV()	#N/A	error	error
-5 pct df=10 two-tail	=ROUND(T.INV.2T(0.05,10),4)	2.2281	basic	number
-1 pct df=30 two-tail	=ROUND(T.INV.2T(0.01,30),4)	2.75	basic	number
-symmetry: T.INV(0.975)=T.INV.2T(0.05)	=ROUND(T.INV(0.975,10)-T.INV.2T(0.05,10),6)	0	nested	number
-matches TINV	=ROUND(T.INV.2T(0.05,10)-TINV(0.05,10),6)	0	nested	number
-no args -> #N/A	=T.INV.2T()	#N/A	error	error
-paired t-test two-tail type=1	=ROUND(T.TEST({1,2,3,4,5},{2,3,4,5,6},2,1),4)	#DIV/0!	basic	error
-two-sample equal var type=2	=ROUND(T.TEST({1,2,3,4,5},{2,3,4,5,6},2,2),4)	0.3466	basic	number
-one-tail type=1	=ROUND(T.TEST({1,2,3,4,5},{2,3,4,5,6},1,1),4)	#DIV/0!	basic	error
-identical arrays -> 1	=ROUND(T.TEST({1,2,3,4,5},{1,2,3,4,5},2,1),4)	#DIV/0!	edge	error
-matches TTEST	=ROUND(T.TEST({1,2,3},{2,3,4},2,1)-TTEST({1,2,3},{2,3,4},2,1),6)	#DIV/0!	nested	error
-no args -> #N/A	=T.TEST()	#N/A	error	error
-legacy one-tail x=2 df=10	=ROUND(TDIST(2,10,1),4)	0.0367	basic	number
-legacy two-tail x=2 df=10	=ROUND(TDIST(2,10,2),4)	0.0734	basic	number
-matches T.DIST.RT one-tail	=ROUND(TDIST(2,10,1)-T.DIST.RT(2,10),6)	0	nested	number
-x negative -> #NUM!	=TDIST(-1,10,1)	#NUM!	error	error
-no args -> #N/A	=TDIST()	#N/A	error	error
-legacy 5 pct df=10	=ROUND(TINV(0.05,10),4)	2.2281	basic	number
-matches T.INV.2T	=ROUND(TINV(0.05,10)-T.INV.2T(0.05,10),6)	0	nested	number
-1 pct df=30	=ROUND(TINV(0.01,30),4)	2.75	basic	number
-no args -> #N/A	=TINV()	#N/A	error	error
-legacy paired two-tail	=ROUND(TTEST({1,2,3,4,5},{2,3,4,5,6},2,1),4)	#DIV/0!	basic	error
-matches T.TEST	=ROUND(TTEST({1,2,3,4,5},{2,3,4,5,6},2,1)-T.TEST({1,2,3,4,5},{2,3,4,5,6},2,1),6)	#DIV/0!	nested	error
-identical arrays -> 1	=ROUND(TTEST({1,2,3},{1,2,3},2,1),4)	#DIV/0!	edge	error
-no args -> #N/A	=TTEST()	#N/A	error	error
-legacy CDF x=1 shape=2 scale=1	=ROUND(WEIBULL(1,2,1,TRUE),6)	0.632121	basic	number
-legacy CDF x=0 -> 0	=ROUND(WEIBULL(0,2,1,TRUE),6)	0	edge	number
-legacy PDF x=1 shape=2 scale=1	=ROUND(WEIBULL(1,2,1,FALSE),6)	0.735759	basic	number
-matches WEIBULL.DIST	=ROUND(WEIBULL(1,2,1,TRUE)-WEIBULL.DIST(1,2,1,TRUE),6)	0	nested	number
-x negative -> #NUM!	=WEIBULL(-1,2,1,TRUE)	#NUM!	error	error
-no args -> #N/A	=WEIBULL()	#N/A	error	error
-CDF x=1 shape=2 scale=1	=ROUND(WEIBULL.DIST(1,2,1,TRUE),6)	0.632121	basic	number
-PDF x=1 shape=2 scale=1	=ROUND(WEIBULL.DIST(1,2,1,FALSE),6)	0.735759	basic	number
-CDF x=0 -> 0	=ROUND(WEIBULL.DIST(0,2,1,TRUE),6)	0	edge	number
-CDF large x -> near 1	=ROUND(WEIBULL.DIST(100,2,1,TRUE),6)	1	edge	number
-shape=1 reduces to exponential	=ROUND(WEIBULL.DIST(1,1,1,TRUE)-EXPON.DIST(1,1,TRUE),6)	0	nested	number
-no args -> #N/A	=WEIBULL.DIST()	#N/A	error	error
-symmetric data test value=mean -> 0.5	=ROUND(Z.TEST({1,2,3,4,5},3),4)	0.5	basic	number
-test value below mean	=ROUND(Z.TEST({1,2,3,4,5},2),4)	0.0786	basic	number
-test value above mean	=ROUND(Z.TEST({1,2,3,4,5},4),4)	0.9214	basic	number
-known sd specified	=ROUND(Z.TEST({1,2,3,4,5},3,1),4)	0.5	basic	number
-matches ZTEST	=ROUND(Z.TEST({1,2,3,4,5},3)-ZTEST({1,2,3,4,5},3),6)	0	nested	number
-no args -> #N/A	=Z.TEST()	#N/A	error	error
-legacy symmetric -> 0.5	=ROUND(ZTEST({1,2,3,4,5},3),4)	0.5	basic	number
-matches Z.TEST	=ROUND(ZTEST({1,2,3,4,5},3)-Z.TEST({1,2,3,4,5},3),6)	0	nested	number
-test value below mean	=ROUND(ZTEST({1,2,3,4,5},2),4)	0.0786	basic	number
-no args -> #N/A	=ZTEST()	#N/A	error	error
+AVERAGE basic	=AVERAGE(1,2,3,4,5)	3	statistical	number
+AVERAGE single value	=AVERAGE(7)	7	statistical	number
+AVERAGE with floats	=AVERAGE(1.5,2.5,3.5)	2.5	statistical	number
+AVERAGE array	=AVERAGE({10,20,30,40})	25	statistical	number
+AVERAGEA basic	=AVERAGEA(1,2,3,4,5)	3	statistical	number
+AVERAGEA with zero	=AVERAGEA(0,5,10)	5	statistical	number
+COUNT numbers	=COUNT(1,2,3)	3	statistical	number
+COUNT array	=COUNT({1,2,3,4,5})	5	statistical	number
+COUNTA values	"=COUNTA(1,""a"",TRUE)"	3	statistical	number
+COUNTBLANK empty string	"=COUNTBLANK("""")"	1	statistical	number
+COUNTIF greater than	"=COUNTIF({1,2,3,4,5},"">3"")"	2	statistical	number
+COUNTIF equals	=COUNTIF({1,2,2,3},2)	2	statistical	number
+COUNTIF wildcard	"=COUNTIF({""apple"",""apricot"",""banana""},""a*"")"	2	statistical	number
+COUNTIFS single range	"=COUNTIFS({1,2,3,4,5},"">2"")"	3	statistical	number
+MAX basic	=MAX(3,1,4,1,5,9)	9	statistical	number
+MAX array	=MAX({-5,-3,-1})	-1	statistical	number
+MAXA basic	=MAXA(3,1,4)	4	statistical	number
+MIN basic	=MIN(3,1,4,1,5,9)	1	statistical	number
+MIN array	=MIN({5,10,15})	5	statistical	number
+MINA basic	=MINA(3,1,4)	1	statistical	number
+MEDIAN odd count	=MEDIAN(1,3,5)	3	statistical	number
+MEDIAN even count	=MEDIAN(1,2,3,4)	2.5	statistical	number
+MEDIAN array	=MEDIAN({2,4,6,8,10})	6	statistical	number
+MODE basic	=MODE(1,2,2,3)	2	statistical	number
+MODE.SNGL basic	=MODE.SNGL(1,2,2,3)	2	statistical	number
+MODE.SNGL array	=MODE.SNGL({4,4,5,6})	4	statistical	number
+LARGE k=1	=LARGE({5,3,8,1,9},1)	9	statistical	number
+LARGE k=2	=LARGE({5,3,8,1,9},2)	8	statistical	number
+LARGE k=3	=LARGE({5,3,8,1,9},3)	5	statistical	number
+SMALL k=1	=SMALL({5,3,8,1,9},1)	1	statistical	number
+SMALL k=2	=SMALL({5,3,8,1,9},2)	3	statistical	number
+SMALL k=3	=SMALL({5,3,8,1,9},3)	5	statistical	number
+PERCENTILE 0.25	=PERCENTILE({1,2,3,4,5},0.25)	2	statistical	number
+PERCENTILE 0.5	=PERCENTILE({1,2,3,4,5},0.5)	3	statistical	number
+PERCENTILE 0.75	=PERCENTILE({1,2,3,4,5},0.75)	4	statistical	number
+PERCENTILE.INC 0.25	=PERCENTILE.INC({1,2,3,4,5},0.25)	2	statistical	number
+PERCENTILE.INC 0.5	=PERCENTILE.INC({1,2,3,4,5},0.5)	3	statistical	number
+PERCENTILE.INC 0.75	=PERCENTILE.INC({1,2,3,4,5},0.75)	4	statistical	number
+PERCENTILE.EXC 0.25	=PERCENTILE.EXC({1,2,3,4,5},0.25)	1.5	statistical	number
+PERCENTILE.EXC 0.5	=PERCENTILE.EXC({1,2,3,4,5},0.5)	3	statistical	number
+PERCENTILE.EXC 0.75	=PERCENTILE.EXC({1,2,3,4,5},0.75)	4.5	statistical	number
+PERCENTRANK basic	=PERCENTRANK({1,2,3,4,5},3)	0.5	statistical	number
+PERCENTRANK with significance	=PERCENTRANK({1,2,3,4,5},3,3)	0.5	statistical	number
+PERCENTRANK.INC basic	=PERCENTRANK.INC({1,2,3,4,5},3)	0.5	statistical	number
+PERCENTRANK.EXC basic	=PERCENTRANK.EXC({1,2,3,4,5},3)	0.5	statistical	number
+QUARTILE Q1	=QUARTILE({1,2,3,4,5},1)	2	statistical	number
+QUARTILE Q2	=QUARTILE({1,2,3,4,5},2)	3	statistical	number
+QUARTILE Q3	=QUARTILE({1,2,3,4,5},3)	4	statistical	number
+QUARTILE.INC Q1	=QUARTILE.INC({1,2,3,4,5},1)	2	statistical	number
+QUARTILE.INC Q2	=QUARTILE.INC({1,2,3,4,5},2)	3	statistical	number
+QUARTILE.INC Q3	=QUARTILE.INC({1,2,3,4,5},3)	4	statistical	number
+QUARTILE.EXC Q1	=QUARTILE.EXC({1,2,3,4,5},1)	1.5	statistical	number
+QUARTILE.EXC Q2	=QUARTILE.EXC({1,2,3,4,5},2)	3	statistical	number
+QUARTILE.EXC Q3	=QUARTILE.EXC({1,2,3,4,5},3)	4.5	statistical	number
+RANK descending	=RANK(3,{1,2,3,4,5})	3	statistical	number
+RANK ascending	=RANK(3,{1,2,3,4,5},1)	3	statistical	number
+RANK tied value	=RANK(2,{1,2,2,4,5})	3	statistical	number
+RANK.AVG descending	=RANK.AVG(3,{1,2,3,4,5})	3	statistical	number
+RANK.AVG tied value	=RANK.AVG(2,{1,2,2,4,5})	3.5	statistical	number
+RANK.EQ descending	=RANK.EQ(3,{1,2,3,4,5})	3	statistical	number
+RANK.EQ tied value	=RANK.EQ(2,{1,2,2,4,5})	3	statistical	number
+STDEV basic	=STDEV(2,4,4,4,5,5,7,9)	2.138089935299395	statistical	number
+STDEV array	=STDEV({2,4,4,4,5,5,7,9})	2.138089935299395	statistical	number
+STDEV.S basic	=STDEV.S(2,4,4,4,5,5,7,9)	2.138089935299395	statistical	number
+STDEV.P basic	=STDEV.P(2,4,4,4,5,5,7,9)	2	statistical	number
+STDEVA basic	=STDEVA(2,4,4,4,5,5,7,9)	2.138089935299395	statistical	number
+STDEVPA basic	=STDEVPA(2,4,4,4,5,5,7,9)	2	statistical	number
+VAR basic	=VAR(2,4,4,4,5,5,7,9)	4.571428571428571	statistical	number
+VAR array	=VAR({2,4,4,4,5,5,7,9})	4.571428571428571	statistical	number
+VAR.S basic	=VAR.S(2,4,4,4,5,5,7,9)	4.571428571428571	statistical	number
+VAR.P basic	=VAR.P(2,4,4,4,5,5,7,9)	4	statistical	number
+VARA basic	=VARA(2,4,4,4,5,5,7,9)	4.571428571428571	statistical	number
+VARPA basic	=VARPA(2,4,4,4,5,5,7,9)	4	statistical	number
+CORREL positive	=CORREL({1,2,3,4,5},{2,4,6,8,10})	1	statistical	number
+CORREL negative	=CORREL({1,2,3,4,5},{10,8,6,4,2})	-1	statistical	number
+CORREL zero	=CORREL({1,2,3,4,5},{5,5,5,5,5})	#DIV/0!	statistical	error
+COVAR basic	=COVAR({1,2,3,4,5},{2,4,6,8,10})	4	statistical	number
+COVARIANCE.P basic	=COVARIANCE.P({1,2,3,4,5},{2,4,6,8,10})	4	statistical	number
+COVARIANCE.S basic	=COVARIANCE.S({1,2,3,4,5},{2,4,6,8,10})	5	statistical	number
+FORECAST x=6	=FORECAST(6,{2,4,6,8,10},{1,2,3,4,5})	12	statistical	number
+FORECAST x=3	=FORECAST(3,{2,4,6,8,10},{1,2,3,4,5})	6	statistical	number
+FORECAST.LINEAR x=6	=FORECAST.LINEAR(6,{2,4,6,8,10},{1,2,3,4,5})	12	statistical	number
+SLOPE basic	=SLOPE({2,4,6,8,10},{1,2,3,4,5})	2	statistical	number
+INTERCEPT basic	=INTERCEPT({2,4,6,8,10},{1,2,3,4,5})	0	statistical	number
+RSQ basic	=RSQ({2,4,6,8,10},{1,2,3,4,5})	1	statistical	number
+STEYX basic	=STEYX({2,4,6,8,10},{1,2,3,4,5})	0	statistical	number
+NORM.DIST cumulative mean=0 sd=1	=NORM.DIST(1,0,1,TRUE)	0.841344746068543	statistical	number
+NORM.DIST pdf mean=0 sd=1	=NORM.DIST(1,0,1,FALSE)	0.24197072451914337	statistical	number
+NORM.DIST cumulative mean=5 sd=2	=NORM.DIST(5,5,2,TRUE)	0.5	statistical	number
+NORM.DIST pdf mean=5 sd=2	=NORM.DIST(5,5,2,FALSE)	0.19947114020071635	statistical	number
+NORMDIST cumulative	=NORMDIST(1,0,1,TRUE)	0.841344746068543	statistical	number
+NORMDIST pdf	=NORMDIST(1,0,1,FALSE)	0.24197072451914337	statistical	number
+NORMDIST mean=5 sd=0.5 cumulative	=NORMDIST(5,5,0.5,TRUE)	0.5	statistical	number
+NORM.INV p=0.1	=NORM.INV(0.1,0,1)	-1.2815515641401563	statistical	number
+NORM.INV p=0.5	=NORM.INV(0.5,0,1)	0	statistical	number
+NORM.INV p=0.9	=NORM.INV(0.9,0,1)	1.2815515641401563	statistical	number
+NORM.INV mean=5 sd=2 p=0.5	=NORM.INV(0.5,5,2)	5	statistical	number
+NORMINV p=0.1	=NORMINV(0.1,0,1)	-1.2815515641401563	statistical	number
+NORMINV p=0.5	=NORMINV(0.5,0,1)	0	statistical	number
+NORMINV p=0.9	=NORMINV(0.9,0,1)	1.2815515641401563	statistical	number
+NORM.S.DIST z=0 cumulative	=NORM.S.DIST(0,TRUE)	0.5	statistical	number
+NORM.S.DIST z=1 cumulative	=NORM.S.DIST(1,TRUE)	0.841344746068543	statistical	number
+NORM.S.DIST z=-1 cumulative	=NORM.S.DIST(-1,TRUE)	0.15865525393145696	statistical	number
+NORM.S.DIST z=0 pdf	=NORM.S.DIST(0,FALSE)	0.3989422804014327	statistical	number
+NORMSDIST z=0	=NORMSDIST(0)	0.5	statistical	number
+NORMSDIST z=1	=NORMSDIST(1)	0.841344746068543	statistical	number
+NORMSDIST z=-1	=NORMSDIST(-1)	0.15865525393145696	statistical	number
+NORM.S.INV p=0.1	=NORM.S.INV(0.1)	-1.2815515641401563	statistical	number
+NORM.S.INV p=0.5	=NORM.S.INV(0.5)	0	statistical	number
+NORM.S.INV p=0.9	=NORM.S.INV(0.9)	1.2815515641401563	statistical	number
+NORMSINV p=0.1	=NORMSINV(0.1)	-1.2815515641401563	statistical	number
+NORMSINV p=0.5	=NORMSINV(0.5)	0	statistical	number
+NORMSINV p=0.9	=NORMSINV(0.9)	1.2815515641401563	statistical	number
+T.DIST df=1 cumulative	=T.DIST(1,1,TRUE)	0.7500000000000003	statistical	number
+T.DIST df=5 cumulative	=T.DIST(1,5,TRUE)	0.8183912661754387	statistical	number
+T.DIST df=10 cumulative	=T.DIST(1,10,TRUE)	0.8295534338489697	statistical	number
+T.DIST df=30 cumulative	=T.DIST(1,30,TRUE)	0.8373456922869831	statistical	number
+T.DIST df=5 pdf	=T.DIST(1,5,FALSE)	0.21967979735098062	statistical	number
+T.DIST.2T df=1	=T.DIST.2T(1,1)	0.49999999999999933	statistical	number
+T.DIST.2T df=5	=T.DIST.2T(1,5)	0.36321746764912266	statistical	number
+T.DIST.2T df=10	=T.DIST.2T(1,10)	0.34089313230206053	statistical	number
+T.DIST.2T df=30	=T.DIST.2T(1,30)	0.32530861542603384	statistical	number
+T.DIST.RT df=1	=T.DIST.RT(1,1)	0.24999999999999967	statistical	number
+T.DIST.RT df=5	=T.DIST.RT(1,5)	0.18160873382456133	statistical	number
+T.DIST.RT df=10	=T.DIST.RT(1,10)	0.17044656615103027	statistical	number
+T.DIST.RT df=30	=T.DIST.RT(1,30)	0.16265430771301692	statistical	number
+T.INV p=0.1 df=1	=T.INV(0.1,1)	-3.077683537175251	statistical	number
+T.INV p=0.1 df=5	=T.INV(0.1,5)	-1.4758840488244802	statistical	number
+T.INV p=0.1 df=10	=T.INV(0.1,10)	-1.3721836411103387	statistical	number
+T.INV p=0.1 df=30	=T.INV(0.1,30)	-1.3104150253914102	statistical	number
+T.INV p=0.5 df=5	=T.INV(0.5,5)	0	statistical	number
+T.INV p=0.9 df=5	=T.INV(0.9,5)	1.4758840488244802	statistical	number
+T.INV.2T p=0.1 df=1	=T.INV.2T(0.1,1)	6.313751514675041	statistical	number
+T.INV.2T p=0.1 df=5	=T.INV.2T(0.1,5)	2.015048373333024	statistical	number
+T.INV.2T p=0.1 df=10	=T.INV.2T(0.1,10)	1.8124611228116743	statistical	number
+T.INV.2T p=0.1 df=30	=T.INV.2T(0.1,30)	1.6972608865939505	statistical	number
+T.INV.2T p=0.5 df=5	=T.INV.2T(0.5,5)	0.7266868438004224	statistical	number
+T.INV.2T p=0.9 df=5	=T.INV.2T(0.9,5)	0.13217517523168643	statistical	number
+TINV p=0.1 df=5	=TINV(0.1,5)	2.015048373333024	statistical	number
+TINV p=0.5 df=5	=TINV(0.5,5)	0.7266868438004224	statistical	number
+TINV p=0.9 df=5	=TINV(0.9,5)	0.13217517523168643	statistical	number
+T.TEST constant-difference paired BUG-03	=T.TEST({1,2,3},{4,5,6},2,1)	#DIV/0!	statistical	error
+T.TEST non-constant paired should work	=T.TEST({1,2,3},{1,2,4},2,1)	0.42264973081037394	statistical	number
+T.TEST two-sample equal-variance tails=2 type=2	=T.TEST({1,2,3,4,5},{2,3,4,5,6},2,2)	0.34659350708733405	statistical	number
+T.TEST two-sample unequal-variance tails=2 type=3	=T.TEST({1,2,3,4,5},{2,3,4,5,6},2,3)	0.34659350708733405	statistical	number
+T.TEST one-tailed paired	=T.TEST({1,2,3},{4,5,6},1,1)	#DIV/0!	statistical	error
+TTEST constant-difference paired alias BUG-03	=TTEST({1,2,3},{4,5,6},2,1)	#DIV/0!	statistical	error
+TTEST two-sample equal-variance alias	=TTEST({1,2,3,4,5},{2,3,4,5,6},2,2)	0.34659350708733405	statistical	number
+F.DIST cumulative df1=1 df2=5	=F.DIST(1,1,5,TRUE)	0.6367825323508773	statistical	number
+F.DIST cumulative df1=5 df2=10	=F.DIST(1,5,10,TRUE)	0.5348805734621995	statistical	number
+F.DIST pdf df1=5 df2=10	=F.DIST(1,5,10,FALSE)	0.4954797834866386	statistical	number
+F.DIST.RT df1=1 df2=5	=F.DIST.RT(1,1,5)	0.36321746764912266	statistical	number
+F.DIST.RT df1=5 df2=10	=F.DIST.RT(1,5,10)	0.4651194265378005	statistical	number
+F.DIST.RT df1=10 df2=30	=F.DIST.RT(2,10,30)	0.06961370807638434	statistical	number
+FDIST df1=5 df2=10	=FDIST(1,5,10)	0.4651194265378005	statistical	number
+FDIST df1=1 df2=5	=FDIST(1,1,5)	0.36321746764912266	statistical	number
+F.INV p=0.1 df1=1 df2=5	=F.INV(0.1,1,5)	0.017470276947527213	statistical	number
+F.INV p=0.5 df1=5 df2=10	=F.INV(0.5,5,10)	0.9319331608510488	statistical	number
+F.INV p=0.9 df1=10 df2=30	=F.INV(0.9,10,30)	1.8194854409149643	statistical	number
+F.INV.RT p=0.1 df1=1 df2=5	=F.INV.RT(0.1,1,5)	4.0604199468720665	statistical	number
+F.INV.RT p=0.5 df1=5 df2=10	=F.INV.RT(0.5,5,10)	0.9319331608510488	statistical	number
+F.INV.RT p=0.9 df1=10 df2=30	=F.INV.RT(0.9,10,30)	0.46394542223481366	statistical	number
+FINV p=0.1 df1=5 df2=10	=FINV(0.1,5,10)	2.5216406862096234	statistical	number
+FINV p=0.5 df1=5 df2=10	=FINV(0.5,5,10)	0.9319331608510488	statistical	number
+F.TEST basic	=F.TEST({1,2,3,4,5},{2,3,4,5,6})	1	statistical	number
+F.TEST different variance	=F.TEST({1,2,3,4,5},{1,4,9,16,25})	0.0039983678747106425	statistical	number
+FTEST basic	=FTEST({1,2,3,4,5},{2,3,4,5,6})	1	statistical	number
+CHISQ.DIST cumulative df=1	=CHISQ.DIST(1,1,TRUE)	0.682689492137086	statistical	number
+CHISQ.DIST cumulative df=5	=CHISQ.DIST(1,5,TRUE)	0.03743422675270361	statistical	number
+CHISQ.DIST cumulative df=10	=CHISQ.DIST(5,10,TRUE)	0.10882198108584873	statistical	number
+CHISQ.DIST pdf df=5	=CHISQ.DIST(1,5,FALSE)	0.08065690817304773	statistical	number
+CHISQ.DIST.RT df=1	=CHISQ.DIST.RT(1,1)	0.31731050786291404	statistical	number
+CHISQ.DIST.RT df=5	=CHISQ.DIST.RT(1,5)	0.9625657732472964	statistical	number
+CHISQ.DIST.RT df=10	=CHISQ.DIST.RT(5,10)	0.8911780189141513	statistical	number
+CHISQ.DIST.RT df=30	=CHISQ.DIST.RT(10,30)	0.9997737463238232	statistical	number
+CHIDIST df=5	=CHIDIST(1,5)	0.9625657732472964	statistical	number
+CHIDIST df=10	=CHIDIST(5,10)	0.8911780189141513	statistical	number
+CHISQ.INV p=0.1 df=1	=CHISQ.INV(0.1,1)	0.015790774093431194	statistical	number
+CHISQ.INV p=0.5 df=5	=CHISQ.INV(0.5,5)	4.351460191095527	statistical	number
+CHISQ.INV p=0.9 df=10	=CHISQ.INV(0.9,10)	15.987179172105263	statistical	number
+CHISQ.INV p=0.9 df=30	=CHISQ.INV(0.9,30)	40.25602373871177	statistical	number
+CHISQ.INV.RT p=0.1 df=1	=CHISQ.INV.RT(0.1,1)	2.705543454095408	statistical	number
+CHISQ.INV.RT p=0.5 df=5	=CHISQ.INV.RT(0.5,5)	4.351460191095527	statistical	number
+CHISQ.INV.RT p=0.9 df=10	=CHISQ.INV.RT(0.9,10)	4.865182051925328	statistical	number
+CHISQ.INV.RT p=0.9 df=30	=CHISQ.INV.RT(0.9,30)	20.599234614585367	statistical	number
+CHIINV p=0.1 df=5	=CHIINV(0.1,5)	9.236356899781116	statistical	number
+CHIINV p=0.5 df=10	=CHIINV(0.5,10)	9.341817765591962	statistical	number
+CHISQ.TEST basic	=CHISQ.TEST({10,20,30},{15,15,30})	0.18887560283756155	statistical	number
+CHITEST basic	=CHITEST({10,20,30},{15,15,30})	0.18887560283756155	statistical	number
+BETA.DIST cumulative a=2 b=2	=BETA.DIST(0.5,2,2,TRUE)	0.49999999999999956	statistical	number
+BETA.DIST cumulative a=2 b=5	=BETA.DIST(0.5,2,5,TRUE)	0.890625	statistical	number
+BETA.DIST pdf a=2 b=2	=BETA.DIST(0.5,2,2,FALSE)	1.4999999999999991	statistical	number
+BETA.DIST 5-arg cumulative	=BETA.DIST(0.5,2,2,TRUE,0,1)	0.49999999999999956	statistical	number
+BETA.DIST 5-arg pdf	=BETA.DIST(0.5,2,2,FALSE,0,1)	1.4999999999999991	statistical	number
+BETADIST 5-arg	=BETADIST(0.5,2,2,0,1)	0.49999999999999956	statistical	number
+BETA.INV 5-arg explicit should work	=BETA.INV(0.5,2,2,0,1)	0.5000000000000001	statistical	number
+BETAINV alias 5-arg	=BETAINV(0.5,2,2,0,1)	0.5000000000000001	statistical	number
+BETAINV p=0.1 a=2 b=5	=BETAINV(0.1,2,5,0,1)	0.09259525891312881	statistical	number
+BETAINV p=0.9 a=5 b=1	=BETAINV(0.9,5,1,0,1)	0.9791483623609768	statistical	number
+BINOM.DIST exact n=10 k=5 p=0.5	=BINOM.DIST(5,10,0.5,FALSE)	0.24609375	statistical	number
+BINOM.DIST cumulative n=10 k=5 p=0.5	=BINOM.DIST(5,10,0.5,TRUE)	0.623046875	statistical	number
+BINOM.DIST exact n=20 k=10 p=0.5	=BINOM.DIST(10,20,0.5,FALSE)	0.17619705200195312	statistical	number
+BINOM.DIST exact n=5 k=2 p=0.1	=BINOM.DIST(2,5,0.1,FALSE)	0.07290000000000002	statistical	number
+BINOM.DIST exact n=5 k=4 p=0.9	=BINOM.DIST(4,5,0.9,FALSE)	0.3280499999999999	statistical	number
+BINOM.INV n=10 p=0.5 alpha=0.1	=BINOM.INV(10,0.5,0.1)	3	statistical	number
+BINOM.INV n=20 p=0.5 alpha=0.5	=BINOM.INV(20,0.5,0.5)	10	statistical	number
+BINOM.INV n=10 p=0.1 alpha=0.9	=BINOM.INV(10,0.1,0.9)	2	statistical	number
+BINOMDIST exact n=10 k=5 p=0.5	=BINOMDIST(5,10,0.5,FALSE)	0.24609375	statistical	number
+BINOMDIST cumulative n=10 k=5 p=0.5	=BINOMDIST(5,10,0.5,TRUE)	0.623046875	statistical	number
+CRITBINOM n=10 p=0.5 alpha=0.1	=CRITBINOM(10,0.5,0.1)	3	statistical	number
+CRITBINOM n=20 p=0.5 alpha=0.9	=CRITBINOM(20,0.5,0.9)	13	statistical	number
+NEGBINOM.DIST exact k=5 r=1 p=0.5	=NEGBINOM.DIST(5,1,0.5,FALSE)	0.015625	statistical	number
+NEGBINOM.DIST cumulative k=5 r=1 p=0.5	=NEGBINOM.DIST(5,1,0.5,TRUE)	0.984375	statistical	number
+NEGBINOM.DIST exact k=10 r=5 p=0.1	=NEGBINOM.DIST(10,5,0.1,FALSE)	0.003490271185401002	statistical	number
+NEGBINOM.DIST exact k=5 r=2 p=0.9	=NEGBINOM.DIST(5,2,0.9,FALSE)	0.00004859999999999995	statistical	number
+NEGBINOMDIST k=5 r=1 p=0.5	=NEGBINOMDIST(5,1,0.5)	0.015625	statistical	number
+NEGBINOMDIST k=10 r=5 p=0.1	=NEGBINOMDIST(10,5,0.1)	0.003490271185401002	statistical	number
+POISSON.DIST exact lambda=5 k=5	=POISSON.DIST(5,5,FALSE)	0.1754673697678507	statistical	number
+POISSON.DIST cumulative lambda=5 k=5	=POISSON.DIST(5,5,TRUE)	0.6159606548330632	statistical	number
+POISSON.DIST exact lambda=1 k=0	=POISSON.DIST(0,1,FALSE)	0.36787944117144233	statistical	number
+POISSON.DIST exact lambda=10 k=10	=POISSON.DIST(10,10,FALSE)	0.1251100357211333	statistical	number
+POISSON exact lambda=5 k=5	=POISSON(5,5,FALSE)	0.1754673697678507	statistical	number
+POISSON cumulative lambda=5 k=5	=POISSON(5,5,TRUE)	0.6159606548330632	statistical	number
+POISSON exact lambda=1 k=0	=POISSON(0,1,FALSE)	0.36787944117144233	statistical	number
+HYPGEOM.DIST exact s=2 ns=5 M=10 N=20	=HYPGEOM.DIST(2,5,10,20,FALSE)	0.34829721362229105	statistical	number
+HYPGEOM.DIST cumulative s=2 ns=5 M=10 N=20	=HYPGEOM.DIST(2,5,10,20,TRUE)	0.49999999999999994	statistical	number
+HYPGEOM.DIST exact s=1 ns=5 M=5 N=20	=HYPGEOM.DIST(1,5,5,20,FALSE)	0.44020897832817335	statistical	number
+HYPGEOMDIST s=2 ns=5 M=10 N=20	=HYPGEOMDIST(2,5,10,20)	0.34829721362229105	statistical	number
+HYPGEOMDIST s=1 ns=5 M=5 N=20	=HYPGEOMDIST(1,5,5,20)	0.44020897832817335	statistical	number
+EXPON.DIST cumulative lambda=1 x=1	=EXPON.DIST(1,1,TRUE)	0.6321205588285577	statistical	number
+EXPON.DIST pdf lambda=1 x=1	=EXPON.DIST(1,1,FALSE)	0.36787944117144233	statistical	number
+EXPON.DIST cumulative lambda=2 x=0.5	=EXPON.DIST(0.5,2,TRUE)	0.6321205588285577	statistical	number
+EXPON.DIST cumulative lambda=5 x=0.1	=EXPON.DIST(0.1,5,TRUE)	0.3934693402873666	statistical	number
+EXPONDIST cumulative lambda=1 x=1	=EXPONDIST(1,1,TRUE)	0.6321205588285577	statistical	number
+EXPONDIST pdf lambda=1 x=1	=EXPONDIST(1,1,FALSE)	0.36787944117144233	statistical	number
+GAMMA.DIST cumulative a=1 b=1	=GAMMA.DIST(1,1,1,TRUE)	0.6321205588285581	statistical	number
+GAMMA.DIST pdf a=1 b=1	=GAMMA.DIST(1,1,1,FALSE)	0.3678794411714425	statistical	number
+GAMMA.DIST cumulative a=2 b=1	=GAMMA.DIST(1,2,1,TRUE)	0.2642411176571153	statistical	number
+GAMMA.DIST cumulative a=5 b=2	=GAMMA.DIST(5,5,2,TRUE)	0.10882198108584873	statistical	number
+GAMMADIST cumulative a=1 b=1	=GAMMADIST(1,1,1,TRUE)	0.6321205588285581	statistical	number
+GAMMADIST pdf a=2 b=1	=GAMMADIST(1,2,1,FALSE)	0.36787944117144233	statistical	number
+GAMMA.INV p=0.1 a=1 b=1	=GAMMA.INV(0.1,1,1)	0.10536051565782623	statistical	number
+GAMMA.INV p=0.5 a=2 b=1	=GAMMA.INV(0.5,2,1)	1.6783469900166608	statistical	number
+GAMMA.INV p=0.9 a=5 b=2	=GAMMA.INV(0.9,5,2)	15.987179172105263	statistical	number
+GAMMAINV p=0.1 a=1 b=1	=GAMMAINV(0.1,1,1)	0.10536051565782623	statistical	number
+GAMMAINV p=0.5 a=2 b=1	=GAMMAINV(0.5,2,1)	1.6783469900166608	statistical	number
+GAMMALN x=1	=GAMMALN(1)	0	statistical	number
+GAMMALN x=2	=GAMMALN(2)	0	statistical	number
+GAMMALN x=5	=GAMMALN(5)	3.1780538303479458	statistical	number
+GAMMALN x=10	=GAMMALN(10)	12.801827480081469	statistical	number
+GAMMALN.PRECISE x=1	=GAMMALN.PRECISE(1)	0	statistical	number
+GAMMALN.PRECISE x=5	=GAMMALN.PRECISE(5)	3.1780538303479458	statistical	number
+LOGNORM.DIST cumulative mu=0 sd=1	=LOGNORM.DIST(1,0,1,TRUE)	0.5	statistical	number
+LOGNORM.DIST pdf mu=0 sd=1	=LOGNORM.DIST(1,0,1,FALSE)	0.3989422804014327	statistical	number
+LOGNORM.DIST cumulative mu=0 sd=0.5	=LOGNORM.DIST(1,0,0.5,TRUE)	0.5	statistical	number
+LOGNORM.DIST cumulative mu=0 sd=2	=LOGNORM.DIST(1,0,2,TRUE)	0.5	statistical	number
+LOGNORMDIST mu=0 sd=1	=LOGNORMDIST(1,0,1)	0.5	statistical	number
+LOGNORMDIST mu=0 sd=0.5	=LOGNORMDIST(1,0,0.5)	0.5	statistical	number
+LOGNORM.INV p=0.1 mu=0 sd=1	=LOGNORM.INV(0.1,0,1)	0.2776062422418923	statistical	number
+LOGNORM.INV p=0.5 mu=0 sd=1	=LOGNORM.INV(0.5,0,1)	1	statistical	number
+LOGNORM.INV p=0.9 mu=0 sd=1	=LOGNORM.INV(0.9,0,1)	3.6022244742200344	statistical	number
+LOGINV p=0.1 mu=0 sd=1	=LOGINV(0.1,0,1)	0.2776062422418923	statistical	number
+LOGINV p=0.5 mu=0 sd=1	=LOGINV(0.5,0,1)	1	statistical	number
+LOGINV p=0.9 mu=0 sd=1	=LOGINV(0.9,0,1)	3.6022244742200344	statistical	number
+WEIBULL.DIST cumulative a=1 b=1	=WEIBULL.DIST(1,1,1,TRUE)	0.6321205588285577	statistical	number
+WEIBULL.DIST pdf a=1 b=1	=WEIBULL.DIST(1,1,1,FALSE)	0.36787944117144233	statistical	number
+WEIBULL.DIST cumulative a=2 b=1	=WEIBULL.DIST(1,2,1,TRUE)	0.6321205588285577	statistical	number
+WEIBULL.DIST cumulative a=5 b=2	=WEIBULL.DIST(2,5,2,TRUE)	0.6321205588285577	statistical	number
+WEIBULL cumulative a=1 b=1	=WEIBULL(1,1,1,TRUE)	0.6321205588285577	statistical	number
+WEIBULL pdf a=2 b=1	=WEIBULL(1,2,1,FALSE)	0.7357588823428847	statistical	number
+DEVSQ basic	=DEVSQ(2,4,4,4,5,5,7,9)	32	statistical	number
+DEVSQ array	=DEVSQ({1,2,3,4,5})	10	statistical	number
+AVEDEV basic	=AVEDEV(2,4,4,4,5,5,7,9)	1.5	statistical	number
+AVEDEV array	=AVEDEV({1,2,3,4,5})	1.2	statistical	number
+GEOMEAN basic	=GEOMEAN(1,2,4,8)	2.8284271247461903	statistical	number
+GEOMEAN array	=GEOMEAN({2,8,18,32})	9.79795897113271	statistical	number
+HARMEAN basic	=HARMEAN(1,2,4)	1.7142857142857142	statistical	number
+HARMEAN array	=HARMEAN({2,4,8})	3.4285714285714284	statistical	number
+KURT basic	=KURT(3,4,5,2,3,4,5,6,4,7)	-0.15179963720841627	statistical	number
+KURT array	=KURT({3,4,5,2,3,4,5,6,4,7})	-0.15179963720841627	statistical	number
+SKEW basic	=SKEW(3,4,5,2,3,4,5,6,4,7)	0.3595430714067974	statistical	number
+SKEW array	=SKEW({3,4,5,2,3,4,5,6,4,7})	0.3595430714067974	statistical	number
+SKEW.P basic	=SKEW.P(3,4,5,2,3,4,5,6,4,7)	0.3031933393541443	statistical	number
+SKEW.P array	=SKEW.P({3,4,5,2,3,4,5,6,4,7})	0.3031933393541443	statistical	number
+TRIMMEAN 10%	=TRIMMEAN({1,2,3,4,5,6,7,8,9,10},0.1)	5.5	statistical	number
+TRIMMEAN 20%	=TRIMMEAN({1,2,3,4,5,6,7,8,9,10},0.2)	5.5	statistical	number
+TRIMMEAN 40%	=TRIMMEAN({1,2,3,4,5,6,7,8,9,10},0.4)	5.5	statistical	number
+PROB x=[1,2,3] prob=[0.2,0.5,0.3] lower=1 upper=2	=PROB({1,2,3},{0.2,0.5,0.3},1,2)	0.7	statistical	number
+PROB x=[1,2,3] prob=[0.2,0.5,0.3] lower=2	=PROB({1,2,3},{0.2,0.5,0.3},2)	0.5	statistical	number
+ZTEST basic mu=3	=ZTEST({1,2,3,4,5},3)	0.5	statistical	number
+ZTEST mu=3 sigma=1	=ZTEST({1,2,3,4,5},3,1)	0.5	statistical	number
+ZTEST mu=3 sigma=2	=ZTEST({1,2,3,4,5},3,2)	0.5	statistical	number
+Z.TEST basic mu=3	=Z.TEST({1,2,3,4,5},3)	0.5	statistical	number
+Z.TEST mu=3 sigma=1	=Z.TEST({1,2,3,4,5},3,1)	0.5	statistical	number
+Z.TEST mu=3 sigma=2	=Z.TEST({1,2,3,4,5},3,2)	0.5	statistical	number
+AVERAGE negative values	=AVERAGE(-3,-1,0,1,3)	0	statistical	number
+AVERAGE large values	=AVERAGE(100,200,300,400,500)	300	statistical	number
+AVERAGE decimal result	=AVERAGE(1,2)	1.5	statistical	number
+AVERAGEA with boolean TRUE	=AVERAGEA(TRUE,3,5)	3	statistical	number
+COUNT no numbers in mix	"=COUNT(""a"",""b"",""c"")"	0	statistical	number
+COUNT large array	=COUNT({1,2,3,4,5,6,7,8,9,10})	10	statistical	number
+COUNTA with numbers and text	"=COUNTA(1,2,""hello"",""world"")"	4	statistical	number
+COUNTIF less than	"=COUNTIF({1,2,3,4,5},""<3"")"	2	statistical	number
+COUNTIF not equal	"=COUNTIF({1,2,3,4,5},""<>3"")"	4	statistical	number
+COUNTIF text match	"=COUNTIF({""a"",""b"",""a"",""c""},""a"")"	2	statistical	number
+MAX single value	=MAX(42)	42	statistical	number
+MAX negative values	=MAX(-5,-3,-1,-10)	-1	statistical	number
+MIN single value	=MIN(42)	42	statistical	number
+MIN positive values	=MIN(5,3,1,10)	1	statistical	number
+MEDIAN two values	=MEDIAN(3,7)	5	statistical	number
+MEDIAN large dataset	=MEDIAN({1,2,3,4,5,6,7,8,9,10})	5.5	statistical	number
+MEDIAN with duplicates	=MEDIAN({1,1,2,2,3})	2	statistical	number
+MODE multiple modes returns first	=MODE(1,2,2,3,3,4)	2	statistical	number
+MODE.SNGL with ties	=MODE.SNGL({5,5,6,6,7})	5	statistical	number
+LARGE k=4	=LARGE({5,3,8,1,9,2,7},4)	5	statistical	number
+LARGE k=5	=LARGE({5,3,8,1,9,2,7},5)	3	statistical	number
+SMALL k=4	=SMALL({5,3,8,1,9,2,7},4)	5	statistical	number
+SMALL k=5	=SMALL({5,3,8,1,9,2,7},5)	7	statistical	number
+PERCENTILE 0.1	=PERCENTILE({1,2,3,4,5,6,7,8,9,10},0.1)	1.9	statistical	number
+PERCENTILE 0.9	=PERCENTILE({1,2,3,4,5,6,7,8,9,10},0.9)	9.1	statistical	number
+PERCENTILE.INC 0.1	=PERCENTILE.INC({1,2,3,4,5,6,7,8,9,10},0.1)	1.9	statistical	number
+PERCENTILE.INC 0.9	=PERCENTILE.INC({1,2,3,4,5,6,7,8,9,10},0.9)	9.1	statistical	number
+PERCENTILE.EXC 0.1	=PERCENTILE.EXC({1,2,3,4,5,6,7,8,9,10},0.1)	1.1	statistical	number
+PERCENTILE.EXC 0.9	=PERCENTILE.EXC({1,2,3,4,5,6,7,8,9,10},0.9)	9.9	statistical	number
+PERCENTRANK.INC x=1	=PERCENTRANK.INC({1,2,3,4,5},1)	0	statistical	number
+PERCENTRANK.INC x=5	=PERCENTRANK.INC({1,2,3,4,5},5)	1	statistical	number
+PERCENTRANK.EXC x=1	=PERCENTRANK.EXC({1,2,3,4,5},1)	0.167	statistical	number
+PERCENTRANK.EXC x=5	=PERCENTRANK.EXC({1,2,3,4,5},5)	0.833	statistical	number
+QUARTILE Q0 min	=QUARTILE({1,2,3,4,5},0)	1	statistical	number
+QUARTILE Q4 max	=QUARTILE({1,2,3,4,5},4)	5	statistical	number
+QUARTILE.INC Q0	=QUARTILE.INC({1,2,3,4,5},0)	1	statistical	number
+QUARTILE.INC Q4	=QUARTILE.INC({1,2,3,4,5},4)	5	statistical	number
+RANK value=1 ascending	=RANK(1,{1,2,3,4,5},1)	1	statistical	number
+RANK value=5 ascending	=RANK(5,{1,2,3,4,5},1)	5	statistical	number
+RANK.AVG ascending	=RANK.AVG(2,{1,2,2,4,5},1)	2.5	statistical	number
+RANK.EQ ascending	=RANK.EQ(2,{1,2,2,4,5},1)	2	statistical	number
+STDEV.S single spread	=STDEV.S(1,2,3,4,5)	1.5811388300841898	statistical	number
+STDEV.P single spread	=STDEV.P(1,2,3,4,5)	1.4142135623730951	statistical	number
+STDEV identical values	=STDEV(5,5,5,5,5)	0	statistical	number
+VAR.S single spread	=VAR.S(1,2,3,4,5)	2.5	statistical	number
+VAR.P single spread	=VAR.P(1,2,3,4,5)	2	statistical	number
+CORREL perfect negative	=CORREL({1,2,3},{3,2,1})	-1	statistical	number
+CORREL perfect positive	=CORREL({1,2,3},{2,4,6})	1	statistical	number
+COVARIANCE.P negative	=COVARIANCE.P({1,2,3},{3,2,1})	-0.6666666666666666	statistical	number
+COVARIANCE.S negative	=COVARIANCE.S({1,2,3},{3,2,1})	-1	statistical	number
+FORECAST x=1	=FORECAST(1,{2,4,6,8,10},{1,2,3,4,5})	2	statistical	number
+FORECAST x=10	=FORECAST(10,{2,4,6,8,10},{1,2,3,4,5})	20	statistical	number
+FORECAST.LINEAR x=1	=FORECAST.LINEAR(1,{2,4,6,8,10},{1,2,3,4,5})	2	statistical	number
+FORECAST.LINEAR x=10	=FORECAST.LINEAR(10,{2,4,6,8,10},{1,2,3,4,5})	20	statistical	number
+NORM.DIST x=-1 cumulative	=NORM.DIST(-1,0,1,TRUE)	0.15865525393145696	statistical	number
+NORM.DIST x=0 cumulative	=NORM.DIST(0,0,1,TRUE)	0.5	statistical	number
+NORM.DIST x=2 cumulative	=NORM.DIST(2,0,1,TRUE)	0.9772498680518209	statistical	number
+NORM.DIST sd=0.5 x=5	=NORM.DIST(5,5,0.5,TRUE)	0.5	statistical	number
+NORM.DIST sd=2 x=5	=NORM.DIST(5,5,2,TRUE)	0.5	statistical	number
+NORMDIST x=-1	=NORMDIST(-1,0,1,TRUE)	0.15865525393145696	statistical	number
+NORMDIST x=0	=NORMDIST(0,0,1,TRUE)	0.5	statistical	number
+NORMDIST x=2	=NORMDIST(2,0,1,TRUE)	0.9772498680518209	statistical	number
+NORM.INV p=0.5 mean=5 sd=0.5	=NORM.INV(0.5,5,0.5)	5	statistical	number
+NORM.INV p=0.1 mean=10 sd=2	=NORM.INV(0.1,10,2)	7.4368968717196875	statistical	number
+NORM.INV p=0.9 mean=10 sd=2	=NORM.INV(0.9,10,2)	12.563103128280313	statistical	number
+NORMINV p=0.5 mean=5 sd=2	=NORMINV(0.5,5,2)	5	statistical	number
+NORM.S.DIST z=2 cumulative	=NORM.S.DIST(2,TRUE)	0.9772498680518209	statistical	number
+NORM.S.DIST z=-2 cumulative	=NORM.S.DIST(-2,TRUE)	0.022750131948179098	statistical	number
+NORMSDIST z=2	=NORMSDIST(2)	0.9772498680518209	statistical	number
+NORMSDIST z=-2	=NORMSDIST(-2)	0.022750131948179098	statistical	number
+NORM.S.INV p=0.025	=NORM.S.INV(0.025)	-1.959963986120195	statistical	number
+NORM.S.INV p=0.975	=NORM.S.INV(0.975)	1.959963986120195	statistical	number
+NORMSINV p=0.025	=NORMSINV(0.025)	-1.959963986120195	statistical	number
+NORMSINV p=0.975	=NORMSINV(0.975)	1.959963986120195	statistical	number
+T.DIST t=0 df=5 cumulative	=T.DIST(0,5,TRUE)	0.5	statistical	number
+T.DIST t=2 df=5 cumulative	=T.DIST(2,5,TRUE)	0.9490302605850709	statistical	number
+T.DIST t=-1 df=10 cumulative	=T.DIST(-1,10,TRUE)	0.17044656615103027	statistical	number
+T.DIST.2T t=2 df=5	=T.DIST.2T(2,5)	0.10193947882985821	statistical	number
+T.DIST.2T t=2 df=30	=T.DIST.2T(2,30)	0.05462504496298193	statistical	number
+T.DIST.RT t=0 df=5	=T.DIST.RT(0,5)	0.5	statistical	number
+T.DIST.RT t=2 df=5	=T.DIST.RT(2,5)	0.050969739414929105	statistical	number
+T.INV p=0.025 df=5	=T.INV(0.025,5)	-2.570581835636316	statistical	number
+T.INV p=0.975 df=5	=T.INV(0.975,5)	2.570581835636312	statistical	number
+T.INV p=0.025 df=30	=T.INV(0.025,30)	-2.0422724563012324	statistical	number
+T.INV.2T p=0.05 df=5	=T.INV.2T(0.05,5)	2.570581835636316	statistical	number
+T.INV.2T p=0.05 df=30	=T.INV.2T(0.05,30)	2.0422724563012324	statistical	number
+TINV p=0.05 df=5	=TINV(0.05,5)	2.570581835636316	statistical	number
+TINV p=0.05 df=30	=TINV(0.05,30)	2.0422724563012324	statistical	number
+T.TEST paired one-tailed equal	=T.TEST({2,3,4},{2,3,5},1,1)	0.21132486540518697	statistical	number
+T.TEST equal-variance one-tailed	=T.TEST({1,2,3,4,5},{2,3,4,5,6},1,2)	0.17329675354366703	statistical	number
+T.TEST unequal-variance one-tailed	=T.TEST({1,2,3,4,5},{2,3,4,5,6},1,3)	0.17329675354366703	statistical	number
+TTEST paired one-tailed	=TTEST({2,3,4},{2,3,5},1,1)	0.21132486540518697	statistical	number
+TTEST unequal-variance two-tailed	=TTEST({1,2,3,4,5},{2,3,4,5,6},2,3)	0.34659350708733405	statistical	number
+F.DIST x=0.5 df1=5 df2=10 cumulative	=F.DIST(0.5,5,10,TRUE)	0.22997511934989837	statistical	number
+F.DIST x=2 df1=5 df2=10 cumulative	=F.DIST(2,5,10,TRUE)	0.8358050491002613	statistical	number
+F.DIST.RT x=0.5 df1=5 df2=10	=F.DIST.RT(0.5,5,10)	0.7700248806501017	statistical	number
+F.DIST.RT x=2 df1=5 df2=10	=F.DIST.RT(2,5,10)	0.16419495089973868	statistical	number
+FDIST x=2 df1=5 df2=10	=FDIST(2,5,10)	0.16419495089973868	statistical	number
+FDIST x=0.5 df1=10 df2=30	=FDIST(0.5,10,30)	0.8763612630739952	statistical	number
+F.INV p=0.5 df1=1 df2=5	=F.INV(0.5,1,5)	0.5280737689526198	statistical	number
+F.INV p=0.1 df1=5 df2=10	=F.INV(0.1,5,10)	0.3032690890210715	statistical	number
+F.INV.RT p=0.5 df1=1 df2=5	=F.INV.RT(0.5,1,5)	0.5280737689526198	statistical	number
+FINV p=0.9 df1=5 df2=10	=FINV(0.9,5,10)	0.3032690890210715	statistical	number
+F.TEST identical arrays	=F.TEST({1,2,3,4,5},{1,2,3,4,5})	1	statistical	number
+FTEST different variance	=FTEST({1,2,3,4,5},{1,4,9,16,25})	0.0039983678747106425	statistical	number
+CHISQ.DIST x=0.5 df=1 cumulative	=CHISQ.DIST(0.5,1,TRUE)	0.5204998778130466	statistical	number
+CHISQ.DIST x=10 df=5 cumulative	=CHISQ.DIST(10,5,TRUE)	0.9247647538534879	statistical	number
+CHISQ.DIST x=20 df=10 cumulative	=CHISQ.DIST(20,10,TRUE)	0.9707473119230389	statistical	number
+CHISQ.DIST.RT x=0.5 df=1	=CHISQ.DIST.RT(0.5,1)	0.47950012218695337	statistical	number
+CHISQ.DIST.RT x=10 df=5	=CHISQ.DIST.RT(10,5)	0.07523524614651211	statistical	number
+CHIDIST x=0.5 df=1	=CHIDIST(0.5,1)	0.47950012218695337	statistical	number
+CHIDIST x=10 df=30	=CHIDIST(10,30)	0.9997737463238232	statistical	number
+CHISQ.INV p=0.5 df=1	=CHISQ.INV(0.5,1)	0.4549364231195724	statistical	number
+CHISQ.INV p=0.9 df=5	=CHISQ.INV(0.9,5)	9.236356899781118	statistical	number
+CHISQ.INV.RT p=0.5 df=1	=CHISQ.INV.RT(0.5,1)	0.4549364231195724	statistical	number
+CHISQ.INV.RT p=0.1 df=30	=CHISQ.INV.RT(0.1,30)	40.25602373871177	statistical	number
+CHIINV p=0.9 df=5	=CHIINV(0.9,5)	1.6103079869623231	statistical	number
+CHIINV p=0.05 df=30	=CHIINV(0.05,30)	43.77297182574217	statistical	number
+CHISQ.TEST uniform vs non-uniform	=CHISQ.TEST({20,20,20},{10,20,30})	0.0012726338013397953	statistical	number
+CHITEST uniform vs non-uniform	=CHITEST({20,20,20},{10,20,30})	0.0012726338013397953	statistical	number
+BETA.DIST a=1 b=1 x=0.1 cumulative	=BETA.DIST(0.1,1,1,TRUE)	0.1000000000000001	statistical	number
+BETA.DIST a=1 b=1 x=0.9 cumulative	=BETA.DIST(0.9,1,1,TRUE)	0.8999999999999999	statistical	number
+BETA.DIST a=5 b=2 x=0.5 cumulative	=BETA.DIST(0.5,5,2,TRUE)	0.10937500000000003	statistical	number
+BETA.DIST a=2 b=5 x=0.5 cumulative	=BETA.DIST(0.5,2,5,TRUE)	0.890625	statistical	number
+BETA.INV p=0.1 a=2 b=5 explicit	=BETA.INV(0.1,2,5,0,1)	0.09259525891312881	statistical	number
+BETA.INV p=0.9 a=5 b=2 explicit	=BETA.INV(0.9,5,2,0,1)	0.9074047410868713	statistical	number
+BETAINV p=0.5 a=1 b=1	=BETAINV(0.5,1,1,0,1)	0.49999999999999956	statistical	number
+BETAINV p=0.5 a=5 b=5	=BETAINV(0.5,5,5,0,1)	0.5000000000000001	statistical	number
+BINOM.DIST exact n=5 k=0 p=0.5	=BINOM.DIST(0,5,0.5,FALSE)	0.03125	statistical	number
+BINOM.DIST exact n=5 k=5 p=0.5	=BINOM.DIST(5,5,0.5,FALSE)	0.03125	statistical	number
+BINOM.DIST exact n=10 k=0 p=0.1	=BINOM.DIST(0,10,0.1,FALSE)	0.3486784401000001	statistical	number
+BINOM.DIST exact n=10 k=9 p=0.9	=BINOM.DIST(9,10,0.9,FALSE)	0.38742048900000003	statistical	number
+BINOMDIST n=20 k=0 p=0.1	=BINOMDIST(0,20,0.1,FALSE)	0.12157665459056935	statistical	number
+BINOMDIST n=20 k=20 p=0.9	=BINOMDIST(20,20,0.9,FALSE)	0.12157665459056935	statistical	number
+CRITBINOM n=5 p=0.5 alpha=0.5	=CRITBINOM(5,0.5,0.5)	2	statistical	number
+BINOM.INV n=5 p=0.5 alpha=0.5	=BINOM.INV(5,0.5,0.5)	2	statistical	number
+BINOM.INV n=20 p=0.1 alpha=0.5	=BINOM.INV(20,0.1,0.5)	2	statistical	number
+BINOM.INV n=20 p=0.9 alpha=0.5	=BINOM.INV(20,0.9,0.5)	18	statistical	number
+NEGBINOM.DIST exact k=1 r=1 p=0.1	=NEGBINOM.DIST(1,1,0.1,FALSE)	0.09000000000000001	statistical	number
+NEGBINOM.DIST exact k=1 r=1 p=0.9	=NEGBINOM.DIST(1,1,0.9,FALSE)	0.08999999999999998	statistical	number
+NEGBINOMDIST k=1 r=2 p=0.5	=NEGBINOMDIST(1,2,0.5)	0.25	statistical	number
+POISSON.DIST exact lambda=1 k=1	=POISSON.DIST(1,1,FALSE)	0.36787944117144233	statistical	number
+POISSON.DIST exact lambda=2 k=2	=POISSON.DIST(2,2,FALSE)	0.2706705664732254	statistical	number
+POISSON.DIST cumulative lambda=2 k=3	=POISSON.DIST(3,2,TRUE)	0.8571234604985472	statistical	number
+POISSON exact lambda=2 k=2	=POISSON(2,2,FALSE)	0.2706705664732254	statistical	number
+POISSON cumulative lambda=2 k=3	=POISSON(3,2,TRUE)	0.8571234604985472	statistical	number
+HYPGEOM.DIST exact s=0 ns=5 M=5 N=20	=HYPGEOM.DIST(0,5,5,20,FALSE)	0.19369195046439627	statistical	number
+HYPGEOM.DIST exact s=5 ns=5 M=10 N=20	=HYPGEOM.DIST(5,5,10,20,FALSE)	0.016253869969040248	statistical	number
+HYPGEOMDIST s=0 ns=5 M=5 N=20	=HYPGEOMDIST(0,5,5,20)	0.19369195046439627	statistical	number
+EXPON.DIST cumulative lambda=0.5 x=2	=EXPON.DIST(2,0.5,TRUE)	0.6321205588285577	statistical	number
+EXPON.DIST pdf lambda=2 x=0.5	=EXPON.DIST(0.5,2,FALSE)	0.7357588823428847	statistical	number
+EXPONDIST cumulative lambda=2 x=0.5	=EXPONDIST(0.5,2,TRUE)	0.6321205588285577	statistical	number
+EXPONDIST pdf lambda=0.5 x=2	=EXPONDIST(2,0.5,FALSE)	0.18393972058572117	statistical	number
+GAMMA.DIST cumulative a=1 b=2	=GAMMA.DIST(2,1,2,TRUE)	0.6321205588285581	statistical	number
+GAMMA.DIST cumulative a=2 b=2	=GAMMA.DIST(2,2,2,TRUE)	0.2642411176571153	statistical	number
+GAMMA.DIST pdf a=2 b=2	=GAMMA.DIST(2,2,2,FALSE)	0.18393972058572114	statistical	number
+GAMMADIST cumulative a=5 b=1	=GAMMADIST(5,5,1,TRUE)	0.5595067149347873	statistical	number
+GAMMA.INV p=0.1 a=2 b=2	=GAMMA.INV(0.1,2,2)	1.0636232167792237	statistical	number
+GAMMA.INV p=0.9 a=1 b=1	=GAMMA.INV(0.9,1,1)	2.3025850929940463	statistical	number
+GAMMAINV p=0.9 a=5 b=2	=GAMMAINV(0.9,5,2)	15.987179172105263	statistical	number
+GAMMALN x=0.5	=GAMMALN(0.5)	0.5723649429247	statistical	number
+GAMMALN x=100	=GAMMALN(100)	359.1342053695754	statistical	number
+GAMMALN.PRECISE x=0.5	=GAMMALN.PRECISE(0.5)	0.5723649429247	statistical	number
+GAMMALN.PRECISE x=10	=GAMMALN.PRECISE(10)	12.801827480081469	statistical	number
+LOGNORM.DIST x=2 mu=0 sd=1 cumulative	=LOGNORM.DIST(2,0,1,TRUE)	0.7558914042144171	statistical	number
+LOGNORM.DIST x=0.5 mu=0 sd=1 cumulative	=LOGNORM.DIST(0.5,0,1,TRUE)	0.24410859578558286	statistical	number
+LOGNORMDIST x=2 mu=0 sd=1	=LOGNORMDIST(2,0,1)	0.7558914042144171	statistical	number
+LOGNORMDIST x=0.5 mu=0 sd=1	=LOGNORMDIST(0.5,0,1)	0.24410859578558286	statistical	number
+LOGNORM.INV p=0.5 mu=0 sd=0.5	=LOGNORM.INV(0.5,0,0.5)	1	statistical	number
+LOGNORM.INV p=0.5 mu=0 sd=2	=LOGNORM.INV(0.5,0,2)	1	statistical	number
+LOGINV p=0.5 mu=0 sd=0.5	=LOGINV(0.5,0,0.5)	1	statistical	number
+LOGINV p=0.5 mu=0 sd=2	=LOGINV(0.5,0,2)	1	statistical	number
+WEIBULL.DIST cumulative a=1 b=2	=WEIBULL.DIST(2,1,2,TRUE)	0.6321205588285577	statistical	number
+WEIBULL.DIST cumulative a=2 b=2	=WEIBULL.DIST(2,2,2,TRUE)	0.6321205588285577	statistical	number
+WEIBULL.DIST pdf a=2 b=2	=WEIBULL.DIST(2,2,2,FALSE)	0.36787944117144233	statistical	number
+WEIBULL cumulative a=2 b=2	=WEIBULL(2,2,2,TRUE)	0.6321205588285577	statistical	number
+WEIBULL pdf a=5 b=2	=WEIBULL(2,5,2,FALSE)	0.9196986029286058	statistical	number
+DEVSQ small dataset	=DEVSQ(1,2,3)	2	statistical	number
+AVEDEV small dataset	=AVEDEV(1,2,3)	0.6666666666666666	statistical	number
+DEVSQ large dataset	=DEVSQ({1,2,3,4,5,6,7,8,9,10})	82.5	statistical	number
+AVEDEV large dataset	=AVEDEV({1,2,3,4,5,6,7,8,9,10})	2.5	statistical	number
+GEOMEAN two values	=GEOMEAN(4,16)	8	statistical	number
+GEOMEAN large dataset	=GEOMEAN({1,2,4,8,16,32})	5.65685424949238	statistical	number
+HARMEAN two values	=HARMEAN(2,6)	3	statistical	number
+HARMEAN large dataset	=HARMEAN({1,2,3,4,5,6})	2.4489795918367347	statistical	number
+KURT normal-like	=KURT(1,2,2,3,3,3,4,4,5)	-0.2857142857142829	statistical	number
+SKEW positive	=SKEW(1,1,1,2,3,4,5)	0.6740884152581731	statistical	number
+SKEW negative	=SKEW(1,2,3,4,5,5,5)	-0.674088415258173	statistical	number
+SKEW.P positive	=SKEW.P(1,1,1,2,3,4,5)	0.5200705032248688	statistical	number
+SKEW.P negative	=SKEW.P(1,2,3,4,5,5,5)	-0.520070503224869	statistical	number
+TRIMMEAN 0% no trim	=TRIMMEAN({1,2,3,4,5,6,7,8,9,10},0.0)	5.5	statistical	number
+TRIMMEAN 50% heavy trim	=TRIMMEAN({1,2,3,4,5,6,7,8,9,10},0.5)	5.5	statistical	number
+PROB x=[1,2,3,4] prob=[0.1,0.2,0.3,0.4] lower=2 upper=3	=PROB({1,2,3,4},{0.1,0.2,0.3,0.4},2,3)	0.5	statistical	number
+PROB single value	=PROB({1,2,3},{0.2,0.5,0.3},1,1)	0.2	statistical	number
+ZTEST large sample mu=5	=ZTEST({1,2,3,4,5,6,7,8,9,10},5)	0.30075406722029496	statistical	number
+Z.TEST large sample mu=5	=Z.TEST({1,2,3,4,5,6,7,8,9,10},5)	0.30075406722029496	statistical	number
+ZTEST mu=0 sigma=1	=ZTEST({-1,0,1},0,1)	0.5	statistical	number
+Z.TEST mu=0 sigma=1	=Z.TEST({-1,0,1},0,1)	0.5	statistical	number
+NORM.DIST x=-3 std normal cumulative	=NORM.DIST(-3,0,1,TRUE)	0.0013498980316301035	statistical	number
+NORM.DIST x=-3 std normal pdf	=NORM.DIST(-3,0,1,FALSE)	0.0044318484119380075	statistical	number
+NORM.DIST x=-2 std normal cumulative	=NORM.DIST(-2,0,1,TRUE)	0.022750131948179098	statistical	number
+NORM.DIST x=-2 std normal pdf	=NORM.DIST(-2,0,1,FALSE)	0.05399096651318806	statistical	number
+NORM.DIST x=-1 std normal cumulative	=NORM.DIST(-1,0,1,TRUE)	0.15865525393145696	statistical	number
+NORM.DIST x=-1 std normal pdf	=NORM.DIST(-1,0,1,FALSE)	0.24197072451914337	statistical	number
+NORM.DIST x=0 std normal cumulative	=NORM.DIST(0,0,1,TRUE)	0.5	statistical	number
+NORM.DIST x=0 std normal pdf	=NORM.DIST(0,0,1,FALSE)	0.3989422804014327	statistical	number
+NORM.DIST x=1 std normal cumulative	=NORM.DIST(1,0,1,TRUE)	0.841344746068543	statistical	number
+NORM.DIST x=1 std normal pdf	=NORM.DIST(1,0,1,FALSE)	0.24197072451914337	statistical	number
+NORM.DIST x=2 std normal cumulative	=NORM.DIST(2,0,1,TRUE)	0.9772498680518209	statistical	number
+NORM.DIST x=2 std normal pdf	=NORM.DIST(2,0,1,FALSE)	0.05399096651318806	statistical	number
+NORM.DIST x=3 std normal cumulative	=NORM.DIST(3,0,1,TRUE)	0.9986501019683699	statistical	number
+NORM.DIST x=3 std normal pdf	=NORM.DIST(3,0,1,FALSE)	0.0044318484119380075	statistical	number
+NORM.S.DIST z=-3 cumulative	=NORM.S.DIST(-3,TRUE)	0.0013498980316301035	statistical	number
+NORM.S.DIST z=-2 cumulative	=NORM.S.DIST(-2,TRUE)	0.022750131948179098	statistical	number
+NORM.S.DIST z=-1 cumulative	=NORM.S.DIST(-1,TRUE)	0.15865525393145696	statistical	number
+NORM.S.DIST z=0 cumulative	=NORM.S.DIST(0,TRUE)	0.5	statistical	number
+NORM.S.DIST z=1 cumulative	=NORM.S.DIST(1,TRUE)	0.841344746068543	statistical	number
+NORM.S.DIST z=2 cumulative	=NORM.S.DIST(2,TRUE)	0.9772498680518209	statistical	number
+NORM.S.DIST z=3 cumulative	=NORM.S.DIST(3,TRUE)	0.9986501019683699	statistical	number
+NORM.S.INV p=0.01	=NORM.S.INV(0.01)	-2.326347874388028	statistical	number
+NORMSINV p=0.01	=NORMSINV(0.01)	-2.326347874388028	statistical	number
+NORM.S.INV p=0.05	=NORM.S.INV(0.05)	-1.6448536251336814	statistical	number
+NORMSINV p=0.05	=NORMSINV(0.05)	-1.6448536251336814	statistical	number
+NORM.S.INV p=0.25	=NORM.S.INV(0.25)	-0.6744897502234225	statistical	number
+NORMSINV p=0.25	=NORMSINV(0.25)	-0.6744897502234225	statistical	number
+NORM.S.INV p=0.75	=NORM.S.INV(0.75)	0.6744897502234225	statistical	number
+NORMSINV p=0.75	=NORMSINV(0.75)	0.6744897502234225	statistical	number
+NORM.S.INV p=0.95	=NORM.S.INV(0.95)	1.644853625133699	statistical	number
+NORMSINV p=0.95	=NORMSINV(0.95)	1.644853625133699	statistical	number
+NORM.S.INV p=0.99	=NORM.S.INV(0.99)	2.326347874388028	statistical	number
+NORMSINV p=0.99	=NORMSINV(0.99)	2.326347874388028	statistical	number
+T.DIST t=1.5 df=1 cumulative	=T.DIST(1.5,1,TRUE)	0.8128329581890013	statistical	number
+T.DIST.RT t=1.5 df=1	=T.DIST.RT(1.5,1)	0.18716704181099875	statistical	number
+T.DIST.2T t=1.5 df=1	=T.DIST.2T(1.5,1)	0.3743340836219975	statistical	number
+T.DIST t=1.5 df=2 cumulative	=T.DIST(1.5,2,TRUE)	0.8638034375544994	statistical	number
+T.DIST.RT t=1.5 df=2	=T.DIST.RT(1.5,2)	0.1361965624455006	statistical	number
+T.DIST.2T t=1.5 df=2	=T.DIST.2T(1.5,2)	0.2723931248910012	statistical	number
+T.DIST t=1.5 df=3 cumulative	=T.DIST(1.5,3,TRUE)	0.8847080673775887	statistical	number
+T.DIST.RT t=1.5 df=3	=T.DIST.RT(1.5,3)	0.11529193262241133	statistical	number
+T.DIST.2T t=1.5 df=3	=T.DIST.2T(1.5,3)	0.23058386524482266	statistical	number
+T.DIST t=1.5 df=5 cumulative	=T.DIST(1.5,5,TRUE)	0.9030481598787635	statistical	number
+T.DIST.RT t=1.5 df=5	=T.DIST.RT(1.5,5)	0.09695184012123648	statistical	number
+T.DIST.2T t=1.5 df=5	=T.DIST.2T(1.5,5)	0.19390368024247295	statistical	number
+T.DIST t=1.5 df=10 cumulative	=T.DIST(1.5,10,TRUE)	0.9177463367772793	statistical	number
+T.DIST.RT t=1.5 df=10	=T.DIST.RT(1.5,10)	0.08225366322272065	statistical	number
+T.DIST.2T t=1.5 df=10	=T.DIST.2T(1.5,10)	0.1645073264454413	statistical	number
+T.DIST t=1.5 df=20 cumulative	=T.DIST(1.5,20,TRUE)	0.9253821144153738	statistical	number
+T.DIST.RT t=1.5 df=20	=T.DIST.RT(1.5,20)	0.07461788558462623	statistical	number
+T.DIST.2T t=1.5 df=20	=T.DIST.2T(1.5,20)	0.14923577116925246	statistical	number
+T.DIST t=1.5 df=30 cumulative	=T.DIST(1.5,30,TRUE)	0.9279670354356746	statistical	number
+T.DIST.RT t=1.5 df=30	=T.DIST.RT(1.5,30)	0.0720329645643254	statistical	number
+T.DIST.2T t=1.5 df=30	=T.DIST.2T(1.5,30)	0.1440659291286508	statistical	number
+T.INV.2T p=0.01 df=10	=T.INV.2T(0.01,10)	3.1692726726169553	statistical	number
+TINV p=0.01 df=10	=TINV(0.01,10)	3.1692726726169553	statistical	number
+T.INV.2T p=0.025 df=10	=T.INV.2T(0.025,10)	2.6337669157115973	statistical	number
+TINV p=0.025 df=10	=TINV(0.025,10)	2.6337669157115973	statistical	number
+T.INV.2T p=0.05 df=10	=T.INV.2T(0.05,10)	2.2281388519862735	statistical	number
+TINV p=0.05 df=10	=TINV(0.05,10)	2.2281388519862735	statistical	number
+T.INV.2T p=0.1 df=10	=T.INV.2T(0.1,10)	1.8124611228116743	statistical	number
+TINV p=0.1 df=10	=TINV(0.1,10)	1.8124611228116743	statistical	number
+T.INV.2T p=0.2 df=10	=T.INV.2T(0.2,10)	1.3721836411103387	statistical	number
+TINV p=0.2 df=10	=TINV(0.2,10)	1.3721836411103387	statistical	number
+T.INV.2T p=0.5 df=10	=T.INV.2T(0.5,10)	0.699812061312433	statistical	number
+TINV p=0.5 df=10	=TINV(0.5,10)	0.699812061312433	statistical	number
+CHISQ.DIST x=3 df=1 cumulative	=CHISQ.DIST(3,1,TRUE)	0.9167354833364495	statistical	number
+CHISQ.DIST.RT x=3 df=1	=CHISQ.DIST.RT(3,1)	0.0832645166635505	statistical	number
+CHISQ.DIST x=3 df=2 cumulative	=CHISQ.DIST(3,2,TRUE)	0.7768698398515704	statistical	number
+CHISQ.DIST.RT x=3 df=2	=CHISQ.DIST.RT(3,2)	0.22313016014842957	statistical	number
+CHISQ.DIST x=3 df=3 cumulative	=CHISQ.DIST(3,3,TRUE)	0.608374823728911	statistical	number
+CHISQ.DIST.RT x=3 df=3	=CHISQ.DIST.RT(3,3)	0.39162517627108895	statistical	number
+CHISQ.DIST x=3 df=5 cumulative	=CHISQ.DIST(3,5,TRUE)	0.30001416412137255	statistical	number
+CHISQ.DIST.RT x=3 df=5	=CHISQ.DIST.RT(3,5)	0.6999858358786275	statistical	number
+CHISQ.DIST x=3 df=10 cumulative	=CHISQ.DIST(3,10,TRUE)	0.01857593622214068	statistical	number
+CHISQ.DIST.RT x=3 df=10	=CHISQ.DIST.RT(3,10)	0.9814240637778593	statistical	number
+CHISQ.DIST x=3 df=20 cumulative	=CHISQ.DIST(3,20,TRUE)	0.000004097500976394847	statistical	number
+CHISQ.DIST.RT x=3 df=20	=CHISQ.DIST.RT(3,20)	0.9999959024990236	statistical	number
+CHISQ.DIST x=3 df=30 cumulative	=CHISQ.DIST(3,30,TRUE)	8.23972236759077e-11	statistical	number
+CHISQ.DIST.RT x=3 df=30	=CHISQ.DIST.RT(3,30)	0.9999999999176028	statistical	number
+CHISQ.INV.RT p=0.01 df=5	=CHISQ.INV.RT(0.01,5)	15.086272469388998	statistical	number
+CHIINV p=0.01 df=5	=CHIINV(0.01,5)	15.086272469388998	statistical	number
+CHISQ.INV.RT p=0.025 df=5	=CHISQ.INV.RT(0.025,5)	12.83250199403003	statistical	number
+CHIINV p=0.025 df=5	=CHIINV(0.025,5)	12.83250199403003	statistical	number
+CHISQ.INV.RT p=0.05 df=5	=CHISQ.INV.RT(0.05,5)	11.070497693516351	statistical	number
+CHIINV p=0.05 df=5	=CHIINV(0.05,5)	11.070497693516351	statistical	number
+CHISQ.INV.RT p=0.1 df=5	=CHISQ.INV.RT(0.1,5)	9.236356899781116	statistical	number
+CHIINV p=0.1 df=5	=CHIINV(0.1,5)	9.236356899781116	statistical	number
+CHISQ.INV.RT p=0.25 df=5	=CHISQ.INV.RT(0.25,5)	6.625679763829255	statistical	number
+CHIINV p=0.25 df=5	=CHIINV(0.25,5)	6.625679763829255	statistical	number
+CHISQ.INV.RT p=0.5 df=5	=CHISQ.INV.RT(0.5,5)	4.351460191095527	statistical	number
+CHIINV p=0.5 df=5	=CHIINV(0.5,5)	4.351460191095527	statistical	number
+CHISQ.INV.RT p=0.75 df=5	=CHISQ.INV.RT(0.75,5)	2.674602809432163	statistical	number
+CHIINV p=0.75 df=5	=CHIINV(0.75,5)	2.674602809432163	statistical	number
+CHISQ.INV.RT p=0.9 df=5	=CHISQ.INV.RT(0.9,5)	1.6103079869623231	statistical	number
+CHIINV p=0.9 df=5	=CHIINV(0.9,5)	1.6103079869623231	statistical	number
+CHISQ.INV.RT p=0.95 df=5	=CHISQ.INV.RT(0.95,5)	1.1454762260617695	statistical	number
+CHIINV p=0.95 df=5	=CHIINV(0.95,5)	1.1454762260617695	statistical	number
+F.DIST x=2 df1=1 df2=5 cumulative	=F.DIST(2,1,5,TRUE)	0.7835627707303147	statistical	number
+F.DIST.RT x=2 df1=1 df2=5	=F.DIST.RT(2,1,5)	0.21643722926968534	statistical	number
+F.DIST x=2 df1=2 df2=5 cumulative	=F.DIST(2,2,5,TRUE)	0.7699518541666883	statistical	number
+F.DIST.RT x=2 df1=2 df2=5	=F.DIST.RT(2,2,5)	0.23004814583331168	statistical	number
+F.DIST x=2 df1=5 df2=5 cumulative	=F.DIST(2,5,5,TRUE)	0.7674886808696214	statistical	number
+F.DIST.RT x=2 df1=5 df2=5	=F.DIST.RT(2,5,5)	0.2325113191303786	statistical	number
+F.DIST x=2 df1=5 df2=10 cumulative	=F.DIST(2,5,10,TRUE)	0.8358050491002613	statistical	number
+F.DIST.RT x=2 df1=5 df2=10	=F.DIST.RT(2,5,10)	0.16419495089973868	statistical	number
+F.DIST x=2 df1=10 df2=20 cumulative	=F.DIST(2,10,20,TRUE)	0.9102172851562496	statistical	number
+F.DIST.RT x=2 df1=10 df2=20	=F.DIST.RT(2,10,20)	0.08978271484375044	statistical	number
+F.DIST x=2 df1=20 df2=30 cumulative	=F.DIST(2,20,30,TRUE)	0.9582398877347857	statistical	number
+F.DIST.RT x=2 df1=20 df2=30	=F.DIST.RT(2,20,30)	0.041760112265214255	statistical	number
+F.INV.RT p=0.01 df1=5 df2=10	=F.INV.RT(0.01,5,10)	5.636326187669086	statistical	number
+FINV p=0.01 df1=5 df2=10	=FINV(0.01,5,10)	5.636326187669086	statistical	number
+F.INV.RT p=0.025 df1=5 df2=10	=F.INV.RT(0.025,5,10)	4.236085668188633	statistical	number
+FINV p=0.025 df1=5 df2=10	=FINV(0.025,5,10)	4.236085668188633	statistical	number
+F.INV.RT p=0.05 df1=5 df2=10	=F.INV.RT(0.05,5,10)	3.3258345304130126	statistical	number
+FINV p=0.05 df1=5 df2=10	=FINV(0.05,5,10)	3.3258345304130126	statistical	number
+F.INV.RT p=0.1 df1=5 df2=10	=F.INV.RT(0.1,5,10)	2.5216406862096234	statistical	number
+FINV p=0.1 df1=5 df2=10	=FINV(0.1,5,10)	2.5216406862096234	statistical	number
+F.INV.RT p=0.25 df1=5 df2=10	=F.INV.RT(0.25,5,10)	1.5853232593846143	statistical	number
+FINV p=0.25 df1=5 df2=10	=FINV(0.25,5,10)	1.5853232593846143	statistical	number
+F.INV.RT p=0.5 df1=5 df2=10	=F.INV.RT(0.5,5,10)	0.9319331608510488	statistical	number
+FINV p=0.5 df1=5 df2=10	=FINV(0.5,5,10)	0.9319331608510488	statistical	number
+F.INV.RT p=0.75 df1=5 df2=10	=F.INV.RT(0.75,5,10)	0.5291416855678216	statistical	number
+FINV p=0.75 df1=5 df2=10	=FINV(0.75,5,10)	0.5291416855678216	statistical	number
+F.INV.RT p=0.9 df1=5 df2=10	=F.INV.RT(0.9,5,10)	0.3032690890210715	statistical	number
+FINV p=0.9 df1=5 df2=10	=FINV(0.9,5,10)	0.3032690890210715	statistical	number
+F.INV.RT p=0.95 df1=5 df2=10	=F.INV.RT(0.95,5,10)	0.2111904287823449	statistical	number
+FINV p=0.95 df1=5 df2=10	=FINV(0.95,5,10)	0.2111904287823449	statistical	number
+BINOM.DIST n=10 k=0 p=0.5 exact	=BINOM.DIST(0,10,0.5,FALSE)	0.0009765625	statistical	number
+BINOM.DIST n=10 k=1 p=0.5 exact	=BINOM.DIST(1,10,0.5,FALSE)	0.009765625	statistical	number
+BINOM.DIST n=10 k=2 p=0.5 exact	=BINOM.DIST(2,10,0.5,FALSE)	0.0439453125	statistical	number
+BINOM.DIST n=10 k=3 p=0.5 exact	=BINOM.DIST(3,10,0.5,FALSE)	0.1171875	statistical	number
+BINOM.DIST n=10 k=4 p=0.5 exact	=BINOM.DIST(4,10,0.5,FALSE)	0.205078125	statistical	number
+BINOM.DIST n=10 k=5 p=0.5 exact	=BINOM.DIST(5,10,0.5,FALSE)	0.24609375	statistical	number
+BINOM.DIST n=10 k=6 p=0.5 exact	=BINOM.DIST(6,10,0.5,FALSE)	0.205078125	statistical	number
+BINOM.DIST n=10 k=7 p=0.5 exact	=BINOM.DIST(7,10,0.5,FALSE)	0.1171875	statistical	number
+BINOM.DIST n=10 k=8 p=0.5 exact	=BINOM.DIST(8,10,0.5,FALSE)	0.0439453125	statistical	number
+BINOM.DIST n=10 k=9 p=0.5 exact	=BINOM.DIST(9,10,0.5,FALSE)	0.009765625	statistical	number
+BINOM.DIST n=10 k=10 p=0.5 exact	=BINOM.DIST(10,10,0.5,FALSE)	0.0009765625	statistical	number
+BINOM.DIST n=20 k=5 p=0.5 cumulative	=BINOM.DIST(5,20,0.5,TRUE)	0.020694732666015625	statistical	number
+BINOM.DIST n=20 k=10 p=0.5 cumulative	=BINOM.DIST(10,20,0.5,TRUE)	0.5880985260009766	statistical	number
+BINOM.DIST n=20 k=15 p=0.5 cumulative	=BINOM.DIST(15,20,0.5,TRUE)	0.9940910339355469	statistical	number
+POISSON.DIST lambda=1 k=1 exact	=POISSON.DIST(1,1,FALSE)	0.36787944117144233	statistical	number
+POISSON.DIST lambda=1 k=1 cumulative	=POISSON.DIST(1,1,TRUE)	0.7357588823428847	statistical	number
+POISSON.DIST lambda=2 k=2 exact	=POISSON.DIST(2,2,FALSE)	0.2706705664732254	statistical	number
+POISSON.DIST lambda=2 k=2 cumulative	=POISSON.DIST(2,2,TRUE)	0.6766764161830635	statistical	number
+POISSON.DIST lambda=5 k=5 exact	=POISSON.DIST(5,5,FALSE)	0.1754673697678507	statistical	number
+POISSON.DIST lambda=5 k=5 cumulative	=POISSON.DIST(5,5,TRUE)	0.6159606548330632	statistical	number
+POISSON.DIST lambda=10 k=10 exact	=POISSON.DIST(10,10,FALSE)	0.1251100357211333	statistical	number
+POISSON.DIST lambda=10 k=10 cumulative	=POISSON.DIST(10,10,TRUE)	0.5830397501929856	statistical	number
+EXPON.DIST x=1 lambda=0.5 cumulative	=EXPON.DIST(1,0.5,TRUE)	0.3934693402873666	statistical	number
+EXPON.DIST x=1 lambda=0.5 pdf	=EXPON.DIST(1,0.5,FALSE)	0.3032653298563167	statistical	number
+EXPON.DIST x=1 lambda=1 cumulative	=EXPON.DIST(1,1,TRUE)	0.6321205588285577	statistical	number
+EXPON.DIST x=1 lambda=1 pdf	=EXPON.DIST(1,1,FALSE)	0.36787944117144233	statistical	number
+EXPON.DIST x=1 lambda=2 cumulative	=EXPON.DIST(1,2,TRUE)	0.8646647167633873	statistical	number
+EXPON.DIST x=1 lambda=2 pdf	=EXPON.DIST(1,2,FALSE)	0.2706705664732254	statistical	number
+EXPON.DIST x=1 lambda=5 cumulative	=EXPON.DIST(1,5,TRUE)	0.9932620530009145	statistical	number
+EXPON.DIST x=1 lambda=5 pdf	=EXPON.DIST(1,5,FALSE)	0.03368973499542734	statistical	number
+GAMMA.DIST a=1 b=1 x=2 cumulative	=GAMMA.DIST(2,1,1,TRUE)	0.8646647167633872	statistical	number
+GAMMA.DIST a=1 b=2 x=2 cumulative	=GAMMA.DIST(2,1,2,TRUE)	0.6321205588285581	statistical	number
+GAMMA.DIST a=2 b=1 x=2 cumulative	=GAMMA.DIST(2,2,1,TRUE)	0.5939941502901617	statistical	number
+GAMMA.DIST a=2 b=2 x=2 cumulative	=GAMMA.DIST(2,2,2,TRUE)	0.2642411176571153	statistical	number
+GAMMA.DIST a=5 b=1 x=2 cumulative	=GAMMA.DIST(2,5,1,TRUE)	0.05265301734371113	statistical	number
+GAMMA.DIST a=5 b=2 x=2 cumulative	=GAMMA.DIST(2,5,2,TRUE)	0.0036598468273437135	statistical	number
+GAMMA.INV p=0.01 a=2 b=1	=GAMMA.INV(0.01,2,1)	0.1485547402532656	statistical	number
+GAMMA.INV p=0.05 a=2 b=1	=GAMMA.INV(0.05,2,1)	0.35536151069866195	statistical	number
+GAMMA.INV p=0.1 a=2 b=1	=GAMMA.INV(0.1,2,1)	0.5318116083896118	statistical	number
+GAMMA.INV p=0.5 a=2 b=1	=GAMMA.INV(0.5,2,1)	1.6783469900166608	statistical	number
+GAMMA.INV p=0.9 a=2 b=1	=GAMMA.INV(0.9,2,1)	3.889720169867429	statistical	number
+GAMMA.INV p=0.95 a=2 b=1	=GAMMA.INV(0.95,2,1)	4.743864518390578	statistical	number
+GAMMA.INV p=0.99 a=2 b=1	=GAMMA.INV(0.99,2,1)	6.638352067993812	statistical	number
+LOGNORM.DIST x=0.5 mu=0 sd=1 cumulative	=LOGNORM.DIST(0.5,0,1,TRUE)	0.24410859578558286	statistical	number
+LOGNORM.DIST x=0.5 mu=0 sd=1 pdf	=LOGNORM.DIST(0.5,0,1,FALSE)	0.6274960771159244	statistical	number
+LOGNORM.DIST x=1 mu=0 sd=1 cumulative	=LOGNORM.DIST(1,0,1,TRUE)	0.5	statistical	number
+LOGNORM.DIST x=1 mu=0 sd=1 pdf	=LOGNORM.DIST(1,0,1,FALSE)	0.3989422804014327	statistical	number
+LOGNORM.DIST x=2 mu=0 sd=1 cumulative	=LOGNORM.DIST(2,0,1,TRUE)	0.7558914042144171	statistical	number
+LOGNORM.DIST x=2 mu=0 sd=1 pdf	=LOGNORM.DIST(2,0,1,FALSE)	0.1568740192789811	statistical	number
+LOGNORM.DIST x=5 mu=0 sd=1 cumulative	=LOGNORM.DIST(5,0,1,TRUE)	0.9462396895483367	statistical	number
+LOGNORM.DIST x=5 mu=0 sd=1 pdf	=LOGNORM.DIST(5,0,1,FALSE)	0.021850714830327203	statistical	number
+LOGNORM.INV p=0.01 mu=0 sd=1	=LOGNORM.INV(0.01,0,1)	0.09765173303643257	statistical	number
+LOGINV p=0.01 mu=0 sd=1	=LOGINV(0.01,0,1)	0.09765173303643257	statistical	number
+LOGNORM.INV p=0.05 mu=0 sd=1	=LOGNORM.INV(0.05,0,1)	0.1930408170496445	statistical	number
+LOGINV p=0.05 mu=0 sd=1	=LOGINV(0.05,0,1)	0.1930408170496445	statistical	number
+LOGNORM.INV p=0.1 mu=0 sd=1	=LOGNORM.INV(0.1,0,1)	0.2776062422418923	statistical	number
+LOGINV p=0.1 mu=0 sd=1	=LOGINV(0.1,0,1)	0.2776062422418923	statistical	number
+LOGNORM.INV p=0.25 mu=0 sd=1	=LOGNORM.INV(0.25,0,1)	0.5094162838493497	statistical	number
+LOGINV p=0.25 mu=0 sd=1	=LOGINV(0.25,0,1)	0.5094162838493497	statistical	number
+LOGNORM.INV p=0.5 mu=0 sd=1	=LOGNORM.INV(0.5,0,1)	1	statistical	number
+LOGINV p=0.5 mu=0 sd=1	=LOGINV(0.5,0,1)	1	statistical	number
+LOGNORM.INV p=0.75 mu=0 sd=1	=LOGNORM.INV(0.75,0,1)	1.9630310842119278	statistical	number
+LOGINV p=0.75 mu=0 sd=1	=LOGINV(0.75,0,1)	1.9630310842119278	statistical	number
+LOGNORM.INV p=0.9 mu=0 sd=1	=LOGNORM.INV(0.9,0,1)	3.6022244742200344	statistical	number
+LOGINV p=0.9 mu=0 sd=1	=LOGINV(0.9,0,1)	3.6022244742200344	statistical	number
+LOGNORM.INV p=0.95 mu=0 sd=1	=LOGNORM.INV(0.95,0,1)	5.18025159281649	statistical	number
+LOGINV p=0.95 mu=0 sd=1	=LOGINV(0.95,0,1)	5.18025159281649	statistical	number
+LOGNORM.INV p=0.99 mu=0 sd=1	=LOGNORM.INV(0.99,0,1)	10.240473659867494	statistical	number
+LOGINV p=0.99 mu=0 sd=1	=LOGINV(0.99,0,1)	10.240473659867494	statistical	number
+WEIBULL.DIST a=1 b=1 x=1 cumulative	=WEIBULL.DIST(1,1,1,TRUE)	0.6321205588285577	statistical	number
+WEIBULL a=1 b=1 x=1 cumulative	=WEIBULL(1,1,1,TRUE)	0.6321205588285577	statistical	number
+WEIBULL.DIST a=2 b=1 x=1 cumulative	=WEIBULL.DIST(1,2,1,TRUE)	0.6321205588285577	statistical	number
+WEIBULL a=2 b=1 x=1 cumulative	=WEIBULL(1,2,1,TRUE)	0.6321205588285577	statistical	number
+WEIBULL.DIST a=5 b=1 x=1 cumulative	=WEIBULL.DIST(1,5,1,TRUE)	0.6321205588285577	statistical	number
+WEIBULL a=5 b=1 x=1 cumulative	=WEIBULL(1,5,1,TRUE)	0.6321205588285577	statistical	number
+BETA.DIST a=1 b=1 x=0.5 cumulative	=BETA.DIST(0.5,1,1,TRUE)	0.5000000000000004	statistical	number
+BETA.DIST a=1 b=2 x=0.5 cumulative	=BETA.DIST(0.5,1,2,TRUE)	0.7499999999999998	statistical	number
+BETA.DIST a=2 b=1 x=0.5 cumulative	=BETA.DIST(0.5,2,1,TRUE)	0.2500000000000003	statistical	number
+BETA.DIST a=2 b=5 x=0.5 cumulative	=BETA.DIST(0.5,2,5,TRUE)	0.890625	statistical	number
+BETA.DIST a=5 b=2 x=0.5 cumulative	=BETA.DIST(0.5,5,2,TRUE)	0.10937500000000003	statistical	number
+BETA.DIST a=5 b=5 x=0.5 cumulative	=BETA.DIST(0.5,5,5,TRUE)	0.4999999999999996	statistical	number
+BETA.INV p=0.05 a=2 b=5 explicit	=BETA.INV(0.05,2,5,0,1)	0.06284989170835442	statistical	number
+BETA.INV p=0.1 a=2 b=5 explicit	=BETA.INV(0.1,2,5,0,1)	0.09259525891312881	statistical	number
+BETA.INV p=0.25 a=2 b=5 explicit	=BETA.INV(0.25,2,5,0,1)	0.16116291679032657	statistical	number
+BETA.INV p=0.5 a=2 b=5 explicit	=BETA.INV(0.5,2,5,0,1)	0.26444998329565994	statistical	number
+BETA.INV p=0.75 a=2 b=5 explicit	=BETA.INV(0.75,2,5,0,1)	0.3894794852007244	statistical	number
+BETA.INV p=0.9 a=2 b=5 explicit	=BETA.INV(0.9,2,5,0,1)	0.5103163065514916	statistical	number
+BETA.INV p=0.95 a=2 b=5 explicit	=BETA.INV(0.95,2,5,0,1)	0.5818034092520258	statistical	number
+BETA.INV p=0.99 a=2 b=5 explicit	=BETA.INV(0.99,2,5,0,1)	0.7056863283197078	statistical	number
+NEGBINOM.DIST k=5 r=1 p=0.5 exact	=NEGBINOM.DIST(5,1,0.5,FALSE)	0.015625	statistical	number
+NEGBINOM.DIST k=5 r=2 p=0.5 exact	=NEGBINOM.DIST(5,2,0.5,FALSE)	0.046875	statistical	number
+NEGBINOM.DIST k=5 r=5 p=0.5 exact	=NEGBINOM.DIST(5,5,0.5,FALSE)	0.123046875	statistical	number
+PERCENTILE.INC p=0.1	=PERCENTILE.INC({1,2,3,4,5,6,7,8,9,10},0.1)	1.9	statistical	number
+PERCENTILE.EXC p=0.1	=PERCENTILE.EXC({1,2,3,4,5,6,7,8,9,10},0.1)	1.1	statistical	number
+PERCENTILE.INC p=0.2	=PERCENTILE.INC({1,2,3,4,5,6,7,8,9,10},0.2)	2.8	statistical	number
+PERCENTILE.EXC p=0.2	=PERCENTILE.EXC({1,2,3,4,5,6,7,8,9,10},0.2)	2.2	statistical	number
+PERCENTILE.INC p=0.3	=PERCENTILE.INC({1,2,3,4,5,6,7,8,9,10},0.3)	3.6999999999999997	statistical	number
+PERCENTILE.EXC p=0.3	=PERCENTILE.EXC({1,2,3,4,5,6,7,8,9,10},0.3)	3.3	statistical	number
+PERCENTILE.INC p=0.4	=PERCENTILE.INC({1,2,3,4,5,6,7,8,9,10},0.4)	4.6	statistical	number
+PERCENTILE.EXC p=0.4	=PERCENTILE.EXC({1,2,3,4,5,6,7,8,9,10},0.4)	4.4	statistical	number
+PERCENTILE.INC p=0.6	=PERCENTILE.INC({1,2,3,4,5,6,7,8,9,10},0.6)	6.3999999999999995	statistical	number
+PERCENTILE.EXC p=0.6	=PERCENTILE.EXC({1,2,3,4,5,6,7,8,9,10},0.6)	6.6	statistical	number
+PERCENTILE.INC p=0.7	=PERCENTILE.INC({1,2,3,4,5,6,7,8,9,10},0.7)	7.3	statistical	number
+PERCENTILE.EXC p=0.7	=PERCENTILE.EXC({1,2,3,4,5,6,7,8,9,10},0.7)	7.699999999999999	statistical	number
+PERCENTILE.INC p=0.8	=PERCENTILE.INC({1,2,3,4,5,6,7,8,9,10},0.8)	8.2	statistical	number
+PERCENTILE.EXC p=0.8	=PERCENTILE.EXC({1,2,3,4,5,6,7,8,9,10},0.8)	8.8	statistical	number
+STDEV.S small	=STDEV.S({1,2,3})	1	statistical	number
+STDEV.P small	=STDEV.P({1,2,3})	0.816496580927726	statistical	number
+VAR.S small	=VAR.S({1,2,3})	1	statistical	number
+VAR.P small	=VAR.P({1,2,3})	0.6666666666666666	statistical	number
+STDEV.S medium	=STDEV.S({1,2,3,4,5,6,7})	2.160246899469287	statistical	number
+STDEV.P medium	=STDEV.P({1,2,3,4,5,6,7})	2	statistical	number
+VAR.S medium	=VAR.S({1,2,3,4,5,6,7})	4.666666666666667	statistical	number
+VAR.P medium	=VAR.P({1,2,3,4,5,6,7})	4	statistical	number
+STDEV.S wide	=STDEV.S({1,5,10,15,20})	7.5960516059331775	statistical	number
+STDEV.P wide	=STDEV.P({1,5,10,15,20})	6.794115100585212	statistical	number
+VAR.S wide	=VAR.S({1,5,10,15,20})	57.7	statistical	number
+VAR.P wide	=VAR.P({1,5,10,15,20})	46.160000000000004	statistical	number
+RANK.EQ val=1 descending	=RANK.EQ(1,{1,2,3,4,5,6,7,8,9,10})	10	statistical	number
+RANK.AVG val=1 descending	=RANK.AVG(1,{1,2,3,4,5,6,7,8,9,10})	10	statistical	number
+RANK.EQ val=5 descending	=RANK.EQ(5,{1,2,3,4,5,6,7,8,9,10})	6	statistical	number
+RANK.AVG val=5 descending	=RANK.AVG(5,{1,2,3,4,5,6,7,8,9,10})	6	statistical	number
+RANK.EQ val=10 descending	=RANK.EQ(10,{1,2,3,4,5,6,7,8,9,10})	1	statistical	number
+RANK.AVG val=10 descending	=RANK.AVG(10,{1,2,3,4,5,6,7,8,9,10})	1	statistical	number
+CORREL identical	=CORREL({1,2,3,4,5},{1,2,3,4,5})	1	statistical	number
+COVARIANCE.P identical	=COVARIANCE.P({1,2,3,4,5},{1,2,3,4,5})	2	statistical	number
+COVARIANCE.S identical	=COVARIANCE.S({1,2,3,4,5},{1,2,3,4,5})	2.5	statistical	number
+CORREL scaled	=CORREL({1,2,3,4,5},{3,6,9,12,15})	1	statistical	number
+COVARIANCE.P scaled	=COVARIANCE.P({1,2,3,4,5},{3,6,9,12,15})	6	statistical	number
+COVARIANCE.S scaled	=COVARIANCE.S({1,2,3,4,5},{3,6,9,12,15})	7.5	statistical	number
+CORREL shifted	=CORREL({1,2,3,4,5},{6,7,8,9,10})	1	statistical	number
+COVARIANCE.P shifted	=COVARIANCE.P({1,2,3,4,5},{6,7,8,9,10})	2	statistical	number
+COVARIANCE.S shifted	=COVARIANCE.S({1,2,3,4,5},{6,7,8,9,10})	2.5	statistical	number
+HYPGEOM.DIST ns=5 s=2 M=10 N=20 exact	=HYPGEOM.DIST(2,5,10,20,FALSE)	0.34829721362229105	statistical	number
+HYPGEOM.DIST ns=5 s=2 M=10 N=20 cumulative	=HYPGEOM.DIST(2,5,10,20,TRUE)	0.49999999999999994	statistical	number
+HYPGEOM.DIST ns=10 s=2 M=10 N=20 exact	=HYPGEOM.DIST(2,10,10,20,FALSE)	0.010960401827274893	statistical	number
+HYPGEOM.DIST ns=10 s=2 M=10 N=20 cumulative	=HYPGEOM.DIST(2,10,10,20,TRUE)	0.01150706878261058	statistical	number
+BINOM.INV n=10 p=0.5 alpha=0.5	=BINOM.INV(10,0.5,0.5)	5	statistical	number
+BINOM.INV n=20 p=0.5 alpha=0.5	=BINOM.INV(20,0.5,0.5)	10	statistical	number
+BINOM.INV n=10 p=0.9 alpha=0.5	=BINOM.INV(10,0.9,0.5)	9	statistical	number
+BINOM.INV n=10 p=0.1 alpha=0.5	=BINOM.INV(10,0.1,0.5)	1	statistical	number
+LARGE k=1 10-elements	=LARGE({10,3,7,1,9,5,6,8,2,4},1)	10	statistical	number
+SMALL k=1 10-elements	=SMALL({10,3,7,1,9,5,6,8,2,4},1)	1	statistical	number
+LARGE k=2 10-elements	=LARGE({10,3,7,1,9,5,6,8,2,4},2)	9	statistical	number
+SMALL k=2 10-elements	=SMALL({10,3,7,1,9,5,6,8,2,4},2)	2	statistical	number
+LARGE k=3 10-elements	=LARGE({10,3,7,1,9,5,6,8,2,4},3)	8	statistical	number
+SMALL k=3 10-elements	=SMALL({10,3,7,1,9,5,6,8,2,4},3)	3	statistical	number
+LARGE k=4 10-elements	=LARGE({10,3,7,1,9,5,6,8,2,4},4)	7	statistical	number
+SMALL k=4 10-elements	=SMALL({10,3,7,1,9,5,6,8,2,4},4)	4	statistical	number
+LARGE k=5 10-elements	=LARGE({10,3,7,1,9,5,6,8,2,4},5)	6	statistical	number
+SMALL k=5 10-elements	=SMALL({10,3,7,1,9,5,6,8,2,4},5)	5	statistical	number
+LARGE k=6 10-elements	=LARGE({10,3,7,1,9,5,6,8,2,4},6)	5	statistical	number
+SMALL k=6 10-elements	=SMALL({10,3,7,1,9,5,6,8,2,4},6)	6	statistical	number
+LARGE k=7 10-elements	=LARGE({10,3,7,1,9,5,6,8,2,4},7)	4	statistical	number
+SMALL k=7 10-elements	=SMALL({10,3,7,1,9,5,6,8,2,4},7)	7	statistical	number
+LARGE k=8 10-elements	=LARGE({10,3,7,1,9,5,6,8,2,4},8)	3	statistical	number
+SMALL k=8 10-elements	=SMALL({10,3,7,1,9,5,6,8,2,4},8)	8	statistical	number
+LARGE k=9 10-elements	=LARGE({10,3,7,1,9,5,6,8,2,4},9)	2	statistical	number
+SMALL k=9 10-elements	=SMALL({10,3,7,1,9,5,6,8,2,4},9)	9	statistical	number
+LARGE k=10 10-elements	=LARGE({10,3,7,1,9,5,6,8,2,4},10)	1	statistical	number
+SMALL k=10 10-elements	=SMALL({10,3,7,1,9,5,6,8,2,4},10)	10	statistical	number
+MODE.SNGL no repeat returns first	=MODE.SNGL({3,1,4,1,5,9,2,6})	1	statistical	number
+MODE array larger	=MODE({1,2,3,3,4,5,5,5,6})	5	statistical	number
+GAMMALN x=3	=GAMMALN(3)	0.6931471805599453	statistical	number
+GAMMALN x=4	=GAMMALN(4)	1.791759469228055	statistical	number
+GAMMALN x=6	=GAMMALN(6)	4.787491742782046	statistical	number
+GAMMALN x=7	=GAMMALN(7)	6.579251212010101	statistical	number
+GAMMALN x=8	=GAMMALN(8)	8.525161361065415	statistical	number
+GAMMALN x=9	=GAMMALN(9)	10.60460290274525	statistical	number
+GAMMALN x=20	=GAMMALN(20)	39.3398841871995	statistical	number
+GAMMALN x=50	=GAMMALN(50)	144.56574394634492	statistical	number
+AVERAGE 10 values	=AVERAGE({1,2,3,4,5,6,7,8,9,10})	5.5	statistical	number
+STDEV 10 values	=STDEV({1,2,3,4,5,6,7,8,9,10})	3.0276503540974917	statistical	number
+MEDIAN 10 values	=MEDIAN({1,2,3,4,5,6,7,8,9,10})	5.5	statistical	number
+VAR 10 values	=VAR({1,2,3,4,5,6,7,8,9,10})	9.166666666666666	statistical	number

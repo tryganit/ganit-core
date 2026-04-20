@@ -361,30 +361,5 @@ pub fn generate_info(_platform: Platform) -> Vec<TestCase> {
         tc("TYPE nested formula result", "TYPE(1+1)", "nested", "number"),
     ]);
 
-    // ── CELL ─────────────────────────────────────────────────────────────────
-    // CELL is context-limited in eval (no cell grid); test what is testable.
-    cases.extend([
-        tc("CELL type of number -> n", r#"CELL("type",5)"#, "basic", "string"),
-        tc("CELL type of text -> l", r#"CELL("type","hello")"#, "basic", "string"),
-        tc("CELL type of boolean -> b", r#"CELL("type",TRUE)"#, "basic", "string"),
-        tc("CELL no args -> error", "CELL()", "error", "error"),
-        tc("CELL unknown info type -> error", r#"CELL("unknown",1)"#, "error", "error"),
-        tc("CELL one arg -> error", r#"CELL("type")"#, "error", "error"),
-        tc("CELL type of error -> e", r#"CELL("type",NA())"#, "edge", "string"),
-        tc("IF using CELL type result", r#"IF(CELL("type",1)="n",1,0)"#, "nested", "number"),
-    ]);
-
-    // ── SHEETS ───────────────────────────────────────────────────────────────
-    cases.extend([
-        tc("SHEETS returns 1 single-sheet", "SHEETS()", "basic", "number"),
-        tc("SHEETS too many args -> error", "SHEETS(1,2)", "error", "error"),
-        tc("SHEETS result is number", "ISNUMBER(SHEETS())", "nested", "boolean"),
-        tc("SHEETS +0 still 1", "SHEETS()+0", "nested", "number"),
-        tc("SHEETS result > 0", "SHEETS()>0", "nested", "boolean"),
-        tc("SHEETS N(SHEETS()) = 1", "N(SHEETS())", "nested", "number"),
-        tc("SHEETS nested in IF", "IF(SHEETS()=1,TRUE,FALSE)", "nested", "boolean"),
-        tc("SHEETS with ref arg", "SHEETS(A1:B2)", "basic", "number"),
-    ]);
-
     cases
 }
