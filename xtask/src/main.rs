@@ -1,7 +1,10 @@
 mod gen_array_filter;
 mod gen_database;
+mod gen_logical_info;
 mod gen_lookup;
 mod gen_math;
+mod gen_operator;
+mod gen_parser_web;
 mod gen_statistical;
 mod gen_text_date_eng_fin;
 mod generate;
@@ -146,6 +149,11 @@ fn run_oracle_evaluate(
         "engineering",
         "financial",
         "database",
+        "logical",
+        "info",
+        "operator",
+        "parser",
+        "web",
     ];
 
     for &cat in categories {
@@ -203,6 +211,11 @@ fn run_generate_fixtures(platform: Platform, category: Option<&str>, all: bool) 
         "engineering",
         "financial",
         "database",
+        "logical",
+        "info",
+        "operator",
+        "parser",
+        "web",
     ];
 
     for &cat in categories {
@@ -221,6 +234,11 @@ fn run_generate_fixtures(platform: Platform, category: Option<&str>, all: bool) 
             "engineering" => gen_text_date_eng_fin::generate_engineering(platform),
             "financial" => gen_text_date_eng_fin::generate_financial(platform),
             "database" => gen_database::generate(platform),
+            "logical" => gen_logical_info::generate_logical(platform),
+            "info" => gen_logical_info::generate_info(platform),
+            "operator" => gen_operator::generate_operator(platform),
+            "parser" => gen_parser_web::generate_parser(platform),
+            "web" => gen_parser_web::generate_web(platform),
             _ => vec![],
         };
 
