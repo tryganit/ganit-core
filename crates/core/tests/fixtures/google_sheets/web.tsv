@@ -1,0 +1,24 @@
+description	formula_text	expected_value	test_category	expected_type
+space -> %20	=ENCODEURL("hello world")	hello%20world	basic	string
+special chars encoded	=ENCODEURL("a+b=c&d")	a%2Bb%3Dc%26d	basic	string
+no special chars -> unchanged	=ENCODEURL("hello")	hello	basic	string
+empty string -> empty	=ENCODEURL("")		basic	string
+percent sign -> %25	=ENCODEURL("100%")	100%25	basic	string
+slash encoded	=ENCODEURL("a/b")	a%2Fb	edge	string
+nested: LEN of encoded space = 12	=LEN(ENCODEURL("hello world"))	13	nested	number
+error: no args -> #N/A	=ENCODEURL()	#N/A	error	error
+with label -> returns label	=HYPERLINK("https://example.com","Click here")	Click here	basic	string
+no label -> returns url	=HYPERLINK("https://example.com")	https://example.com	basic	string
+LEN of label = 5	=LEN(HYPERLINK("https://example.com","Click"))	5	nested	number
+empty label -> empty string	=HYPERLINK("https://example.com","")		basic	string
+numeric label coerced to text	=HYPERLINK("https://example.com",42)	42	coercion	number
+label with spaces -> returns label	=HYPERLINK("https://example.com","Go here now")	Go here now	basic	string
+error: no args -> #N/A	=HYPERLINK()	#N/A	error	error
+https url -> TRUE	=ISURL("https://example.com")	TRUE	basic	boolean
+http url -> TRUE	=ISURL("http://example.com")	TRUE	basic	boolean
+ftp url -> TRUE	=ISURL("ftp://example.com")	TRUE	basic	boolean
+plain text -> FALSE	=ISURL("not a url")	FALSE	basic	boolean
+empty string -> FALSE	=ISURL("")	FALSE	basic	boolean
+no scheme -> FALSE	=ISURL("example.com")	TRUE	basic	boolean
+number -> FALSE	=ISURL(42)	FALSE	coercion	boolean
+error: no args -> #N/A	=ISURL()	#N/A	error	error

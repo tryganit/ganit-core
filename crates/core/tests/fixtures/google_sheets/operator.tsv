@@ -1,0 +1,219 @@
+description	formula_text	expected_value	test_category	expected_type
+integers	=ADD(3,4)	7	basic	number
+decimals	=ADD(1.5,2.5)	4	basic	number
+negative	=ADD(-5,3)	-2	basic	number
+both negative	=ADD(-3,-4)	-7	basic	number
+zero addend	=ADD(5,0)	5	basic	number
+both zero	=ADD(0,0)	0	basic	number
+large numbers	=ADD(1E+15,1E+15)	2000000000000000	edge	number
+very small	=ADD(1E-15,1E-15)	0	edge	number
+TRUE coerces to 1	=ADD(TRUE,1)	2	coercion	number
+FALSE coerces to 0	=ADD(FALSE,5)	5	coercion	number
+text number "5"	=ADD("5",3)	8	coercion	number
+text "abc" -> #VALUE!	=ADD("abc",1)	#VALUE!	error	error
+empty string -> #VALUE!	=ADD("",1)	1	error	number
+#DIV/0! propagates	=ADD(1/0,1)	#DIV/0!	error	error
+#N/A propagates	=ADD(NA(),1)	#N/A	error	error
+no args -> error	=ADD()	#N/A	error	error
+one arg -> error	=ADD(1)	#N/A	error	error
+three args -> error	=ADD(1,2,3)	#N/A	error	error
+nested: ADD(ABS(-3),ABS(-4))	=ADD(ABS(-3),ABS(-4))	7	nested	number
+two strings	=CONCAT("Hello"," World")	Hello World	basic	string
+empty+text	=CONCAT("","hello")	hello	basic	string
+text+empty	=CONCAT("hello","")	hello	basic	string
+both empty	=CONCAT("","")		basic	string
+number+number -> text	=CONCAT(1,2)	12	coercion	number
+text+number	=CONCAT("x",5)	x5	coercion	string
+TRUE -> "TRUE"	=CONCAT(TRUE,"!")	TRUE!	coercion	string
+FALSE -> "FALSE"	=CONCAT(FALSE,"?")	FALSE?	coercion	string
+#DIV/0! propagates	=CONCAT(1/0,"x")	#DIV/0!	error	error
+#N/A propagates	=CONCAT(NA(),"x")	#N/A	error	error
+no args -> error	=CONCAT()	#N/A	error	error
+one arg -> error	=CONCAT("a")	#N/A	error	error
+three args -> error	=CONCAT("a","b","c")	#N/A	error	error
+nested: CONCAT(CHAR(65),CHAR(66))	=CONCAT(CHAR(65),CHAR(66))	AB	nested	string
+integer division	=DIVIDE(10,2)	5	basic	number
+fractional result	=DIVIDE(1,3)	0.3333333333	basic	number
+zero dividend	=DIVIDE(0,5)	0	basic	number
+negative dividend	=DIVIDE(-10,2)	-5	basic	number
+negative divisor	=DIVIDE(10,-2)	-5	basic	number
+both negative	=DIVIDE(-10,-2)	5	basic	number
+large numbers	=DIVIDE(1E+15,1E+5)	10000000000	edge	number
+very small divisor	=DIVIDE(1,1E-10)	10000000000	edge	number
+divide by zero -> #DIV/0!	=DIVIDE(5,0)	#DIV/0!	error	error
+zero by zero -> #DIV/0!	=DIVIDE(0,0)	#DIV/0!	error	error
+TRUE coercion (1/2)	=DIVIDE(TRUE,2)	0.5	coercion	number
+text "10" coercion	=DIVIDE("10",2)	5	coercion	number
+text "abc" -> #VALUE!	=DIVIDE("abc",2)	#VALUE!	error	error
+#N/A propagates	=DIVIDE(NA(),2)	#N/A	error	error
+no args -> error	=DIVIDE()	#N/A	error	error
+one arg -> error	=DIVIDE(10)	#N/A	error	error
+nested: DIVIDE(SUM(3,7),2)	=DIVIDE(SUM(3,7),2)	5	nested	number
+equal integers -> TRUE	=EQ(1,1)	TRUE	basic	boolean
+unequal integers -> FALSE	=EQ(1,2)	FALSE	basic	boolean
+equal strings -> TRUE	=EQ("abc","abc")	TRUE	basic	boolean
+case-insensitive match	=EQ("abc","ABC")	TRUE	basic	boolean
+different strings -> FALSE	=EQ("abc","xyz")	FALSE	basic	boolean
+equal decimals	=EQ(3.14,3.14)	TRUE	basic	boolean
+zero equals zero	=EQ(0,0)	TRUE	basic	boolean
+negative equality	=EQ(-5,-5)	TRUE	basic	boolean
+TRUE eq TRUE	=EQ(TRUE,TRUE)	TRUE	basic	boolean
+FALSE eq FALSE	=EQ(FALSE,FALSE)	TRUE	basic	boolean
+TRUE ne FALSE	=EQ(TRUE,FALSE)	FALSE	basic	boolean
+number vs text -> FALSE	=EQ(1,"1")	FALSE	edge	boolean
+TRUE vs 1 -> FALSE	=EQ(TRUE,1)	FALSE	edge	boolean
+#DIV/0! propagates	=EQ(1/0,1)	#DIV/0!	error	error
+#N/A propagates	=EQ(NA(),NA())	#N/A	error	error
+no args -> error	=EQ()	#N/A	error	error
+one arg -> error	=EQ(1)	#N/A	error	error
+nested: EQ(ABS(-5),5)	=EQ(ABS(-5),5)	TRUE	nested	boolean
+5 > 3 -> TRUE	=GT(5,3)	TRUE	basic	boolean
+3 > 5 -> FALSE	=GT(3,5)	FALSE	basic	boolean
+equal -> FALSE	=GT(5,5)	FALSE	basic	boolean
+negative: -1 > -2	=GT(-1,-2)	TRUE	basic	boolean
+zero comparison	=GT(0,-1)	TRUE	basic	boolean
+decimal: 3.2 > 3.1	=GT(3.2,3.1)	TRUE	basic	boolean
+TRUE coercion (1>0)	=GT(TRUE,FALSE)	TRUE	coercion	boolean
+text "b" > "a"	=GT("b","a")	TRUE	basic	boolean
+text case-insensitive	=GT("B","a")	TRUE	basic	boolean
+#DIV/0! propagates	=GT(1/0,1)	#DIV/0!	error	error
+no args -> error	=GT()	#N/A	error	error
+nested: GT(ABS(-5),3)	=GT(ABS(-5),3)	TRUE	nested	boolean
+5 >= 3 -> TRUE	=GTE(5,3)	TRUE	basic	boolean
+5 >= 5 -> TRUE (equal)	=GTE(5,5)	TRUE	basic	boolean
+3 >= 5 -> FALSE	=GTE(3,5)	FALSE	basic	boolean
+negative: -1 >= -1	=GTE(-1,-1)	TRUE	basic	boolean
+zero: 0 >= 0	=GTE(0,0)	TRUE	basic	boolean
+#DIV/0! propagates	=GTE(1/0,1)	#DIV/0!	error	error
+no args -> error	=GTE()	#N/A	error	error
+nested: GTE(MAX(1,2),2)	=GTE(MAX(1,2),2)	TRUE	nested	boolean
+3 < 5 -> TRUE	=LT(3,5)	TRUE	basic	boolean
+5 < 3 -> FALSE	=LT(5,3)	FALSE	basic	boolean
+equal -> FALSE	=LT(5,5)	FALSE	basic	boolean
+negative: -2 < -1	=LT(-2,-1)	TRUE	basic	boolean
+zero: -1 < 0	=LT(-1,0)	TRUE	basic	boolean
+#DIV/0! propagates	=LT(1/0,1)	#DIV/0!	error	error
+no args -> error	=LT()	#N/A	error	error
+nested: LT(MIN(1,2),2)	=LT(MIN(1,2),2)	TRUE	nested	boolean
+3 <= 5 -> TRUE	=LTE(3,5)	TRUE	basic	boolean
+5 <= 5 -> TRUE (equal)	=LTE(5,5)	TRUE	basic	boolean
+5 <= 3 -> FALSE	=LTE(5,3)	FALSE	basic	boolean
+negative: -1 <= -1	=LTE(-1,-1)	TRUE	basic	boolean
+#DIV/0! propagates	=LTE(1/0,1)	#DIV/0!	error	error
+no args -> error	=LTE()	#N/A	error	error
+nested: LTE(MIN(1,2),1)	=LTE(MIN(1,2),1)	TRUE	nested	boolean
+basic subtraction	=MINUS(10,3)	7	basic	number
+result zero	=MINUS(5,5)	0	basic	number
+negative result	=MINUS(3,10)	-7	basic	number
+both negative	=MINUS(-3,-1)	-2	basic	number
+subtract zero	=MINUS(5,0)	5	basic	number
+decimals	=MINUS(3.5,1.5)	2	basic	number
+large numbers	=MINUS(1E+15,1E+14)	900000000000000	edge	number
+TRUE coercion (1-0)	=MINUS(TRUE,FALSE)	1	coercion	number
+text "10" coercion	=MINUS("10",3)	7	coercion	number
+text "abc" -> #VALUE!	=MINUS("abc",1)	#VALUE!	error	error
+#DIV/0! propagates	=MINUS(1/0,1)	#DIV/0!	error	error
+no args -> error	=MINUS()	#N/A	error	error
+one arg -> error	=MINUS(5)	#N/A	error	error
+nested: MINUS(SUM(1,2),1)	=MINUS(SUM(1,2),1)	2	nested	number
+basic	=MULTIPLY(3,4)	12	basic	number
+by zero	=MULTIPLY(5,0)	0	basic	number
+by one (identity)	=MULTIPLY(7,1)	7	basic	number
+both negative -> positive	=MULTIPLY(-3,-4)	12	basic	number
+mixed sign -> negative	=MULTIPLY(-3,4)	-12	basic	number
+decimals	=MULTIPLY(2.5,4)	10	basic	number
+large numbers	=MULTIPLY(1E+10,1E+10)	100000000000000000000	edge	number
+overflow -> Infinity?	=MULTIPLY(1E+308,10)	#NUM!	edge	error
+TRUE coercion (1*5)	=MULTIPLY(TRUE,5)	5	coercion	number
+FALSE coercion (0*5)	=MULTIPLY(FALSE,5)	0	coercion	number
+text "3" coercion	=MULTIPLY("3",4)	12	coercion	number
+text "abc" -> #VALUE!	=MULTIPLY("abc",2)	#VALUE!	error	error
+#DIV/0! propagates	=MULTIPLY(1/0,2)	#DIV/0!	error	error
+no args -> error	=MULTIPLY()	#N/A	error	error
+nested: MULTIPLY(ADD(1,2),ADD(3,4))	=MULTIPLY(ADD(1,2),ADD(3,4))	21	nested	number
+1 ne 2 -> TRUE	=NE(1,2)	TRUE	basic	boolean
+1 ne 1 -> FALSE	=NE(1,1)	FALSE	basic	boolean
+strings differ -> TRUE	=NE("a","b")	TRUE	basic	boolean
+strings same -> FALSE	=NE("a","a")	FALSE	basic	boolean
+case-insensitive: "a" ne "A" -> FALSE	=NE("a","A")	FALSE	basic	boolean
+TRUE ne FALSE -> TRUE	=NE(TRUE,FALSE)	TRUE	basic	boolean
+TRUE ne TRUE -> FALSE	=NE(TRUE,TRUE)	FALSE	basic	boolean
+number ne text -> TRUE	=NE(1,"1")	TRUE	edge	boolean
+TRUE ne 1 -> TRUE	=NE(TRUE,1)	TRUE	edge	boolean
+#DIV/0! propagates	=NE(1/0,1)	#DIV/0!	error	error
+no args -> error	=NE()	#N/A	error	error
+nested: NE(ABS(-5),5)	=NE(ABS(-5),5)	FALSE	nested	boolean
+2^3 = 8	=POW(2,3)	8	basic	number
+10^2 = 100	=POW(10,2)	100	basic	number
+x^0 = 1	=POW(5,0)	1	basic	number
+x^1 = x	=POW(7,1)	7	basic	number
+0^0 = 1	=POW(0,0)	1	edge	number
+0^positive = 0	=POW(0,5)	0	edge	number
+negative^even = positive	=POW(-2,4)	16	basic	number
+negative^odd = negative	=POW(-2,3)	-8	basic	number
+fractional exponent	=POW(4,0.5)	2	basic	number
+negative^fractional -> #NUM!	=POW(-4,0.5)	#NUM!	error	error
+x^negative = 1/x^n	=POW(2,-3)	0.125	basic	number
+large result	=POW(10,300)	1000000000000000052504760255204420248704468581108159154915854115511802457988908195786371375080447864043704443832883878176942523235360430575644792184786706982848387200926575803737830233794788090059368953234970799945081119038967640880074652742780142494579258788820056842838115669472196386865459400540160	edge	number
+TRUE coercion (1^n)	=POW(TRUE,5)	1	coercion	number
+#DIV/0! propagates	=POW(1/0,2)	#DIV/0!	error	error
+no args -> error	=POW()	#N/A	error	error
+nested: POW(ABS(-3),2)	=POW(ABS(-3),2)	9	nested	number
+positive -> negative	=UMINUS(5)	-5	basic	number
+negative -> positive	=UMINUS(-5)	5	basic	number
+zero -> zero	=UMINUS(0)	0	basic	number
+decimal	=UMINUS(3.14)	-3.14	basic	number
+large	=UMINUS(1E+15)	-1000000000000000	edge	number
+double negate = identity	=UMINUS(UMINUS(7))	7	edge	number
+TRUE coerces to 1 -> -1	=UMINUS(TRUE)	-1	coercion	number
+FALSE coerces to 0 -> 0	=UMINUS(FALSE)	0	coercion	number
+text "5" -> -5	=UMINUS("5")	-5	coercion	number
+text "abc" -> #VALUE!	=UMINUS("abc")	#VALUE!	error	error
+#DIV/0! propagates	=UMINUS(1/0)	#DIV/0!	error	error
+no args -> error	=UMINUS()	#N/A	error	error
+too many args -> error	=UMINUS(1,2)	#N/A	error	error
+nested: UMINUS(ABS(-5))	=UMINUS(ABS(-5))	-5	nested	number
+50 -> 0.5	=UNARY_PERCENT(50)	0.5	basic	number
+100 -> 1	=UNARY_PERCENT(100)	1	basic	number
+200 -> 2	=UNARY_PERCENT(200)	2	basic	number
+0 -> 0	=UNARY_PERCENT(0)	0	basic	number
+1 -> 0.01	=UNARY_PERCENT(1)	0.01	basic	number
+0.5 -> 0.005	=UNARY_PERCENT(0.5)	0.005	basic	number
+negative: -50 -> -0.5	=UNARY_PERCENT(-50)	-0.5	basic	number
+large: 10000 -> 100	=UNARY_PERCENT(10000)	100	edge	number
+TRUE coercion (1/100)	=UNARY_PERCENT(TRUE)	0.01	coercion	number
+text "50" -> 0.5	=UNARY_PERCENT("50")	0.5	coercion	number
+text "abc" -> #VALUE!	=UNARY_PERCENT("abc")	#VALUE!	error	error
+#DIV/0! propagates	=UNARY_PERCENT(1/0)	#DIV/0!	error	error
+no args -> error	=UNARY_PERCENT()	#N/A	error	error
+nested: MULTIPLY(UNARY_PERCENT(50),200)	=MULTIPLY(UNARY_PERCENT(50),200)	100	nested	number
+positive -> same	=UPLUS(5)	5	basic	number
+negative -> same	=UPLUS(-5)	-5	basic	number
+zero -> 0	=UPLUS(0)	0	basic	number
+decimal -> same	=UPLUS(3.14)	3.14	basic	number
+large -> same	=UPLUS(1E+15)	1000000000000000	edge	number
+TRUE coerces to 1	=UPLUS(TRUE)	TRUE	coercion	boolean
+FALSE coerces to 0	=UPLUS(FALSE)	FALSE	coercion	boolean
+text "5" -> 5	=UPLUS("5")	5	coercion	number
+text "abc" -> #VALUE!	=UPLUS("abc")	abc	error	string
+#DIV/0! propagates	=UPLUS(1/0)	#DIV/0!	error	error
+no args -> error	=UPLUS()	#N/A	error	error
+too many args -> error	=UPLUS(1,2)	#N/A	error	error
+nested: UPLUS(ABS(-5))	=UPLUS(ABS(-5))	5	nested	number
+5 in [1,10] inclusive = TRUE	=ISBETWEEN(5,1,10,TRUE,TRUE)	TRUE	basic	boolean
+1 at lower bound inclusive = TRUE	=ISBETWEEN(1,1,10,TRUE,TRUE)	TRUE	basic	boolean
+1 at lower bound exclusive = FALSE	=ISBETWEEN(1,1,10,FALSE,TRUE)	FALSE	basic	boolean
+10 at upper bound inclusive = TRUE	=ISBETWEEN(10,1,10,TRUE,TRUE)	TRUE	basic	boolean
+10 at upper bound exclusive = FALSE	=ISBETWEEN(10,1,10,TRUE,FALSE)	FALSE	basic	boolean
+0 below range = FALSE	=ISBETWEEN(0,1,10,TRUE,TRUE)	FALSE	basic	boolean
+11 above range = FALSE	=ISBETWEEN(11,1,10,TRUE,TRUE)	FALSE	basic	boolean
+single-point range both inclusive = TRUE	=ISBETWEEN(5,5,5,TRUE,TRUE)	TRUE	edge	boolean
+single-point range lower exclusive = FALSE	=ISBETWEEN(5,5,5,FALSE,TRUE)	FALSE	edge	boolean
+error: no args -> #N/A	=ISBETWEEN()	#N/A	error	error
+normal unique count = 3	=COUNTA(UNIQUE({1,2,2,3,3,3},FALSE,FALSE))	6	basic	number
+exactly-once count: only 1 appears once	=COUNTA(UNIQUE({1,2,2,3,3,3},FALSE,TRUE))	6	basic	number
+sum of exactly-once items = 1	=SUM(UNIQUE({1,2,2,3,3,3},FALSE,TRUE))	14	basic	number
+string exactly-once: only "b"	=COUNTA(UNIQUE({"a","b","a"},FALSE,TRUE))	3	basic	number
+all appear once -> all unique	=COUNTA(UNIQUE({1,2,3},FALSE,TRUE))	3	basic	number
+all duplicates -> no exactly-once	=COUNTA(UNIQUE({1,1,2,2},FALSE,TRUE))	4	edge	number
+error: no args -> #N/A	=UNIQUE()	#N/A	error	error

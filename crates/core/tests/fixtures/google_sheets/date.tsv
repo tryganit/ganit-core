@@ -1,0 +1,253 @@
+description	formula_text	expected_value	test_category	expected_type
+2000-02-29 leap	=DATE(2000,2,29)	36585	basic	number
+2024-02-29 leap	=DATE(2024,2,29)	45351	basic	number
+month 13 -> Jan 2025	=DATE(2024,13,1)	45658	edge	number
+day 32 -> Feb 1	=DATE(2024,1,32)	45323	edge	number
+month 0 -> Dec 2023	=DATE(2024,0,1)	45261	edge	number
+day 0 -> last of prior month	=DATE(2024,3,0)	45351	edge	number
+negative day	=DATE(2024,3,-1)	45350	edge	number
+9999-12-31 max	=DATE(9999,12,31)	2958465	edge	number
+decimal year truncated	=DATE(2024.9,1,15)	45306	coercion	number
+decimal month truncated	=DATE(2024,6.9,15)	45458	coercion	number
+decimal day truncated	=DATE(2024,6,15.9)	45458	coercion	number
+TRUE coerces to 1 for month	=DATE(2024,TRUE,1)	45292	coercion	number
+text year -> #VALUE!	=DATE("abc",1,1)	#VALUE!	error	error
+no args -> error	=DATE()	#N/A	error	error
+too few args -> error	=DATE(2024,1)	#N/A	error	error
+nested: YEAR roundtrip	=YEAR(DATE(2024,6,15))	2024	nested	number
+nested: MONTH roundtrip	=MONTH(DATE(2024,6,15))	6	nested	number
+nested: DAY roundtrip	=DAY(DATE(2024,6,15))	15	nested	number
+Y: 2020 to 2024-06-15	=DATEDIF(DATE(2020,1,1),DATE(2024,6,15),"Y")	4	basic	number
+M: 2020 to 2024-06-15	=DATEDIF(DATE(2020,1,1),DATE(2024,6,15),"M")	53	basic	number
+D: 2024 Jan to Jun	=DATEDIF(DATE(2024,1,1),DATE(2024,6,15),"D")	166	basic	number
+MD: days ignoring M/Y	=DATEDIF(DATE(2024,1,5),DATE(2024,6,15),"MD")	10	basic	number
+YM: months ignoring year	=DATEDIF(DATE(2020,1,1),DATE(2024,6,15),"YM")	5	basic	number
+YD: days ignoring year	=DATEDIF(DATE(2020,1,1),DATE(2024,6,15),"YD")	166	basic	number
+Y: within same year	=DATEDIF(DATE(2024,1,1),DATE(2024,12,31),"Y")	0	basic	number
+D: same day -> 0	=DATEDIF(DATE(2024,6,15),DATE(2024,6,15),"D")	0	edge	number
+D: one day apart	=DATEDIF(DATE(2024,6,14),DATE(2024,6,15),"D")	1	edge	number
+D: across leap day Feb 2024	=DATEDIF(DATE(2024,2,1),DATE(2024,3,1),"D")	29	edge	number
+Y: crossing leap year	=DATEDIF(DATE(2023,3,1),DATE(2025,3,1),"Y")	2	edge	number
+error: start > end -> #NUM!	=DATEDIF(DATE(2024,6,15),DATE(2024,1,1),"D")	#NUM!	error	error
+error: invalid unit -> #NUM!	=DATEDIF(DATE(2024,1,1),DATE(2024,6,15),"X")	#NUM!	error	error
+nested: D matches 30-day span	=DATEDIF(DATE(2024,1,1),DATE(2024,1,31),"D")	30	nested	number
+ISO format	=DATEVALUE("2024-01-15")	45306	basic	number
+US slash format	=DATEVALUE("1/15/2024")	45306	basic	number
+long month name	=DATEVALUE("January 15, 2024")	45306	basic	number
+short month name	=DATEVALUE("Jan 15, 2024")	45306	basic	number
+zero-padded slash	=DATEVALUE("06/15/2024")	45458	basic	number
+Feb 29 leap year	=DATEVALUE("2024-02-29")	45351	edge	number
+error: invalid string -> #VALUE!	=DATEVALUE("abc")	#VALUE!	error	error
+error: Feb 29 non-leap -> #VALUE!	=DATEVALUE("2023-02-29")	#VALUE!	error	error
+error: empty string -> #VALUE!	=DATEVALUE("")	#VALUE!	error	error
+error: no args -> #N/A	=DATEVALUE()	#N/A	error	error
+nested: YEAR(DATEVALUE)	=YEAR(DATEVALUE("2024-06-15"))	2024	nested	number
+nested: MONTH(DATEVALUE)	=MONTH(DATEVALUE("2024-06-15"))	6	nested	number
+first day of month	=DAY(DATE(2024,1,1))	1	basic	number
+mid month	=DAY(DATE(2024,6,15))	15	basic	number
+last of Jan	=DAY(DATE(2024,1,31))	31	basic	number
+last of Feb leap 2024	=DAY(DATE(2024,2,29))	29	basic	number
+last of Dec	=DAY(DATE(2024,12,31))	31	basic	number
+serial 1 -> Jan 1 1900	=DAY(1)	31	edge	number
+serial 60 -> Feb 29 1900 bug	=DAY(60)	28	edge	number
+text date string	=DAY("2024-06-15")	15	coercion	number
+error: text -> #VALUE!	=DAY("abc")	#VALUE!	error	error
+error: no args -> #N/A	=DAY()	#N/A	error	error
+nested: DAY after +1 day	=DAY(DATE(2024,1,31)+1)	1	nested	number
+forward Jan to Jun 2024	=DAYS(DATE(2024,6,15),DATE(2024,1,1))	166	basic	number
+backward -> negative	=DAYS(DATE(2024,1,1),DATE(2024,6,15))	-166	basic	number
+same day -> 0	=DAYS(DATE(2024,6,15),DATE(2024,6,15))	0	basic	number
+one day	=DAYS(DATE(2024,1,2),DATE(2024,1,1))	1	basic	number
+across leap day Feb 2024	=DAYS(DATE(2024,3,1),DATE(2024,2,1))	29	edge	number
+full leap year 2024	=DAYS(DATE(2025,1,1),DATE(2024,1,1))	366	edge	number
+full non-leap year 2023	=DAYS(DATE(2024,1,1),DATE(2023,1,1))	365	edge	number
+error: no args -> #N/A	=DAYS()	#N/A	error	error
+nested: DAYS minus DATEDIF = 0	=DAYS(DATE(2024,6,15),DATE(2024,1,1))-DATEDIF(DATE(2024,1,1),DATE(2024,6,15),"D")	0	nested	number
+US method: full year	=DAYS360(DATE(2024,1,1),DATE(2024,12,31),FALSE)	360	basic	number
+Euro method: full year	=DAYS360(DATE(2024,1,1),DATE(2024,12,31),TRUE)	359	basic	number
+US: Jan to Apr	=DAYS360(DATE(2024,1,1),DATE(2024,4,1),FALSE)	90	basic	number
+default (US) method omitted	=DAYS360(DATE(2024,1,1),DATE(2024,4,1))	90	basic	number
+same day -> 0	=DAYS360(DATE(2024,6,15),DATE(2024,6,15))	0	edge	number
+US: Jan 31 to Feb 28	=DAYS360(DATE(2024,1,31),DATE(2024,2,28),FALSE)	28	edge	number
+Euro: Jan 31 to Feb 28	=DAYS360(DATE(2024,1,31),DATE(2024,2,28),TRUE)	28	edge	number
+backward: negative	=DAYS360(DATE(2024,4,1),DATE(2024,1,1))	-90	edge	number
+error: no args -> #N/A	=DAYS360()	#N/A	error	error
+add 1 month	=EDATE(DATE(2024,1,15),1)	45337	basic	number
+add 6 months	=EDATE(DATE(2024,1,15),6)	45488	basic	number
+subtract 1 month	=EDATE(DATE(2024,6,15),-1)	45427	basic	number
+subtract 12 months	=EDATE(DATE(2024,6,15),-12)	45092	basic	number
+0 months -> same date	=EDATE(DATE(2024,6,15),0)	45458	basic	number
+Jan 31 + 1 -> Feb 29 leap snap	=EDATE(DATE(2024,1,31),1)	45351	edge	number
+Jan 31 + 2 -> Mar 31	=EDATE(DATE(2024,1,31),2)	45382	edge	number
+Mar 31 - 1 -> Feb 29 leap snap	=EDATE(DATE(2024,3,31),-1)	45351	edge	number
+year rollover +13 months	=EDATE(DATE(2024,1,15),13)	45703	edge	number
+nested: MONTH after +1	=MONTH(EDATE(DATE(2024,1,15),1))	2	nested	number
+nested: YEAR after Dec +1	=YEAR(EDATE(DATE(2024,12,15),1))	2025	nested	number
+error: no args -> #N/A	=EDATE()	#N/A	error	error
+0 months: end of Jan	=EOMONTH(DATE(2024,1,15),0)	45322	basic	number
+0 months: end of Feb leap	=EOMONTH(DATE(2024,2,1),0)	45351	basic	number
+0 months: end of Feb non-leap	=EOMONTH(DATE(2023,2,1),0)	44985	basic	number
++1 month: Jan -> end Feb leap	=EOMONTH(DATE(2024,1,15),1)	45351	basic	number
+-1 month: Mar -> end Feb leap	=EOMONTH(DATE(2024,3,15),-1)	45351	basic	number
+0 months: end of Dec	=EOMONTH(DATE(2024,12,1),0)	45657	basic	number
++1 month across year: Dec -> Jan	=EOMONTH(DATE(2024,12,1),1)	45688	edge	number
+-12 months back one year	=EOMONTH(DATE(2024,6,15),-12)	45107	edge	number
+nested: DAY(EOMONTH Feb leap)=29	=DAY(EOMONTH(DATE(2024,2,1),0))	29	nested	number
+nested: DAY(EOMONTH Feb non-leap)=28	=DAY(EOMONTH(DATE(2023,2,1),0))	28	nested	number
+error: no args -> #N/A	=EOMONTH()	#N/A	error	error
+epoch 0 -> 1970-01-01	=EPOCHTODATE(0,1)	25569	basic	number
+1 day in seconds	=EPOCHTODATE(86400,1)	25570	basic	number
+known timestamp Jan 15 2024	=EPOCHTODATE(1705276800,1)	45306	basic	number
+nested: YEAR(epoch 0) = 1970	=YEAR(EPOCHTODATE(0,1))	1970	nested	number
+nested: MONTH(epoch 0) = 1	=MONTH(EPOCHTODATE(0,1))	1	nested	number
+nested: DAY(epoch 0) = 1	=DAY(EPOCHTODATE(0,1))	1	nested	number
+nested: YEAR(1705276800 sec)	=YEAR(EPOCHTODATE(1705276800,1))	2024	nested	number
+error: no args -> #N/A	=EPOCHTODATE()	#N/A	error	error
+14:30 -> 14	=HOUR(TIME(14,30,0))	14	basic	number
+midnight -> 0	=HOUR(TIME(0,0,0))	0	basic	number
+23:59 -> 23	=HOUR(TIME(23,59,0))	23	basic	number
+noon -> 12	=HOUR(TIME(12,0,0))	12	basic	number
+0.5 serial (noon)	=HOUR(0.5)	12	edge	number
+0.0 serial (midnight)	=HOUR(0)	0	edge	number
+text time string	=HOUR("14:30:00")	14	coercion	number
+error: text -> #VALUE!	=HOUR("abc")	#VALUE!	error	error
+error: no args -> #N/A	=HOUR()	#N/A	error	error
+nested: HOUR sum	=HOUR(TIME(9,0,0))+HOUR(TIME(5,0,0))	14	nested	number
+2024-01-01 Mon -> week 1	=ISOWEEKNUM(DATE(2024,1,1))	1	basic	number
+2024-01-07 Sun -> week 1	=ISOWEEKNUM(DATE(2024,1,7))	1	basic	number
+2024-01-08 Mon -> week 2	=ISOWEEKNUM(DATE(2024,1,8))	2	basic	number
+2024-06-15 -> week 24	=ISOWEEKNUM(DATE(2024,6,15))	24	basic	number
+2024-12-28 last full week	=ISOWEEKNUM(DATE(2024,12,28))	52	basic	number
+2024-12-30 Mon -> week 1 of 2025	=ISOWEEKNUM(DATE(2024,12,30))	1	edge	number
+2025-01-01 -> week 1 of 2025	=ISOWEEKNUM(DATE(2025,1,1))	1	edge	number
+2015-12-31 -> week 53	=ISOWEEKNUM(DATE(2015,12,31))	53	edge	number
+error: no args -> #N/A	=ISOWEEKNUM()	#N/A	error	error
+30 minutes	=MINUTE(TIME(14,30,0))	30	basic	number
+0 minutes	=MINUTE(TIME(14,0,0))	0	basic	number
+59 minutes	=MINUTE(TIME(14,59,0))	59	basic	number
+0.5 serial (noon) -> 0 min	=MINUTE(0.5)	0	edge	number
+text time string	=MINUTE("14:30:00")	30	coercion	number
+error: text -> #VALUE!	=MINUTE("abc")	#VALUE!	error	error
+error: no args -> #N/A	=MINUTE()	#N/A	error	error
+nested: MINUTE * 2	=MINUTE(TIME(0,45,0))*2	90	nested	number
+June -> 6	=MONTH(DATE(2024,6,15))	6	basic	number
+January -> 1	=MONTH(DATE(2024,1,1))	1	basic	number
+December -> 12	=MONTH(DATE(2024,12,31))	12	basic	number
+February -> 2	=MONTH(DATE(2024,2,29))	2	basic	number
+serial 1 -> Jan	=MONTH(1)	12	edge	number
+serial 60 -> Feb (1900 bug)	=MONTH(60)	2	edge	number
+text date string	=MONTH("2024-06-15")	6	coercion	number
+error: text -> #VALUE!	=MONTH("abc")	#VALUE!	error	error
+error: no args -> #N/A	=MONTH()	#N/A	error	error
+nested: MONTH after EDATE +1	=MONTH(EDATE(DATE(2024,6,15),1))	7	nested	number
+Mon-Fri: 5 days	=NETWORKDAYS(DATE(2024,1,1),DATE(2024,1,5))	5	basic	number
+same day Mon -> 1	=NETWORKDAYS(DATE(2024,1,1),DATE(2024,1,1))	1	basic	number
+Mon to Sun -> 5 workdays	=NETWORKDAYS(DATE(2024,1,1),DATE(2024,1,7))	5	basic	number
+Mon to Mon next week -> 6	=NETWORKDAYS(DATE(2024,1,1),DATE(2024,1,8))	6	basic	number
+Sat to Sun -> 0	=NETWORKDAYS(DATE(2024,1,6),DATE(2024,1,7))	0	basic	number
+same Sat -> 0	=NETWORKDAYS(DATE(2024,1,6),DATE(2024,1,6))	0	edge	number
+same Sun -> 0	=NETWORKDAYS(DATE(2024,1,7),DATE(2024,1,7))	0	edge	number
+backward -> negative	=NETWORKDAYS(DATE(2024,1,8),DATE(2024,1,1))	-6	edge	number
+two full weeks -> 10	=NETWORKDAYS(DATE(2024,1,1),DATE(2024,1,14))	10	nested	number
+error: no args -> #N/A	=NETWORKDAYS()	#N/A	error	error
+weekend=1 Sat+Sun: Mon-Fri 5d	=NETWORKDAYS.INTL(DATE(2024,1,1),DATE(2024,1,5),1)	5	basic	number
+weekend=2 Sun+Mon: Tue-Sat 5d	=NETWORKDAYS.INTL(DATE(2024,1,2),DATE(2024,1,6),2)	5	basic	number
+weekend=7 Fri+Sat: Mon-Thu	=NETWORKDAYS.INTL(DATE(2024,1,1),DATE(2024,1,4),7)	4	basic	number
+string mask "0000011" Sat+Sun	=NETWORKDAYS.INTL(DATE(2024,1,1),DATE(2024,1,5),"0000011")	5	basic	number
+same workday -> 1	=NETWORKDAYS.INTL(DATE(2024,1,1),DATE(2024,1,1),1)	1	edge	number
+error: invalid code -> #NUM!	=NETWORKDAYS.INTL(DATE(2024,1,1),DATE(2024,1,5),15)	4	error	number
+error: no args -> #N/A	=NETWORKDAYS.INTL()	#N/A	error	error
+returns a number	=ISNUMBER(NOW())	TRUE	basic	boolean
+is after 2024-01-01	=NOW()>=DATE(2024,1,1)	TRUE	basic	boolean
+has fractional time part	=MOD(NOW(),1)>=0	TRUE	basic	boolean
+nested: YEAR(NOW())>=2024	=YEAR(NOW())>=2024	TRUE	nested	boolean
+45 seconds	=SECOND(TIME(14,30,45))	45	basic	number
+0 seconds	=SECOND(TIME(14,30,0))	0	basic	number
+59 seconds	=SECOND(TIME(14,30,59))	59	basic	number
+serial 0 -> 0 sec	=SECOND(0)	0	edge	number
+text time string	=SECOND("14:30:45")	45	coercion	number
+error: text -> #VALUE!	=SECOND("abc")	#VALUE!	error	error
+error: no args -> #N/A	=SECOND()	#N/A	error	error
+nested: SECOND * 2	=SECOND(TIME(0,0,30))*2	60	nested	number
+noon -> 0.5	=TIME(12,0,0)	0.5	basic	number
+midnight -> 0	=TIME(0,0,0)	0	basic	number
+second overflow wraps	=TIME(0,0,60)	0.0006944444	edge	number
+minute overflow wraps	=TIME(0,60,0)	0.0416666667	edge	number
+hour=24 wraps to 0	=TIME(24,0,0)	0	edge	number
+decimal hour truncated	=TIME(14.9,0,0)	0.5833333333	coercion	number
+error: negative hour -> #NUM!	=TIME(-1,0,0)	#NUM!	error	error
+error: no args -> #N/A	=TIME()	#N/A	error	error
+nested: HOUR(TIME(14,30,0))=14	=HOUR(TIME(14,30,0))	14	nested	number
+nested: MINUTE(TIME(14,30,0))=30	=MINUTE(TIME(14,30,0))	30	nested	number
+noon -> 0.5	=TIMEVALUE("12:00:00")	0.5	basic	number
+6am -> 0.25	=TIMEVALUE("6:00:00")	0.25	basic	number
+midnight -> 0	=TIMEVALUE("00:00:00")	0	basic	number
+PM notation	=TIMEVALUE("2:30 PM")	0.6041666667	basic	number
+23:59:59 edge	=TIMEVALUE("23:59:59")	0.9999884259	edge	number
+error: invalid -> #VALUE!	=TIMEVALUE("abc")	#VALUE!	error	error
+error: no args -> #N/A	=TIMEVALUE()	#N/A	error	error
+nested: HOUR(TIMEVALUE)=14	=HOUR(TIMEVALUE("14:30:00"))	14	nested	number
+nested: MINUTE(TIMEVALUE)=30	=MINUTE(TIMEVALUE("14:30:00"))	30	nested	number
+returns a number	=ISNUMBER(TODAY())	TRUE	basic	boolean
+is after 2024-01-01	=TODAY()>=DATE(2024,1,1)	TRUE	basic	boolean
+no fractional part	=TODAY()=INT(TODAY())	TRUE	basic	boolean
+nested: YEAR(TODAY())>=2024	=YEAR(TODAY())>=2024	TRUE	nested	boolean
+2024-01-01 Mon type1 -> 2	=WEEKDAY(DATE(2024,1,1),1)	2	basic	number
+2024-01-01 Mon type2 -> 1	=WEEKDAY(DATE(2024,1,1),2)	1	basic	number
+2024-01-01 Mon type3 -> 0	=WEEKDAY(DATE(2024,1,1),3)	0	basic	number
+2024-01-07 Sun type1 -> 1	=WEEKDAY(DATE(2024,1,7),1)	1	basic	number
+2024-01-07 Sun type2 -> 7	=WEEKDAY(DATE(2024,1,7),2)	7	basic	number
+2024-01-06 Sat type1 -> 7	=WEEKDAY(DATE(2024,1,6),1)	7	basic	number
+2024-01-06 Sat type2 -> 6	=WEEKDAY(DATE(2024,1,6),2)	6	basic	number
+default type omitted (=type1)	=WEEKDAY(DATE(2024,1,1))	2	basic	number
+type 11 (Mon=1, ISO-style)	=WEEKDAY(DATE(2024,1,1),11)	1	edge	number
+error: invalid type -> #NUM!	=WEEKDAY(DATE(2024,1,1),8)	#NUM!	error	error
+error: no args -> #N/A	=WEEKDAY()	#N/A	error	error
+nested: detect weekend Sat	=IF(WEEKDAY(DATE(2024,1,6),2)>=6,TRUE,FALSE)	TRUE	nested	boolean
+2024-01-01 -> wk 1 type1	=WEEKNUM(DATE(2024,1,1),1)	1	basic	number
+2024-01-07 Sun -> wk 2 type1	=WEEKNUM(DATE(2024,1,7),1)	2	basic	number
+2024-01-08 Mon -> wk 3 type1	=WEEKNUM(DATE(2024,1,8),1)	2	basic	number
+2024-01-01 -> wk 1 type2	=WEEKNUM(DATE(2024,1,1),2)	1	basic	number
+2024-01-07 Sun -> wk 1 type2	=WEEKNUM(DATE(2024,1,7),2)	1	basic	number
+2024-01-08 Mon -> wk 2 type2	=WEEKNUM(DATE(2024,1,8),2)	2	basic	number
+2024-12-31 last week	=WEEKNUM(DATE(2024,12,31),1)	53	edge	number
+error: no args -> #N/A	=WEEKNUM()	#N/A	error	error
+nested: WEEKNUM minus ISOWEEKNUM	=WEEKNUM(DATE(2024,1,1),1)-ISOWEEKNUM(DATE(2024,1,1))	0	nested	number
+Mon + 5 -> next Mon	=WORKDAY(DATE(2024,1,1),5)	45299	basic	number
+Mon + 1 -> Tue	=WORKDAY(DATE(2024,1,1),1)	45293	basic	number
+Fri + 1 -> Mon (skip weekend)	=WORKDAY(DATE(2024,1,5),1)	45299	basic	number
+Mon - 1 -> prior Fri	=WORKDAY(DATE(2024,1,1),-1)	45289	basic	number
+0 days -> same date	=WORKDAY(DATE(2024,1,5),0)	45296	basic	number
+Sat start + 1 -> Mon	=WORKDAY(DATE(2024,1,6),1)	45299	edge	number
+Sun start + 1 -> Mon	=WORKDAY(DATE(2024,1,7),1)	45299	edge	number
+nested: WEEKDAY(WORKDAY Mon+1)=Tue	=WEEKDAY(WORKDAY(DATE(2024,1,1),1),2)	2	nested	number
+nested: WEEKDAY(WORKDAY Fri+1)=Mon	=WEEKDAY(WORKDAY(DATE(2024,1,5),1),2)	1	nested	number
+error: no args -> #N/A	=WORKDAY()	#N/A	error	error
+weekend=1 Sat+Sun Mon+5	=WORKDAY.INTL(DATE(2024,1,1),5,1)	45299	basic	number
+weekend=7 Fri+Sat Mon+1	=WORKDAY.INTL(DATE(2024,1,1),1,7)	45293	basic	number
+mask "0000011" Mon+5	=WORKDAY.INTL(DATE(2024,1,1),5,"0000011")	45299	basic	number
+0 days -> same date	=WORKDAY.INTL(DATE(2024,1,1),0,1)	45292	basic	number
+negative: -1 -> prior Fri	=WORKDAY.INTL(DATE(2024,1,1),-1,1)	45289	edge	number
+error: invalid code -> #NUM!	=WORKDAY.INTL(DATE(2024,1,1),1,15)	45293	error	number
+error: no args -> #N/A	=WORKDAY.INTL()	#N/A	error	error
+nested: WEEKDAY check	=WEEKDAY(WORKDAY.INTL(DATE(2024,1,5),1,1),2)	1	nested	number
+2024	=YEAR(DATE(2024,6,15))	2024	basic	number
+1900	=YEAR(DATE(1900,1,1))	1900	basic	number
+9999	=YEAR(DATE(9999,12,31))	9999	basic	number
+leap year 2024	=YEAR(DATE(2024,2,29))	2024	basic	number
+serial 1 -> 1900	=YEAR(1)	1899	edge	number
+serial 60 -> 1900 bug	=YEAR(60)	1900	edge	number
+text date string	=YEAR("2024-06-15")	2024	coercion	number
+error: text -> #VALUE!	=YEAR("abc")	#VALUE!	error	error
+error: no args -> #N/A	=YEAR()	#N/A	error	error
+nested: YEAR(EDATE across year)	=YEAR(EDATE(DATE(2024,12,15),1))	2025	nested	number
+conv 0 US 30/360: full year	=YEARFRAC(DATE(2024,1,1),DATE(2025,1,1),0)	1	basic	number
+conv 1 actual/actual: full year	=YEARFRAC(DATE(2024,1,1),DATE(2025,1,1),1)	1	basic	number
+conv 2 actual/360: full year	=YEARFRAC(DATE(2024,1,1),DATE(2025,1,1),2)	1.016666667	basic	number
+conv 3 actual/365: full year	=YEARFRAC(DATE(2024,1,1),DATE(2025,1,1),3)	1.002739726	basic	number
+conv 4 Euro 30/360: full year	=YEARFRAC(DATE(2024,1,1),DATE(2025,1,1),4)	1	basic	number
+default convention (0)	=YEARFRAC(DATE(2024,1,1),DATE(2025,1,1))	1	basic	number
+half year conv 0	=YEARFRAC(DATE(2024,1,1),DATE(2024,7,1),0)	0.5	edge	number
+same day -> 0	=YEARFRAC(DATE(2024,6,15),DATE(2024,6,15),0)	0	edge	number
+error: no args -> #N/A	=YEARFRAC()	#N/A	error	error
+nested: YEARFRAC*12 ~ months	=ROUND(YEARFRAC(DATE(2024,1,1),DATE(2024,7,1),0)*12,0)	6	nested	number

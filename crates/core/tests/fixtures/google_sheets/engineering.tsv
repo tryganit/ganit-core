@@ -1,0 +1,472 @@
+description	formula_text	expected_value	test_category	expected_type
+1010 -> 10	=BIN2DEC("1010")	10	basic	number
+11111111 -> 255	=BIN2DEC("11111111")	255	basic	number
+0 -> 0	=BIN2DEC("0")	0	basic	number
+1 -> 1	=BIN2DEC("1")	1	basic	number
+10 -> 2	=BIN2DEC("10")	2	basic	number
+100000000 -> 256... sign bit: 1111111111 -> -1	=BIN2DEC("1111111111")	-1	edge	number
+1000000000 -> -512 (most negative)	=BIN2DEC("1000000000")	-512	edge	number
+0111111111 -> 511 (max positive)	=BIN2DEC("0111111111")	511	edge	number
+leading zero preserved: 01 -> 1	=BIN2DEC("01")	1	basic	number
+non-binary digit 2 -> #NUM!	=BIN2DEC("2")	#NUM!	error	error
+empty string -> #NUM!	=BIN2DEC("")	0	error	number
+too long (11 digits) -> #NUM!	=BIN2DEC("12345678901")	#NUM!	error	error
+nested: BIN2DEC+BIN2DEC	=BIN2DEC("1010")+BIN2DEC("0101")	15	nested	number
+1111 -> F	=BIN2HEX("1111")	F	basic	string
+11111111 -> FF	=BIN2HEX("11111111")	FF	basic	string
+0 -> 0	=BIN2HEX("0")	0	basic	number
+1000 -> 8	=BIN2HEX("1000")	8	basic	number
+1111 with 2 digits -> 0F	=BIN2HEX("1111",2)	0F	basic	string
+1111 with 4 digits -> 000F	=BIN2HEX("1111",4)	000F	edge	string
+sign bit: 1111111111 -> FFFFFFFFFF	=BIN2HEX("1111111111")	FFFFFFFFFF	edge	string
+significant_digits=0 -> #NUM!	=BIN2HEX("1111",0)	#NUM!	error	error
+invalid digit -> #NUM!	=BIN2HEX("2")	#NUM!	error	error
+empty string -> #NUM!	=BIN2HEX("")	0	error	number
+nested: BIN2HEX same as DEC2HEX(BIN2DEC)	=BIN2HEX("1010")=DEC2HEX(BIN2DEC("1010"))	TRUE	nested	boolean
+111 -> 7	=BIN2OCT("111")	7	basic	number
+1000 -> 10	=BIN2OCT("1000")	10	basic	number
+0 -> 0	=BIN2OCT("0")	0	basic	number
+11111111 -> 377	=BIN2OCT("11111111")	377	basic	number
+1111 with 4 digits -> 0017	=BIN2OCT("1111",4)	17	basic	number
+sign bit: 1111111111 -> 7777777777	=BIN2OCT("1111111111")	7777777777	edge	number
+1000000000 -> 7777777000 (negative)	=BIN2OCT("1000000000")	7777777000	edge	number
+invalid digit -> #NUM!	=BIN2OCT("2")	#NUM!	error	error
+empty string -> #NUM!	=BIN2OCT("")	0	error	number
+too many digits requested -> #NUM!	=BIN2OCT("111",0)	#NUM!	error	error
+nested: BIN2OCT matches DEC2OCT	=BIN2OCT("111")=DEC2OCT(BIN2DEC("111"))	TRUE	nested	boolean
+12 AND 10 -> 8	=BITAND(12,10)	8	basic	number
+0 AND 255 -> 0	=BITAND(0,255)	0	basic	number
+255 AND 255 -> 255	=BITAND(255,255)	255	basic	number
+15 AND 9 -> 9	=BITAND(15,9)	9	basic	number
+6 AND 3 -> 2	=BITAND(6,3)	2	basic	number
+large: 2^48-1 AND 0 -> 0	=BITAND(281474976710655,0)	0	edge	number
+same value: 42 AND 42 -> 42	=BITAND(42,42)	42	edge	number
+power of 2 isolation: 8 AND 12 -> 8	=BITAND(8,12)	8	basic	number
+negative input -> #NUM!	=BITAND(-1,5)	#NUM!	error	error
+non-integer -> #NUM!	=BITAND(1.5,3)	#NUM!	error	error
+no args -> error	=BITAND()	#N/A	error	error
+nested: BITAND result used in BITOR	=BITOR(BITAND(12,10),3)	11	nested	number
+1 left 3 -> 8	=BITLSHIFT(1,3)	8	basic	number
+2 left 2 -> 8	=BITLSHIFT(2,2)	8	basic	number
+1 left 0 -> 1	=BITLSHIFT(1,0)	1	basic	number
+5 left 1 -> 10	=BITLSHIFT(5,1)	10	basic	number
+255 left 1 -> 510	=BITLSHIFT(255,1)	510	basic	number
+1 left 48 -> max allowed	=BITLSHIFT(1,48)	#NUM!	edge	error
+negative shift amount (right shift) -> #NUM!	=BITLSHIFT(1,-1)	0	error	number
+shift > 48 -> #NUM!	=BITLSHIFT(1,49)	#NUM!	error	error
+negative value -> #NUM!	=BITLSHIFT(-1,1)	#NUM!	error	error
+no args -> error	=BITLSHIFT()	#N/A	error	error
+nested: BITLSHIFT then BITRSHIFT	=BITRSHIFT(BITLSHIFT(3,2),2)	3	nested	number
+nested: compare to multiply by 2	=BITLSHIFT(5,1)=5*2	TRUE	nested	boolean
+12 OR 10 -> 14	=BITOR(12,10)	14	basic	number
+0 OR 255 -> 255	=BITOR(0,255)	255	basic	number
+0 OR 0 -> 0	=BITOR(0,0)	0	basic	number
+5 OR 3 -> 7	=BITOR(5,3)	7	basic	number
+6 OR 3 -> 7	=BITOR(6,3)	7	basic	number
+same bits: 42 OR 42 -> 42	=BITOR(42,42)	42	edge	number
+large numbers	=BITOR(281474976710654,1)	281474976710655	edge	number
+negative input -> #NUM!	=BITOR(-1,5)	#NUM!	error	error
+no args -> error	=BITOR()	#N/A	error	error
+nested: BITOR with BITAND	=BITOR(BITAND(12,10),BITXOR(12,10))	14	nested	number
+nested: BITOR result equals sum for disjoint bits	=BITOR(4,3)=4+3	TRUE	nested	boolean
+8 right 3 -> 1	=BITRSHIFT(8,3)	1	basic	number
+16 right 2 -> 4	=BITRSHIFT(16,2)	4	basic	number
+5 right 1 -> 2	=BITRSHIFT(5,1)	2	basic	number
+1 right 0 -> 1	=BITRSHIFT(1,0)	1	basic	number
+255 right 4 -> 15	=BITRSHIFT(255,4)	15	basic	number
+1 right 1 -> 0	=BITRSHIFT(1,1)	0	basic	number
+large: 2^48-1 right 47 -> 1	=BITRSHIFT(281474976710655,47)	1	edge	number
+negative value -> #NUM!	=BITRSHIFT(-8,1)	#NUM!	error	error
+negative shift -> #NUM!	=BITRSHIFT(8,-1)	16	error	number
+shift > 48 -> #NUM!	=BITRSHIFT(1,49)	0	error	number
+no args -> error	=BITRSHIFT()	#N/A	error	error
+nested: compare to INT divide by 2	=BITRSHIFT(10,1)=INT(10/2)	TRUE	nested	boolean
+12 XOR 10 -> 6	=BITXOR(12,10)	6	basic	number
+0 XOR 255 -> 255	=BITXOR(0,255)	255	basic	number
+255 XOR 255 -> 0	=BITXOR(255,255)	0	basic	number
+5 XOR 3 -> 6	=BITXOR(5,3)	6	basic	number
+6 XOR 3 -> 5	=BITXOR(6,3)	5	basic	number
+same value XOR -> 0: 42 XOR 42	=BITXOR(42,42)	0	edge	number
+0 XOR 0 -> 0	=BITXOR(0,0)	0	edge	number
+negative input -> #NUM!	=BITXOR(-1,5)	#NUM!	error	error
+no args -> error	=BITXOR()	#N/A	error	error
+nested: XOR self-inverse: XOR twice = original	=BITXOR(BITXOR(42,99),99)	42	nested	number
+nested: BITXOR with BITAND: check disjoint	=BITXOR(12,10)=BITOR(12,10)-BITAND(12,10)	TRUE	nested	boolean
+10 -> 1010	=DEC2BIN(10)	1010	basic	number
+255 -> 11111111	=DEC2BIN(255)	11111111	basic	number
+0 -> 0	=DEC2BIN(0)	0	basic	number
+1 -> 1	=DEC2BIN(1)	1	basic	number
+2 -> 10	=DEC2BIN(2)	10	basic	number
+10 with 8 digits -> 00001010	=DEC2BIN(10,8)	1010	basic	number
+-1 -> 1111111111 (signed)	=DEC2BIN(-1)	1111111111	edge	number
+-512 -> 1000000000 (most negative)	=DEC2BIN(-512)	1000000000	edge	number
+511 -> 0111111111 (max positive)	=DEC2BIN(511)	111111111	edge	number
+512 out of range -> #NUM!	=DEC2BIN(512)	#NUM!	error	error
+-513 out of range -> #NUM!	=DEC2BIN(-513)	#NUM!	error	error
+significant_digits=0 -> #NUM!	=DEC2BIN(5,0)	#NUM!	error	error
+nested: roundtrip BIN2DEC(DEC2BIN)	=BIN2DEC(DEC2BIN(42))	42	nested	number
+nested: width forces leading zeros	=LEN(DEC2BIN(1,8))	8	nested	number
+255 -> FF	=DEC2HEX(255)	FF	basic	string
+16 -> 10	=DEC2HEX(16)	10	basic	number
+0 -> 0	=DEC2HEX(0)	0	basic	number
+10 -> A	=DEC2HEX(10)	A	basic	string
+255 with 4 digits -> 00FF	=DEC2HEX(255,4)	00FF	basic	string
+-1 -> FFFFFFFFFF	=DEC2HEX(-1)	FFFFFFFFFF	edge	string
+max: 549755813887 -> 7FFFFFFFFF	=DEC2HEX(549755813887)	7FFFFFFFFF	edge	string
+min: -549755813888 -> 8000000000	=DEC2HEX(-549755813888)	8000000000	edge	number
+too large -> #NUM!	=DEC2HEX(549755813888)	#NUM!	error	error
+significant_digits=0 -> #NUM!	=DEC2HEX(10,0)	#NUM!	error	error
+no args -> error	=DEC2HEX()	#N/A	error	error
+nested: roundtrip HEX2DEC(DEC2HEX)	=HEX2DEC(DEC2HEX(255))	255	nested	number
+8 -> 10	=DEC2OCT(8)	10	basic	number
+64 -> 100	=DEC2OCT(64)	100	basic	number
+0 -> 0	=DEC2OCT(0)	0	basic	number
+7 -> 7	=DEC2OCT(7)	7	basic	number
+8 with 4 digits -> 0010	=DEC2OCT(8,4)	10	basic	number
+-1 -> 7777777777	=DEC2OCT(-1)	7777777777	edge	number
+max: 536870911	=DEC2OCT(536870911)	3777777777	edge	number
+min: -536870912	=DEC2OCT(-536870912)	4000000000	edge	number
+too large -> #NUM!	=DEC2OCT(536870912)	#NUM!	error	error
+significant_digits=0 -> #NUM!	=DEC2OCT(8,0)	#NUM!	error	error
+no args -> error	=DEC2OCT()	#N/A	error	error
+nested: roundtrip OCT2DEC(DEC2OCT)	=OCT2DEC(DEC2OCT(64))	64	nested	number
+5=5 -> 1	=DELTA(5,5)	1	basic	number
+3!=5 -> 0	=DELTA(3,5)	0	basic	number
+0=0 -> 1	=DELTA(0,0)	1	basic	number
+default second arg=0: DELTA(0) -> 1	=DELTA(0)	1	basic	number
+default second arg=0: DELTA(1) -> 0	=DELTA(1)	0	basic	number
+negative equal: -5=-5 -> 1	=DELTA(-5,-5)	1	basic	number
+1.5=1.5 -> 1	=DELTA(1.5,1.5)	1	edge	number
+1.0=1 -> 1	=DELTA(1.0,1)	1	edge	number
+very close but not equal -> 0	=DELTA(1.00000001,1)	0	edge	number
+coercion: text "5" -> #VALUE!	=DELTA("5",5)	1	coercion	number
+no args -> error	=DELTA()	#N/A	error	error
+nested: DELTA in SUM	=DELTA(5,5)+DELTA(3,3)	2	nested	number
+nested: IF(DELTA(...))	=IF(DELTA(2,2),"equal","not")	equal	nested	string
+5>=3 -> 1	=GESTEP(5,3)	1	basic	number
+3>=5 -> 0 (below step)	=GESTEP(3,5)	0	basic	number
+5>=5 -> 1 (equal)	=GESTEP(5,5)	1	basic	number
+default step=0: GESTEP(1) -> 1	=GESTEP(1)	1	basic	number
+default step=0: GESTEP(0) -> 1 (0>=0)	=GESTEP(0)	1	basic	number
+default step=0: GESTEP(-1) -> 0	=GESTEP(-1)	0	basic	number
+negative: -5>=-10 -> 1	=GESTEP(-5,-10)	1	basic	number
+negative: -5>=-3 -> 0	=GESTEP(-5,-3)	0	edge	number
+fraction: 0.5>=0.5 -> 1	=GESTEP(0.5,0.5)	1	edge	number
+text -> #VALUE!	=GESTEP("5",3)	1	coercion	number
+no args -> error	=GESTEP()	#N/A	error	error
+nested: sum of GESTEP filters	=GESTEP(10,5)+GESTEP(3,5)	1	nested	number
+nested: IF(GESTEP(...))	=IF(GESTEP(100,50),"big","small")	big	nested	string
+F -> 1111	=HEX2BIN("F")	1111	basic	number
+A -> 1010	=HEX2BIN("A")	1010	basic	number
+0 -> 0	=HEX2BIN("0")	0	basic	number
+FF -> 11111111	=HEX2BIN("FF")	11111111	basic	number
+1F with 8 places -> 00011111	=HEX2BIN("1F",8)	11111	basic	number
+lowercase f -> 1111	=HEX2BIN("f")	1111	basic	number
+FFFFFFFFFF -> 1111111111 (sign bit)	=HEX2BIN("FFFFFFFFFF")	1111111111	edge	number
+out-of-range: 200 -> #NUM!	=HEX2BIN("200")	#NUM!	error	error
+invalid hex char -> #NUM!	=HEX2BIN("G")	#NUM!	error	error
+empty string -> #NUM!	=HEX2BIN("")	0	error	number
+nested: HEX2BIN matches DEC2BIN	=HEX2BIN("A")=DEC2BIN(HEX2DEC("A"))	TRUE	nested	boolean
+FF -> 255	=HEX2DEC("FF")	255	basic	number
+A -> 10	=HEX2DEC("A")	10	basic	number
+0 -> 0	=HEX2DEC("0")	0	basic	number
+10 -> 16	=HEX2DEC("10")	16	basic	number
+1A -> 26	=HEX2DEC("1A")	26	basic	number
+lowercase: ff -> 255	=HEX2DEC("ff")	255	basic	number
+FFFFFFFFFF -> -1 (sign bit)	=HEX2DEC("FFFFFFFFFF")	-1	edge	number
+7FFFFFFFFF -> 549755813887 (max positive)	=HEX2DEC("7FFFFFFFFF")	549755813887	edge	number
+invalid char -> #NUM!	=HEX2DEC("G")	#NUM!	error	error
+empty string -> #NUM!	=HEX2DEC("")	0	error	number
+too many digits -> #NUM!	=HEX2DEC("FFFFFFFFFFF")	#NUM!	error	error
+nested: roundtrip DEC2HEX(HEX2DEC)	=DEC2HEX(HEX2DEC("1A"))	1A	nested	string
+nested: HEX2DEC + HEX2DEC	=HEX2DEC("A")+HEX2DEC("6")	16	nested	number
+F -> 17	=HEX2OCT("F")	17	basic	number
+A -> 12	=HEX2OCT("A")	12	basic	number
+0 -> 0	=HEX2OCT("0")	0	basic	number
+FF -> 377	=HEX2OCT("FF")	377	basic	number
+10 -> 20	=HEX2OCT("10")	20	basic	number
+1F with 4 places -> 0037	=HEX2OCT("1F",4)	37	basic	number
+FFFFFFFFFF -> 7777777777 (sign)	=HEX2OCT("FFFFFFFFFF")	7777777777	edge	number
+invalid char -> #NUM!	=HEX2OCT("G")	#NUM!	error	error
+empty string -> #NUM!	=HEX2OCT("")	0	error	number
+out-of-range hex -> #NUM!	=HEX2OCT("2000000000")	#NUM!	error	error
+nested: HEX2OCT matches DEC2OCT	=HEX2OCT("A")=DEC2OCT(HEX2DEC("A"))	TRUE	nested	boolean
+7 -> 111	=OCT2BIN("7")	111	basic	number
+10 -> 1000	=OCT2BIN("10")	1000	basic	number
+0 -> 0	=OCT2BIN("0")	0	basic	number
+377 -> 11111111	=OCT2BIN("377")	11111111	basic	number
+7 with 6 places -> 000111	=OCT2BIN("7",6)	111	basic	number
+7777777777 -> 1111111111 (sign)	=OCT2BIN("7777777777")	1111111111	edge	number
+out-of-range: 1000 -> #NUM!	=OCT2BIN("1000")	#NUM!	error	error
+invalid digit -> #NUM!	=OCT2BIN("8")	#NUM!	error	error
+empty string -> #NUM!	=OCT2BIN("")	0	error	number
+nested: OCT2BIN matches DEC2BIN	=OCT2BIN("7")=DEC2BIN(OCT2DEC("7"))	TRUE	nested	boolean
+nested: BIN2DEC(OCT2BIN) roundtrip	=BIN2DEC(OCT2BIN("12"))	10	nested	number
+7 -> 7	=OCT2DEC("7")	7	basic	number
+10 -> 8	=OCT2DEC("10")	8	basic	number
+100 -> 64	=OCT2DEC("100")	64	basic	number
+377 -> 255	=OCT2DEC("377")	255	basic	number
+0 -> 0	=OCT2DEC("0")	0	basic	number
+7777777777 -> -1 (sign bit)	=OCT2DEC("7777777777")	-1	edge	number
+4000000000 -> -536870912 (min)	=OCT2DEC("4000000000")	-536870912	edge	number
+invalid digit 8 -> #NUM!	=OCT2DEC("8")	#NUM!	error	error
+empty string -> #NUM!	=OCT2DEC("")	0	error	number
+too many digits -> #NUM!	=OCT2DEC("77777777777")	#NUM!	error	error
+nested: roundtrip DEC2OCT(OCT2DEC)	=DEC2OCT(OCT2DEC("12"))	12	nested	number
+nested: OCT2DEC + OCT2DEC	=OCT2DEC("10")+OCT2DEC("7")	15	nested	number
+7 -> 7	=OCT2HEX("7")	7	basic	number
+10 -> 8	=OCT2HEX("10")	8	basic	number
+377 -> FF	=OCT2HEX("377")	FF	basic	string
+0 -> 0	=OCT2HEX("0")	0	basic	number
+12 -> A	=OCT2HEX("12")	A	basic	string
+377 with 4 places -> 00FF	=OCT2HEX("377",4)	00FF	basic	string
+7777777777 -> FFFFFFFFFF (sign)	=OCT2HEX("7777777777")	FFFFFFFFFF	edge	string
+invalid digit 8 -> #NUM!	=OCT2HEX("8")	#NUM!	error	error
+empty string -> #NUM!	=OCT2HEX("")	0	error	number
+nested: OCT2HEX matches DEC2HEX	=OCT2HEX("12")=DEC2HEX(OCT2DEC("12"))	TRUE	nested	boolean
+nested: HEX2DEC(OCT2HEX) roundtrip	=HEX2DEC(OCT2HEX("377"))	255	nested	number
+3+4i	=COMPLEX(3,4)	3+4i	basic	string
+3-4i	=COMPLEX(3,-4)	3-4i	basic	string
+pure imaginary i	=COMPLEX(0,1)	i	basic	string
+pure real 1	=COMPLEX(1,0)	1	basic	number
+zero	=COMPLEX(0,0)	0	basic	number
+negative real	=COMPLEX(-3,4)	-3+4i	basic	string
+j suffix	=COMPLEX(3,4,"j")	3+4j	basic	string
+-i suffix j	=COMPLEX(0,-1,"j")	-j	edge	string
+large values	=COMPLEX(1000,2000)	1000+2000i	edge	string
+decimal parts	=COMPLEX(1.5,2.5)	1.5+2.5i	basic	string
+error: no args -> #N/A	=COMPLEX()	#N/A	error	error
+ERF(0) = 0	=ROUND(ERF(0),6)	0	basic	number
+ERF(1) = 0.842701	=ROUND(ERF(1),6)	0.842701	basic	number
+ERF(0,1) = ERF(1)	=ROUND(ERF(0,1),6)	0.842701	basic	number
+ERF(0.5)	=ROUND(ERF(0.5),6)	0.5205	basic	number
+ERF(0,0) = 0	=ERF(0,0)	0	edge	number
+ERF(2)	=ROUND(ERF(2),6)	0.995322	basic	number
+ERF(0.1)	=ROUND(ERF(0.1),6)	0.112463	basic	number
+ERF(-1) = -ERF(1)	=ROUND(ERF(-1),6)	-0.842701	edge	number
+nested: ERF(1)+ERFC(1) = 1	=ROUND(ERF(1)+ERFC(1),6)	1	nested	number
+error: no args -> #N/A	=ERF()	#N/A	error	error
+ERF.PRECISE(1) = 0.842701	=ROUND(ERF.PRECISE(1),6)	0.842701	basic	number
+ERF.PRECISE(0) = 0	=ROUND(ERF.PRECISE(0),6)	0	basic	number
+ERF.PRECISE(0.5)	=ROUND(ERF.PRECISE(0.5),6)	0.5205	basic	number
+ERF.PRECISE(2)	=ROUND(ERF.PRECISE(2),6)	0.995322	basic	number
+ERF.PRECISE(-1) = -ERF(1)	=ROUND(ERF.PRECISE(-1),6)	-0.842701	edge	number
+matches ERF single arg	=ROUND(ERF.PRECISE(0.7),6)	0.677801	basic	number
+nested: ERF.PRECISE = ERF	=ROUND(ERF.PRECISE(1)-ERF(1),10)	0	nested	number
+error: no args -> #N/A	=ERF.PRECISE()	#N/A	error	error
+|3+4i| = 5	=IMABS("3+4i")	5	basic	number
+|5| = 5	=IMABS("5")	5	basic	number
+|i| = 1	=IMABS("i")	1	basic	number
+|0| = 0	=IMABS("0")	0	edge	number
+|-i| = 1	=IMABS("-i")	1	basic	number
+via COMPLEX	=IMABS(COMPLEX(3,4))	5	basic	number
+|3-4i| = 5	=IMABS("3-4i")	5	basic	number
+|1+1i| = sqrt(2)	=ROUND(IMABS("1+i"),6)	1.414214	basic	number
+|-3-4i| = 5	=IMABS("-3-4i")	5	edge	number
+nested: IMABS of IMPRODUCT	=IMABS(IMPRODUCT("3+4i","3-4i"))	25	nested	number
+error: no args -> #N/A	=IMABS()	#N/A	error	error
+imaginary of 3+4i = 4	=IMAGINARY("3+4i")	4	basic	number
+imaginary of 3-4i = -4	=IMAGINARY("3-4i")	-4	basic	number
+imaginary of pure real = 0	=IMAGINARY("3")	0	basic	number
+imaginary of i = 1	=IMAGINARY("i")	1	basic	number
+imaginary of -i = -1	=IMAGINARY("-i")	-1	basic	number
+imaginary of 0 = 0	=IMAGINARY("0")	0	edge	number
+imaginary of -3+4i = 4	=IMAGINARY("-3+4i")	4	basic	number
+imaginary of large	=IMAGINARY("100+200i")	200	basic	number
+nested: IMAGINARY of IMCONJUGATE negates	=IMAGINARY(IMCONJUGATE("3+4i"))	-4	nested	number
+error: no args -> #N/A	=IMAGINARY()	#N/A	error	error
+arg(i) = pi/2	=ROUND(IMARGUMENT("i"),6)	1.570796	basic	number
+arg(-1) = pi	=ROUND(IMARGUMENT("-1"),6)	3.141593	basic	number
+arg(1) = 0	=ROUND(IMARGUMENT("1"),6)	0	basic	number
+arg(1+i) = pi/4	=ROUND(IMARGUMENT("1+i"),6)	0.785398	basic	number
+arg(-i) = -pi/2	=ROUND(IMARGUMENT("-i"),6)	-1.570796	basic	number
+arg(3+4i)	=ROUND(IMARGUMENT("3+4i"),6)	0.927295	basic	number
+error: arg(0) -> #DIV/0!	=IMARGUMENT("0")	#DIV/0!	error	error
+nested: IMARGUMENT of COMPLEX	=ROUND(IMARGUMENT(COMPLEX(0,1)),6)	1.570796	nested	number
+error: no args -> #N/A	=IMARGUMENT()	#N/A	error	error
+conj(3+4i) = 3-4i	=IMCONJUGATE("3+4i")	3-4i	basic	string
+conj(3-4i) = 3+4i	=IMCONJUGATE("3-4i")	3+4i	basic	string
+conj pure real = same	=IMCONJUGATE("5")	5	basic	number
+conj(i) = -i	=IMCONJUGATE("i")	-i	basic	string
+conj(-i) = i	=IMCONJUGATE("-i")	i	basic	string
+conj(0) = 0	=IMCONJUGATE("0")	0	edge	number
+conj(-3+4i) = -3-4i	=IMCONJUGATE("-3+4i")	-3-4i	basic	string
+nested: abs(z*conj(z)) = abs(z)^2	=ROUND(IMABS(IMPRODUCT("3+4i",IMCONJUGATE("3+4i"))),6)	25	nested	number
+nested: conj(conj(z)) = z real part	=IMREAL(IMCONJUGATE(IMCONJUGATE("3+4i")))	3	nested	number
+error: no args -> #N/A	=IMCONJUGATE()	#N/A	error	error
+cos(0) real part = 1	=ROUND(IMREAL(IMCOS("0")),6)	1	basic	number
+cos(0) imag part = 0	=ROUND(IMAGINARY(IMCOS("0")),6)	0	basic	number
+|cos(0)| = 1	=ROUND(IMABS(IMCOS("0")),6)	1	basic	number
+cos real 1	=ROUND(IMREAL(IMCOS("1")),6)	0.540302	basic	number
+cos imag of real input = 0	=ROUND(IMAGINARY(IMCOS("1")),6)	0	basic	number
+cos of i: real part = cosh(1)	=ROUND(IMREAL(IMCOS("i")),6)	1.543081	edge	number
+nested: cos via COMPLEX	=ROUND(IMREAL(IMCOS(COMPLEX(0,0))),6)	1	nested	number
+error: no args -> #N/A	=IMCOS()	#N/A	error	error
+cosh(0) = 1	=ROUND(IMABS(IMCOSH("0")),6)	1	basic	number
+cosh real 0 real part = 1	=ROUND(IMREAL(IMCOSH("0")),6)	1	basic	number
+cosh real 0 imag part = 0	=ROUND(IMAGINARY(IMCOSH("0")),6)	0	basic	number
+cosh(1) real part	=ROUND(IMREAL(IMCOSH("1")),6)	1.543081	basic	number
+cosh(-1) = cosh(1)	=ROUND(IMREAL(IMCOSH("-1")),6)	1.543081	edge	number
+cosh of i: real = cos(1)	=ROUND(IMREAL(IMCOSH("i")),6)	0.540302	edge	number
+nested: IMCOSH via COMPLEX	=ROUND(IMREAL(IMCOSH(COMPLEX(0,0))),6)	1	nested	number
+error: no args -> #N/A	=IMCOSH()	#N/A	error	error
+cot real pi/4: real part	=ROUND(IMREAL(IMCOT("1")),6)	0.642093	basic	number
+cot(0) -> #DIV/0!	=IMCOT("0")	#DIV/0!	error	error
+cot imag part of real input	=ROUND(IMAGINARY(IMCOT("1")),6)	0	basic	number
+cot(2) real part	=ROUND(IMREAL(IMCOT("2")),6)	-0.457658	basic	number
+|cot| of 1	=ROUND(IMABS(IMCOT("1")),6)	0.642093	basic	number
+nested: IMCOT via COMPLEX	=ROUND(IMREAL(IMCOT(COMPLEX(1,0))),6)	0.642093	nested	number
+error: no args -> #N/A	=IMCOT()	#N/A	error	error
+coth(1) real part	=ROUND(IMREAL(IMCOTH("1")),6)	1.313035	basic	number
+coth(0) -> #DIV/0!	=IMCOTH("0")	#DIV/0!	error	error
+coth imag part of real = 0	=ROUND(IMAGINARY(IMCOTH("1")),6)	0	basic	number
+coth(2) real part	=ROUND(IMREAL(IMCOTH("2")),6)	1.037315	basic	number
+|coth(1)|	=ROUND(IMABS(IMCOTH("1")),6)	1.313035	basic	number
+coth(-1) = -coth(1)	=ROUND(IMREAL(IMCOTH("-1")),6)	-1.313035	edge	number
+nested: IMCOTH via COMPLEX	=ROUND(IMREAL(IMCOTH(COMPLEX(1,0))),6)	1.313035	nested	number
+error: no args -> #N/A	=IMCOTH()	#N/A	error	error
+csc(1) real part	=ROUND(IMREAL(IMCSC("1")),6)	1.188395	basic	number
+csc(0) -> #DIV/0!	=IMCSC("0")	#NUM!	error	error
+csc imag of real = 0	=ROUND(IMAGINARY(IMCSC("1")),6)	0	basic	number
+|csc(1)|	=ROUND(IMABS(IMCSC("1")),6)	1.188395	basic	number
+csc(2) real part	=ROUND(IMREAL(IMCSC("2")),6)	1.09975	basic	number
+csc(-1) = -csc(1)	=ROUND(IMREAL(IMCSC("-1")),6)	-1.188395	edge	number
+nested: IMCSC via COMPLEX	=ROUND(IMREAL(IMCSC(COMPLEX(1,0))),6)	1.188395	nested	number
+error: no args -> #N/A	=IMCSC()	#N/A	error	error
+csch(1) real part	=ROUND(IMREAL(IMCSCH("1")),6)	0.850918	basic	number
+csch(0) -> #DIV/0!	=IMCSCH("0")	#DIV/0!	error	error
+csch imag of real = 0	=ROUND(IMAGINARY(IMCSCH("1")),6)	0	basic	number
+|csch(1)|	=ROUND(IMABS(IMCSCH("1")),6)	0.850918	basic	number
+csch(2) real part	=ROUND(IMREAL(IMCSCH("2")),6)	0.275721	basic	number
+csch(-1) = -csch(1)	=ROUND(IMREAL(IMCSCH("-1")),6)	-0.850918	edge	number
+nested: IMCSCH via COMPLEX	=ROUND(IMREAL(IMCSCH(COMPLEX(1,0))),6)	0.850918	nested	number
+error: no args -> #N/A	=IMCSCH()	#N/A	error	error
+4+2i div 2 = 2+i	=IMDIV("4+2i","2")	2+i	basic	string
+10 div 2+0i = 5	=IMDIV("10","2+0i")	5	basic	number
+|3+4i div 5| = 1	=IMABS(IMDIV("3+4i","5"))	1	basic	number
+i div i = 1	=IMDIV("i","i")	1	basic	number
+6+0i div 3 real part = 2	=IMREAL(IMDIV("6","3"))	2	basic	number
+-4+2i div 2 = -2+i	=IMDIV("-4+2i","2")	-2+i	edge	string
+div by complex: (1+i)/(1-i)	=ROUND(IMAGINARY(IMDIV("1+i","1-i")),6)	1	basic	number
+error: div by 0 -> #DIV/0!	=IMDIV("1","0")	#DIV/0!	error	error
+nested: IMDIV reverses IMPRODUCT	=IMREAL(IMDIV(IMPRODUCT("2","3"),"3"))	2	nested	number
+error: no args -> #N/A	=IMDIV()	#N/A	error	error
+e^0 abs = 1	=ROUND(IMABS(IMEXP("0")),6)	1	basic	number
+e^1 real part = e	=ROUND(IMREAL(IMEXP("1")),6)	2.718282	basic	number
+e^1 imag part = 0	=ROUND(IMAGINARY(IMEXP("1")),6)	0	basic	number
+e^i real = cos(1)	=ROUND(IMREAL(IMEXP("i")),6)	0.540302	basic	number
+e^i imag = sin(1)	=ROUND(IMAGINARY(IMEXP("i")),6)	0.841471	basic	number
+|e^(i*pi)| = 1	=ROUND(IMABS(IMEXP(COMPLEX(0,3.14159265358979))),6)	1	edge	number
+e^2 real part	=ROUND(IMREAL(IMEXP("2")),6)	7.389056	basic	number
+nested: IMEXP via COMPLEX	=ROUND(IMREAL(IMEXP(COMPLEX(1,0))),6)	2.718282	nested	number
+error: no args -> #N/A	=IMEXP()	#N/A	error	error
+log10(1) real = 0	=ROUND(IMREAL(IMLOG("1","10")),6)	0	basic	number
+log10(10) real = 1	=ROUND(IMREAL(IMLOG("10","10")),6)	1	basic	number
+log2(8) real = 3	=ROUND(IMREAL(IMLOG("8","2")),6)	3	basic	number
+log10(100) real = 2	=ROUND(IMREAL(IMLOG("100","10")),6)	2	basic	number
+log imag part of positive real = 0	=ROUND(IMAGINARY(IMLOG("10","10")),6)	0	basic	number
+log base 10 of complex	=ROUND(IMABS(IMLOG("10+0i","10")),6)	1	edge	number
+nested: IMLOG10 matches IMLOG base 10	=ROUND(IMREAL(IMLOG("100","10"))-IMREAL(IMLOG10("100")),10)	0	nested	number
+error: no args -> #N/A	=IMLOG()	#N/A	error	error
+log10(1) = 0	=ROUND(IMREAL(IMLOG10("1")),6)	0	basic	number
+log10(10) = 1	=ROUND(IMREAL(IMLOG10("10")),6)	1	basic	number
+log10(100) = 2	=ROUND(IMREAL(IMLOG10("100")),6)	2	basic	number
+log10(1000) = 3	=ROUND(IMREAL(IMLOG10("1000")),6)	3	basic	number
+log10 imag of positive real = 0	=ROUND(IMAGINARY(IMLOG10("10")),6)	0	basic	number
+error: log10(0) -> #NUM!	=IMLOG10("0")	#DIV/0!	error	error
+log10(-1) has imag pi/ln(10)	=ROUND(IMAGINARY(IMLOG10("-1")),6)	1.364376	edge	number
+nested: IMLOG10 via COMPLEX	=ROUND(IMREAL(IMLOG10(COMPLEX(10,0))),6)	1	nested	number
+error: no args -> #N/A	=IMLOG10()	#N/A	error	error
+log2(1) = 0	=ROUND(IMREAL(IMLOG2("1")),6)	0	basic	number
+log2(2) = 1	=ROUND(IMREAL(IMLOG2("2")),6)	1	basic	number
+log2(8) = 3	=ROUND(IMREAL(IMLOG2("8")),6)	3	basic	number
+log2(16) = 4	=ROUND(IMREAL(IMLOG2("16")),6)	4	basic	number
+log2 imag of positive real = 0	=ROUND(IMAGINARY(IMLOG2("8")),6)	0	basic	number
+log2(-1) has imag part	=ROUND(IMAGINARY(IMLOG2("-1")),6)	4.53236	edge	number
+nested: IMLOG2 via COMPLEX	=ROUND(IMREAL(IMLOG2(COMPLEX(8,0))),6)	3	nested	number
+error: no args -> #N/A	=IMLOG2()	#N/A	error	error
+2 * 3 = 6	=IMPRODUCT("2","3")	6	basic	number
+i * i = -1	=IMPRODUCT("i","i")	-1	basic	number
+|3+4i * 3+4i| = 25	=IMABS(IMPRODUCT("3+4i","3+4i"))	25	basic	number
+(1+i)*(1-i) = 2	=IMPRODUCT("1+i","1-i")	2	basic	number
+(-1)*(-1) = 1	=IMPRODUCT("-1","-1")	1	edge	number
+i * -i = 1	=IMPRODUCT("i","-i")	1	edge	number
+chain product 2*3*4 = 24	=IMPRODUCT("2","3","4")	24	basic	number
+product of pure imaginary: 2i*3i = -6	=IMPRODUCT("2i","3i")	-6	basic	number
+nested: IMPRODUCT then IMDIV reverses	=IMREAL(IMDIV(IMPRODUCT("3+4i","2"),"2"))	3	nested	number
+error: no args -> #N/A	=IMPRODUCT()	#N/A	error	error
+real(3+4i) = 3	=IMREAL("3+4i")	3	basic	number
+real(3-4i) = 3	=IMREAL("3-4i")	3	basic	number
+real(5) = 5	=IMREAL("5")	5	basic	number
+real(i) = 0	=IMREAL("i")	0	basic	number
+real(-i) = 0	=IMREAL("-i")	0	basic	number
+real(0) = 0	=IMREAL("0")	0	edge	number
+real(-3+4i) = -3	=IMREAL("-3+4i")	-3	basic	number
+real(100+200i) = 100	=IMREAL("100+200i")	100	basic	number
+nested: IMREAL of IMCONJUGATE = IMREAL	=IMREAL(IMCONJUGATE("3+4i"))	3	nested	number
+error: no args -> #N/A	=IMREAL()	#N/A	error	error
+sec(1) real part	=ROUND(IMREAL(IMSEC("1")),6)	1.850816	basic	number
+sec imag of real = 0	=ROUND(IMAGINARY(IMSEC("1")),6)	0	basic	number
+|sec(1)|	=ROUND(IMABS(IMSEC("1")),6)	1.850816	basic	number
+sec(2) real part	=ROUND(IMREAL(IMSEC("2")),6)	-2.402998	basic	number
+sec(-1) = sec(1)	=ROUND(IMREAL(IMSEC("-1")),6)	1.850816	edge	number
+nested: IMSEC via COMPLEX	=ROUND(IMREAL(IMSEC(COMPLEX(1,0))),6)	1.850816	nested	number
+error: no args -> #N/A	=IMSEC()	#N/A	error	error
+sech(0) = 1	=ROUND(IMREAL(IMSECH("0")),6)	1	basic	number
+sech imag of real = 0	=ROUND(IMAGINARY(IMSECH("0")),6)	0	basic	number
+|sech(0)| = 1	=ROUND(IMABS(IMSECH("0")),6)	1	basic	number
+sech(1) real part	=ROUND(IMREAL(IMSECH("1")),6)	0.648054	basic	number
+sech(-1) = sech(1)	=ROUND(IMREAL(IMSECH("-1")),6)	0.648054	edge	number
+nested: IMSECH via COMPLEX	=ROUND(IMREAL(IMSECH(COMPLEX(0,0))),6)	1	nested	number
+error: no args -> #N/A	=IMSECH()	#N/A	error	error
+sin(0) real = 0	=ROUND(IMREAL(IMSIN("0")),6)	0	basic	number
+sin(0) imag = 0	=ROUND(IMAGINARY(IMSIN("0")),6)	0	basic	number
+|sin(0)| = 0	=ROUND(IMABS(IMSIN("0")),6)	0	basic	number
+sin(1) real part	=ROUND(IMREAL(IMSIN("1")),6)	0.841471	basic	number
+sin imag of real = 0	=ROUND(IMAGINARY(IMSIN("1")),6)	0	basic	number
+sin(i) = i*sinh(1)	=ROUND(IMAGINARY(IMSIN("i")),6)	1.175201	edge	number
+nested: IMSIN via COMPLEX	=ROUND(IMREAL(IMSIN(COMPLEX(0,0))),6)	0	nested	number
+error: no args -> #N/A	=IMSIN()	#N/A	error	error
+sinh(0) = 0	=ROUND(IMREAL(IMSINH("0")),6)	0	basic	number
+sinh imag of real = 0	=ROUND(IMAGINARY(IMSINH("0")),6)	0	basic	number
+|sinh(0)| = 0	=ROUND(IMABS(IMSINH("0")),6)	0	basic	number
+sinh(1) real part	=ROUND(IMREAL(IMSINH("1")),6)	1.175201	basic	number
+sinh(-1) = -sinh(1)	=ROUND(IMREAL(IMSINH("-1")),6)	-1.175201	edge	number
+sinh(i) = i*sin(1)	=ROUND(IMAGINARY(IMSINH("i")),6)	0.841471	edge	number
+nested: IMSINH via COMPLEX	=ROUND(IMREAL(IMSINH(COMPLEX(1,0))),6)	1.175201	nested	number
+error: no args -> #N/A	=IMSINH()	#N/A	error	error
+(3+4i)-(1+2i) = 2+2i	=IMSUB("3+4i","1+2i")	2+2i	basic	string
+5 - 3 = 2	=IMSUB("5","3")	2	basic	number
+|5+0i - 3+0i| = 2	=IMABS(IMSUB("5+0i","3+0i"))	2	basic	number
+same complex -> 0	=IMSUB("3+4i","3+4i")	0	edge	number
+(3+4i) - (3+4i) real = 0	=IMREAL(IMSUB("3+4i","3+4i"))	0	edge	number
+subtract pure imaginary	=IMSUB("5+3i","0+3i")	5	basic	number
+subtract yields negative real	=IMREAL(IMSUB("1","5"))	-4	edge	number
+nested: IMSUB reverses IMSUM	=IMREAL(IMSUB(IMSUM("3+4i","1+2i"),"1+2i"))	3	nested	number
+error: no args -> #N/A	=IMSUB()	#N/A	error	error
+(3+4i)+(1+2i) = 4+6i	=IMSUM("3+4i","1+2i")	4+6i	basic	string
+3 + 4i = 3+4i	=IMSUM("3","4i")	3+4i	basic	string
+|3+0i + 4+0i| = 7	=IMABS(IMSUM("3+0i","4+0i"))	7	basic	number
+sum of three	=IMSUM("1+i","2+2i","3+3i")	6+6i	basic	string
+sum with zero	=IMSUM("3+4i","0")	3+4i	edge	string
+sum of negatives	=IMSUM("-3-4i","3+4i")	0	edge	number
+real part of sum	=IMREAL(IMSUM("3+4i","1+2i"))	4	basic	number
+imag part of sum	=IMAGINARY(IMSUM("3+4i","1+2i"))	6	basic	number
+nested: IMSUM then IMSUB	=IMREAL(IMSUB(IMSUM("3+4i","2+1i"),"2+1i"))	3	nested	number
+error: no args -> #N/A	=IMSUM()	#N/A	error	error
+tan(0) = 0	=ROUND(IMREAL(IMTAN("0")),6)	0	basic	number
+tan imag of real = 0	=ROUND(IMAGINARY(IMTAN("0")),6)	0	basic	number
+|tan(0)| = 0	=ROUND(IMABS(IMTAN("0")),6)	0	basic	number
+tan(1) real part	=ROUND(IMREAL(IMTAN("1")),6)	1.557408	basic	number
+tan(-1) = -tan(1)	=ROUND(IMREAL(IMTAN("-1")),6)	-1.557408	edge	number
+tan of i: real = 0	=ROUND(IMREAL(IMTAN("i")),6)	0	edge	number
+nested: IMTAN via COMPLEX	=ROUND(IMREAL(IMTAN(COMPLEX(0,0))),6)	0	nested	number
+error: no args -> #N/A	=IMTAN()	#N/A	error	error
+tanh(0) = 0	=ROUND(IMREAL(IMTANH("0")),6)	0	basic	number
+tanh imag of real = 0	=ROUND(IMAGINARY(IMTANH("0")),6)	0	basic	number
+|tanh(0)| = 0	=ROUND(IMABS(IMTANH("0")),6)	0	basic	number
+tanh(1) real part	=ROUND(IMREAL(IMTANH("1")),6)	0.761594	basic	number
+tanh(-1) = -tanh(1)	=ROUND(IMREAL(IMTANH("-1")),6)	-0.761594	edge	number
+tanh(i) = i*tan(1)	=ROUND(IMAGINARY(IMTANH("i")),6)	1.557408	edge	number
+nested: IMTANH via COMPLEX	=ROUND(IMREAL(IMTANH(COMPLEX(1,0))),6)	0.761594	nested	number
+error: no args -> #N/A	=IMTANH()	#N/A	error	error

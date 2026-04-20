@@ -124,6 +124,19 @@ impl Registry {
     pub fn list_functions(&self) -> impl Iterator<Item = (&str, &FunctionMeta)> {
         self.metadata.iter().map(|(k, v)| (k.as_str(), v))
     }
+
+    /// Return all registered user-facing function names (upper-cased keys).
+    /// Used by the conformance coverage gate test (T2.3).
+    pub fn metadata_names(&self) -> Vec<String> {
+        self.metadata.keys().cloned().collect()
+    }
+}
+
+impl Registry {
+    /// Functions whose results change on every evaluation and cannot be
+    /// tested against a fixed oracle.
+    pub const VOLATILE_FUNCTIONS: &'static [&'static str] =
+        &["RAND", "RANDARRAY", "NOW", "TODAY", "RANDBETWEEN"];
 }
 
 impl Default for Registry {

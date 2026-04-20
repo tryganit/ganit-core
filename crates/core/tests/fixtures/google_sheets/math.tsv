@@ -1,0 +1,1146 @@
+description	formula_text	expected_value	test_category	expected_type
+positive integer	=ABS(5)	5	basic	number
+positive decimal	=ABS(3.14)	3.14	basic	number
+negative integer	=ABS(-5)	5	basic	number
+negative decimal	=ABS(-3.14)	3.14	basic	number
+zero	=ABS(0)	0	edge	number
+large positive	=ABS(1E+15)	1000000000000000	edge	number
+large negative	=ABS(-1E+15)	1000000000000000	edge	number
+very small positive	=ABS(1E-10)	0.0000000001	edge	number
+very small negative	=ABS(-1E-10)	0.0000000001	edge	number
+near max double	=ABS(-1.7E+308)	169999999999999993883079578865998174333346074304075874502773119193537729178160565864330091787584707988572262467983188919169916105593357174268369962062473635296474636515660464935663040684957844303524367815028553272712298986386310828644513212353921123253311675499856875650512437415429217994623324794855339589632	edge	number
+TRUE coercion -> 1	=ABS(TRUE)	1	coercion	number
+FALSE coercion -> 0	=ABS(FALSE)	0	coercion	number
+text number "5"	=ABS("5")	5	coercion	number
+text negative "-3.14"	=ABS("-3.14")	3.14	coercion	number
+empty string -> #VALUE!	=ABS("")	0	error	number
+non-numeric text -> #VALUE!	=ABS("abc")	#VALUE!	error	error
+#DIV/0! propagation	=ABS(1/0)	#DIV/0!	error	error
+#N/A propagation	=ABS(NA())	#N/A	error	error
+no args -> error	=ABS()	#N/A	error	error
+too many args -> error	=ABS(1,2)	#N/A	error	error
+nested SUM	=ABS(SUM(3,-8))	5	nested	number
+nested: abs of difference	=ABS(2-7)	5	nested	number
+nested: error propagates	=ABS(SQRT(-1))	#NUM!	nested	error
+1 -> 0	=ACOS(1)	0	basic	number
+0 -> PI/2	=ACOS(0)	1.570796327	basic	number
+-1 -> PI	=ACOS(-1)	3.141592654	basic	number
+0.5	=ACOS(0.5)	1.047197551	basic	number
+-0.5	=ACOS(-0.5)	2.094395102	basic	number
+0.866... -> PI/6	=ACOS(0.866025403784439)	0.5235987756	basic	number
+boundary just inside 1	=ACOS(0.9999999)	0.0004472136	edge	number
+boundary just inside -1	=ACOS(-0.9999999)	3.14114544	edge	number
+1.0000001 -> #NUM!	=ACOS(1.0000001)	#NUM!	error	error
+-1.0000001 -> #NUM!	=ACOS(-1.0000001)	#NUM!	error	error
+2 -> #NUM!	=ACOS(2)	#NUM!	error	error
+TRUE -> ACOS(1) = 0	=ACOS(TRUE)	0	coercion	number
+FALSE -> ACOS(0) = PI/2	=ACOS(FALSE)	1.570796327	coercion	number
+text "0.5"	=ACOS("0.5")	1.047197551	coercion	number
+empty string -> #VALUE!	=ACOS("")	1.570796327	error	number
+text "abc" -> #VALUE!	=ACOS("abc")	#VALUE!	error	error
+#DIV/0! propagation	=ACOS(1/0)	#DIV/0!	error	error
+#N/A propagation	=ACOS(NA())	#N/A	error	error
+no args	=ACOS()	#N/A	error	error
+too many args	=ACOS(0.5,1)	#N/A	error	error
+nested: ACOS(COS(0)) = 0	=ACOS(COS(0))	0	nested	number
+identity: ACOS(COS(PI()/3))	=ACOS(COS(PI()/3))	1.047197551	nested	number
+1 -> 0	=ACOSH(1)	0	basic	number
+2	=ACOSH(2)	1.316957897	basic	number
+10	=ACOSH(10)	2.993222846	basic	number
+100	=ACOSH(100)	5.298292366	basic	number
+1.0000001	=ACOSH(1.0000001)	0.0004472136	edge	number
+large: 1E+10	=ACOSH(1E+10)	23.71899811	edge	number
+0.9999999 -> #NUM!	=ACOSH(0.9999999)	#NUM!	error	error
+0 -> #NUM!	=ACOSH(0)	#NUM!	error	error
+-1 -> #NUM!	=ACOSH(-1)	#NUM!	error	error
+TRUE -> ACOSH(1) = 0	=ACOSH(TRUE)	0	coercion	number
+FALSE -> #NUM! (ACOSH(0))	=ACOSH(FALSE)	#NUM!	error	error
+text "2"	=ACOSH("2")	1.316957897	coercion	number
+empty string -> #VALUE!	=ACOSH("")	#NUM!	error	error
+#DIV/0! propagation	=ACOSH(1/0)	#DIV/0!	error	error
+#N/A propagation	=ACOSH(NA())	#N/A	error	error
+no args	=ACOSH()	#N/A	error	error
+identity: ACOSH(COSH(2))	=ACOSH(COSH(2))	2	nested	number
+0 -> PI/2	=ACOT(0)	1.570796327	basic	number
+1 -> PI/4	=ACOT(1)	0.7853981634	basic	number
+-1 -> 3PI/4	=ACOT(-1)	-0.7853981634	basic	number
+large -> near 0	=ACOT(1E+10)	0.0000000001	edge	number
+very small -> near PI/2	=ACOT(1E-10)	1.570796327	edge	number
+negative large	=ACOT(-1E+10)	-0.0000000001	edge	number
+TRUE -> ACOT(1)	=ACOT(TRUE)	0.7853981634	coercion	number
+FALSE -> ACOT(0) = PI/2	=ACOT(FALSE)	1.570796327	coercion	number
+text "1"	=ACOT("1")	0.7853981634	coercion	number
+empty string -> #VALUE!	=ACOT("")	1.570796327	error	number
+#DIV/0! propagation	=ACOT(1/0)	#DIV/0!	error	error
+#N/A propagation	=ACOT(NA())	#N/A	error	error
+no args	=ACOT()	#N/A	error	error
+identity: ACOT(COT(PI()/4))	=ACOT(COT(PI()/4))	0.7853981634	nested	number
+2	=ACOTH(2)	0.5493061443	basic	number
+-2	=ACOTH(-2)	-0.5493061443	basic	number
+1.0000001	=ACOTH(1.0000001)	8.40562144	edge	number
+-1.0000001	=ACOTH(-1.0000001)	-8.40562144	edge	number
+large: 1E+10	=ACOTH(1E+10)	0.0000000001	edge	number
+1 -> #NUM!	=ACOTH(1)	#NUM!	error	error
+-1 -> #NUM!	=ACOTH(-1)	#NUM!	error	error
+0 -> #NUM!	=ACOTH(0)	#NUM!	error	error
+0.5 -> #NUM! (|x|<1)	=ACOTH(0.5)	#NUM!	error	error
+TRUE -> ACOTH(1) = #NUM!	=ACOTH(TRUE)	#NUM!	error	error
+FALSE -> ACOTH(0) = #NUM!	=ACOTH(FALSE)	#NUM!	error	error
+text "2"	=ACOTH("2")	0.5493061443	coercion	number
+empty string -> #VALUE!	=ACOTH("")	#NUM!	error	error
+#N/A propagation	=ACOTH(NA())	#N/A	error	error
+no args	=ACOTH()	#N/A	error	error
+0 -> 0	=ASIN(0)	0	basic	number
+1 -> PI/2	=ASIN(1)	1.570796327	basic	number
+-1 -> -PI/2	=ASIN(-1)	-1.570796327	basic	number
+0.5	=ASIN(0.5)	0.5235987756	basic	number
+-0.5	=ASIN(-0.5)	-0.5235987756	basic	number
+0.7071... -> PI/4	=ASIN(SQRT(2)/2)	0.7853981634	basic	number
+0.9999999	=ASIN(0.9999999)	1.570349113	edge	number
+1.0000001 -> #NUM!	=ASIN(1.0000001)	#NUM!	error	error
+-1.0000001 -> #NUM!	=ASIN(-1.0000001)	#NUM!	error	error
+2 -> #NUM!	=ASIN(2)	#NUM!	error	error
+TRUE -> ASIN(1) = PI/2	=ASIN(TRUE)	1.570796327	coercion	number
+FALSE -> ASIN(0) = 0	=ASIN(FALSE)	0	coercion	number
+text "0.5"	=ASIN("0.5")	0.5235987756	coercion	number
+empty string -> #VALUE!	=ASIN("")	0	error	number
+#DIV/0! propagation	=ASIN(1/0)	#DIV/0!	error	error
+#N/A propagation	=ASIN(NA())	#N/A	error	error
+no args	=ASIN()	#N/A	error	error
+identity: ASIN(SIN(PI()/6))	=ASIN(SIN(PI()/6))	0.5235987756	nested	number
+0 -> 0	=ASINH(0)	0	basic	number
+1	=ASINH(1)	0.881373587	basic	number
+-1	=ASINH(-1)	-0.881373587	basic	number
+10	=ASINH(10)	2.99822295	basic	number
+-10	=ASINH(-10)	-2.99822295	basic	number
+large: 1E+10	=ASINH(1E+10)	23.71899811	edge	number
+very small	=ASINH(1E-10)	0.0000000001	edge	number
+TRUE -> ASINH(1)	=ASINH(TRUE)	0.881373587	coercion	number
+FALSE -> ASINH(0) = 0	=ASINH(FALSE)	0	coercion	number
+text "1"	=ASINH("1")	0.881373587	coercion	number
+empty string -> #VALUE!	=ASINH("")	0	error	number
+#N/A propagation	=ASINH(NA())	#N/A	error	error
+no args	=ASINH()	#N/A	error	error
+identity: ASINH(SINH(2))	=ASINH(SINH(2))	2	nested	number
+0 -> 0	=ATAN(0)	0	basic	number
+1 -> PI/4	=ATAN(1)	0.7853981634	basic	number
+-1 -> -PI/4	=ATAN(-1)	-0.7853981634	basic	number
+very large -> ~PI/2	=ATAN(1E+15)	1.570796327	edge	number
+very large negative -> ~-PI/2	=ATAN(-1E+15)	-1.570796327	edge	number
+very small	=ATAN(1E-10)	0.0000000001	edge	number
+TRUE -> ATAN(1) = PI/4	=ATAN(TRUE)	0.7853981634	coercion	number
+FALSE -> ATAN(0) = 0	=ATAN(FALSE)	0	coercion	number
+text "1"	=ATAN("1")	0.7853981634	coercion	number
+empty string -> #VALUE!	=ATAN("")	0	error	number
+#N/A propagation	=ATAN(NA())	#N/A	error	error
+no args	=ATAN()	#N/A	error	error
+identity: ATAN(TAN(PI()/4))	=ATAN(TAN(PI()/4))	0.7853981634	nested	number
+symmetry: ATAN(-x) = -ATAN(x)	=ATAN(-2)+ATAN(2)	0	nested	number
+(1,0) -> 0	=ATAN2(1,0)	0	basic	number
+(0,1) -> PI/2	=ATAN2(0,1)	1.570796327	basic	number
+(-1,0) -> PI	=ATAN2(-1,0)	3.141592654	basic	number
+(0,-1) -> -PI/2	=ATAN2(0,-1)	-1.570796327	basic	number
+(1,1) -> PI/4	=ATAN2(1,1)	0.7853981634	basic	number
+(-1,-1) -> -3PI/4	=ATAN2(-1,-1)	-2.35619449	basic	number
+(1,-1) -> -PI/4	=ATAN2(1,-1)	-0.7853981634	basic	number
+(-1,1) -> 3PI/4	=ATAN2(-1,1)	2.35619449	basic	number
+(0,0) -> #DIV/0!	=ATAN2(0,0)	#DIV/0!	error	error
+large values	=ATAN2(1E+10,1E+10)	0.7853981634	edge	number
+very small values	=ATAN2(1E-10,1E-10)	0.7853981634	edge	number
+x=TRUE y=0 -> 0	=ATAN2(TRUE,0)	0	coercion	number
+x=FALSE y=1 -> PI/2	=ATAN2(FALSE,1)	1.570796327	coercion	number
+text x	=ATAN2("1",1)	0.7853981634	coercion	number
+#N/A propagation x	=ATAN2(NA(),1)	#N/A	error	error
+#N/A propagation y	=ATAN2(1,NA())	#N/A	error	error
+no args	=ATAN2()	#N/A	error	error
+one arg only	=ATAN2(1)	#N/A	error	error
+three args	=ATAN2(1,1,1)	#N/A	error	error
+verify: ATAN2(1,1)=ATAN(1)	=ATAN2(1,1)-ATAN(1)	0	nested	number
+0 -> 0	=ATANH(0)	0	basic	number
+0.5	=ATANH(0.5)	0.5493061443	basic	number
+-0.5	=ATANH(-0.5)	-0.5493061443	basic	number
+0.9	=ATANH(0.9)	1.47221949	basic	number
+0.9999999	=ATANH(0.9999999)	8.405621391	edge	number
+-0.9999999	=ATANH(-0.9999999)	-8.405621391	edge	number
+1 -> #NUM!	=ATANH(1)	#NUM!	error	error
+-1 -> #NUM!	=ATANH(-1)	#NUM!	error	error
+1.0000001 -> #NUM!	=ATANH(1.0000001)	#NUM!	error	error
+2 -> #NUM!	=ATANH(2)	#NUM!	error	error
+TRUE -> ATANH(1) = #NUM!	=ATANH(TRUE)	#NUM!	error	error
+FALSE -> ATANH(0) = 0	=ATANH(FALSE)	0	coercion	number
+text "0.5"	=ATANH("0.5")	0.5493061443	coercion	number
+empty string -> #VALUE!	=ATANH("")	0	error	number
+#N/A propagation	=ATANH(NA())	#N/A	error	error
+no args	=ATANH()	#N/A	error	error
+identity: ATANH(TANH(0.5))	=ATANH(TANH(0.5))	0.5	nested	number
+2.1 -> 3	=CEILING(2.1,1)	3	basic	number
+2.9 -> 3	=CEILING(2.9,1)	3	basic	number
+exact integer	=CEILING(3,1)	3	edge	number
+0 -> 0	=CEILING(0,1)	0	edge	number
+negative: -2.1 -> -2	=CEILING(-2.1,1)	-2	basic	number
+negative: -2.9 -> -2	=CEILING(-2.9,1)	-2	basic	number
+factor 0.5: 2.3 -> 2.5	=CEILING(2.3,0.5)	2.5	basic	number
+factor 0.5: 2.6 -> 3	=CEILING(2.6,0.5)	3	basic	number
+factor 0.1: 1.01 -> 1.1	=CEILING(1.01,0.1)	1.1	basic	number
+factor 5: 12 -> 15	=CEILING(12,5)	15	basic	number
+factor 10: 11 -> 20	=CEILING(11,10)	20	edge	number
+negative factor with positive -> #NUM!	=CEILING(2.5,-1)	#NUM!	error	error
+factor 0: any nonzero -> #DIV/0!	=CEILING(2,0)	0	error	number
+factor 0 with 0 -> 0	=CEILING(0,0)	0	edge	number
+TRUE value	=CEILING(TRUE,1)	1	coercion	number
+text value "2.5"	=CEILING("2.5",1)	3	coercion	number
+#N/A propagation	=CEILING(NA(),1)	#N/A	error	error
+no args	=CEILING()	#N/A	error	error
+one arg only	=CEILING(2.5)	3	error	number
+three args	=CEILING(2.5,1,1)	#N/A	error	error
+0 -> 1	=COS(0)	1	basic	number
+PI() -> -1	=COS(PI())	-1	basic	number
+PI()/2 -> ~0	=COS(PI()/2)	0	basic	number
+PI()/3 -> 0.5	=COS(PI()/3)	0.5	basic	number
+PI()/4 -> sqrt(2)/2	=COS(PI()/4)	0.7071067812	basic	number
+2*PI() -> 1 (full cycle)	=COS(2*PI())	1	edge	number
+-PI()/2 -> ~0 (symmetry)	=COS(-PI()/2)	0	edge	number
+large angle: 1000	=COS(1000)	0.5623790763	edge	number
+very small: 0.001	=COS(0.001)	0.9999995	edge	number
+TRUE -> COS(1)	=COS(TRUE)	0.5403023059	coercion	number
+FALSE -> COS(0) = 1	=COS(FALSE)	1	coercion	number
+text "0"	=COS("0")	1	coercion	number
+empty string -> #VALUE!	=COS("")	1	error	number
+#N/A propagation	=COS(NA())	#N/A	error	error
+no args	=COS()	#N/A	error	error
+Pythagorean identity: SIN^2+COS^2=1	=SIN(0.5)^2+COS(0.5)^2	1	nested	number
+identity: COS(ACOS(0.5))=0.5	=COS(ACOS(0.5))	0.5	nested	number
+0 -> 1	=COSH(0)	1	basic	number
+1	=COSH(1)	1.543080635	basic	number
+-1 -> same as COSH(1)	=COSH(-1)	1.543080635	basic	number
+2	=COSH(2)	3.762195691	basic	number
+10	=COSH(10)	11013.23292	basic	number
+large: 709	=COSH(709)	41092000000000000302661163631584040024768970042660194581303872042167473906796715265122590388792111068001376081629728049068036634187809478944318529883218804876175770585153781859338390399794156349183802469375916037849771030769355487287122936311681071758483557050455166536536712173320729787139367993046992945152	edge	number
+large: 710 -> #NUM! (overflow)	=COSH(710)	#NUM!	error	error
+TRUE -> COSH(1)	=COSH(TRUE)	1.543080635	coercion	number
+FALSE -> COSH(0) = 1	=COSH(FALSE)	1	coercion	number
+text "1"	=COSH("1")	1.543080635	coercion	number
+empty string -> #VALUE!	=COSH("")	1	error	number
+#N/A propagation	=COSH(NA())	#N/A	error	error
+no args	=COSH()	#N/A	error	error
+identity: COSH(-x)=COSH(x)	=COSH(-2)-COSH(2)	0	nested	number
+identity: COSH(ACOSH(2))	=COSH(ACOSH(2))	2	nested	number
+PI()/4 -> 1	=COT(PI()/4)	1	basic	number
+PI()/6 -> sqrt(3)	=COT(PI()/6)	1.732050808	basic	number
+PI()/3	=COT(PI()/3)	0.5773502692	basic	number
+PI()/2 -> ~0	=COT(PI()/2)	0	basic	number
+0 -> #DIV/0!	=COT(0)	#DIV/0!	error	error
+PI() -> #DIV/0! (very large)	=COT(PI())	-8165620000000000	edge	number
+large value	=COT(1000)	0.6801221323	edge	number
+negative: -PI()/4 -> -1	=COT(-PI()/4)	-1	basic	number
+TRUE -> COT(1)	=COT(TRUE)	0.6420926159	coercion	number
+text "1"	=COT("1")	0.6420926159	coercion	number
+empty string -> #VALUE!	=COT("")	#DIV/0!	error	error
+#N/A propagation	=COT(NA())	#N/A	error	error
+no args	=COT()	#N/A	error	error
+identity: COT=COS/SIN	=COT(0.5)-COS(0.5)/SIN(0.5)	0	nested	number
+1	=COTH(1)	1.313035285	basic	number
+-1	=COTH(-1)	-1.313035285	basic	number
+2	=COTH(2)	1.037314721	basic	number
+0.1	=COTH(0.1)	10.03331113	basic	number
+0 -> #DIV/0!	=COTH(0)	#DIV/0!	error	error
+very small: 0.0001	=COTH(0.0001)	10000.00003	edge	number
+large: 10 -> ~1	=COTH(10)	1.000000004	edge	number
+TRUE -> COTH(1)	=COTH(TRUE)	1.313035285	coercion	number
+text "1"	=COTH("1")	1.313035285	coercion	number
+empty string -> #VALUE!	=COTH("")	#DIV/0!	error	error
+#N/A propagation	=COTH(NA())	#N/A	error	error
+no args	=COTH()	#N/A	error	error
+identity: COTH=COSH/SINH	=COTH(2)-COSH(2)/SINH(2)	0	nested	number
+PI()/2 -> 1	=CSC(PI()/2)	1	basic	number
+PI()/6 -> 2	=CSC(PI()/6)	2	basic	number
+PI()/4	=CSC(PI()/4)	1.414213562	basic	number
+PI()/3	=CSC(PI()/3)	1.154700538	basic	number
+0 -> #DIV/0!	=CSC(0)	#DIV/0!	error	error
+PI() -> very large	=CSC(PI())	8165620000000000	edge	number
+negative: -PI()/2 -> -1	=CSC(-PI()/2)	-1	basic	number
+TRUE -> CSC(1)	=CSC(TRUE)	1.188395106	coercion	number
+text "1"	=CSC("1")	1.188395106	coercion	number
+empty string -> #VALUE!	=CSC("")	#DIV/0!	error	error
+#N/A propagation	=CSC(NA())	#N/A	error	error
+no args	=CSC()	#N/A	error	error
+identity: CSC=1/SIN	=CSC(0.5)-1/SIN(0.5)	0	nested	number
+1	=CSCH(1)	0.8509181282	basic	number
+-1	=CSCH(-1)	-0.8509181282	basic	number
+2	=CSCH(2)	0.2757205648	basic	number
+0 -> #DIV/0!	=CSCH(0)	#DIV/0!	error	error
+very small: 0.001	=CSCH(0.001)	999.9998333	edge	number
+large: 10 -> ~0	=CSCH(10)	0.0000907999	edge	number
+TRUE -> CSCH(1)	=CSCH(TRUE)	0.8509181282	coercion	number
+text "1"	=CSCH("1")	0.8509181282	coercion	number
+empty string -> #VALUE!	=CSCH("")	#DIV/0!	error	error
+#N/A propagation	=CSCH(NA())	#N/A	error	error
+no args	=CSCH()	#N/A	error	error
+identity: CSCH=1/SINH	=CSCH(1)-1/SINH(1)	0	nested	number
+PI() -> 180	=DEGREES(PI())	180	basic	number
+PI()/2 -> 90	=DEGREES(PI()/2)	90	basic	number
+PI()/4 -> 45	=DEGREES(PI()/4)	45	basic	number
+0 -> 0	=DEGREES(0)	0	basic	number
+2*PI() -> 360	=DEGREES(2*PI())	360	basic	number
+-PI() -> -180	=DEGREES(-PI())	-180	basic	number
+1 radian	=DEGREES(1)	57.29577951	edge	number
+TRUE -> DEGREES(1)	=DEGREES(TRUE)	57.29577951	coercion	number
+FALSE -> 0	=DEGREES(FALSE)	0	coercion	number
+text "1"	=DEGREES("1")	57.29577951	coercion	number
+empty string -> #VALUE!	=DEGREES("")	0	error	number
+#N/A propagation	=DEGREES(NA())	#N/A	error	error
+no args	=DEGREES()	#N/A	error	error
+identity: DEGREES(RADIANS(45))=45	=DEGREES(RADIANS(45))	45	nested	number
+DEGREES(RADIANS(180))=180	=DEGREES(RADIANS(180))	180	nested	number
+2.1 -> 4	=EVEN(2.1)	4	basic	number
+3 -> 4	=EVEN(3)	4	basic	number
+4 -> 4	=EVEN(4)	4	edge	number
+0 -> 0	=EVEN(0)	0	edge	number
+-1 -> -2	=EVEN(-1)	-2	basic	number
+-2 -> -2	=EVEN(-2)	-2	edge	number
+-2.1 -> -4	=EVEN(-2.1)	-4	basic	number
+0.1 -> 2	=EVEN(0.1)	2	basic	number
+1.9 -> 2	=EVEN(1.9)	2	basic	number
+large: 1000001 -> 1000002	=EVEN(1000001)	1000002	edge	number
+TRUE -> EVEN(1) = 2	=EVEN(TRUE)	2	coercion	number
+FALSE -> EVEN(0) = 0	=EVEN(FALSE)	0	coercion	number
+text "3"	=EVEN("3")	4	coercion	number
+empty string -> #VALUE!	=EVEN("")	0	error	number
+#N/A propagation	=EVEN(NA())	#N/A	error	error
+no args	=EVEN()	#N/A	error	error
+result is always even: MOD	=MOD(EVEN(3.7),2)	0	nested	number
+0 -> 1	=EXP(0)	1	basic	number
+1 -> e	=EXP(1)	2.718281828	basic	number
+-1 -> 1/e	=EXP(-1)	0.3678794412	basic	number
+2	=EXP(2)	7.389056099	basic	number
+0.5	=EXP(0.5)	1.648721271	basic	number
+large: 100	=EXP(100)	26881199999999999944687640596341951077285888	edge	number
+near overflow: 709	=EXP(709)	82184100000000000157616526934702675944322153589206439334203414154136015261327438018221346356867181393809880405201085350947291203876642167900828098516995877921386554650718682445520293940690473330512586602736792955887919503500244157335456099421844284588877223066615239445491167808074757520938151310908933013504	edge	number
+overflow: 710 -> #NUM!	=EXP(710)	#NUM!	error	error
+very negative: -100	=EXP(-100)	0	edge	number
+near underflow: -745	=EXP(-745)	0	edge	number
+TRUE -> EXP(1) = e	=EXP(TRUE)	2.718281828	coercion	number
+FALSE -> EXP(0) = 1	=EXP(FALSE)	1	coercion	number
+text "1"	=EXP("1")	2.718281828	coercion	number
+empty string -> #VALUE!	=EXP("")	1	error	number
+#N/A propagation	=EXP(NA())	#N/A	error	error
+no args	=EXP()	#N/A	error	error
+identity: EXP(LN(5))=5	=EXP(LN(5))	5	nested	number
+identity: EXP(-1)=1/EXP(1)	=EXP(-1)-1/EXP(1)	0	nested	number
+0 -> 1	=FACT(0)	1	basic	number
+1 -> 1	=FACT(1)	1	basic	number
+2 -> 2	=FACT(2)	2	basic	number
+5 -> 120	=FACT(5)	120	basic	number
+10 -> 3628800	=FACT(10)	3628800	basic	number
+20	=FACT(20)	2432900000000000000	edge	number
+170 -> largest valid	=FACT(170)	7257420000000000389945027124603152996235913458837941524998669005404826806513111689435610732332747061764676429403453866927318092181219938045335538470662586897751407108135515378847048651239854930433392606779244563989949579784123774217451086172533691582400433019900269048161456060809778046042016185417134505984	edge	number
+171 -> #NUM! overflow	=FACT(171)	#NUM!	error	error
+decimal 5.9 -> FACT(5) = 120	=FACT(5.9)	120	edge	number
+decimal 5.1 -> FACT(5) = 120	=FACT(5.1)	120	edge	number
+-1 -> #NUM!	=FACT(-1)	#NUM!	error	error
+-0.1 -> #NUM!	=FACT(-0.1)	#NUM!	error	error
+TRUE -> FACT(1) = 1	=FACT(TRUE)	1	coercion	number
+FALSE -> FACT(0) = 1	=FACT(FALSE)	1	coercion	number
+text "5"	=FACT("5")	120	coercion	number
+empty string -> #VALUE!	=FACT("")	1	error	number
+#N/A propagation	=FACT(NA())	#N/A	error	error
+no args	=FACT()	#N/A	error	error
+identity: n! = n*(n-1)!	=FACT(6)/FACT(5)	6	nested	number
+2.9 -> 2	=FLOOR(2.9,1)	2	basic	number
+2.1 -> 2	=FLOOR(2.1,1)	2	basic	number
+exact integer	=FLOOR(3,1)	3	edge	number
+0 -> 0	=FLOOR(0,1)	0	edge	number
+negative: -2.1 -> -3	=FLOOR(-2.1,1)	-3	basic	number
+negative: -2.9 -> -3	=FLOOR(-2.9,1)	-3	basic	number
+factor 0.5: 2.7 -> 2.5	=FLOOR(2.7,0.5)	2.5	basic	number
+factor 0.5: 2.3 -> 2	=FLOOR(2.3,0.5)	2	basic	number
+factor 5: 12 -> 10	=FLOOR(12,5)	10	basic	number
+factor 10: 19 -> 10	=FLOOR(19,10)	10	edge	number
+positive value negative factor -> #NUM!	=FLOOR(2.5,-1)	#NUM!	error	error
+negative value negative factor	=FLOOR(-2.5,-1)	-2	basic	number
+factor 0 nonzero value -> #DIV/0!	=FLOOR(2,0)	#DIV/0!	error	error
+factor 0 zero value -> 0	=FLOOR(0,0)	0	edge	number
+text "2.5"	=FLOOR("2.5",1)	2	coercion	number
+#N/A propagation	=FLOOR(NA(),1)	#N/A	error	error
+no args	=FLOOR()	#N/A	error	error
+one arg	=FLOOR(2.5)	2	error	number
+2.9 -> 2	=INT(2.9)	2	basic	number
+2.1 -> 2	=INT(2.1)	2	basic	number
+3 -> 3	=INT(3)	3	edge	number
+0 -> 0	=INT(0)	0	edge	number
+-2.1 -> -3 (floor, not truncate)	=INT(-2.1)	-3	basic	number
+-2.9 -> -3	=INT(-2.9)	-3	basic	number
+-3 -> -3	=INT(-3)	-3	edge	number
+0.9999 -> 0	=INT(0.9999)	0	edge	number
+-0.0001 -> -1	=INT(-0.0001)	-1	edge	number
+large: 1E+15	=INT(1E+15)	1000000000000000	edge	number
+TRUE -> INT(1) = 1	=INT(TRUE)	1	coercion	number
+FALSE -> INT(0) = 0	=INT(FALSE)	0	coercion	number
+text "2.9"	=INT("2.9")	2	coercion	number
+empty string -> #VALUE!	=INT("")	0	error	number
+#N/A propagation	=INT(NA())	#N/A	error	error
+no args	=INT()	#N/A	error	error
+INT vs TRUNC for negative: INT(-2.5)=-3, TRUNC=-2	=INT(-2.5)-TRUNC(-2.5)	-1	nested	number
+1 -> 0	=LN(1)	0	basic	number
+e -> 1	=LN(EXP(1))	1	basic	number
+10	=LN(10)	2.302585093	basic	number
+0.5	=LN(0.5)	-0.6931471806	basic	number
+100	=LN(100)	4.605170186	basic	number
+very small: 1E-300	=LN(1E-300)	-690.7755279	edge	number
+large: 1E+300	=LN(1E+300)	690.7755279	edge	number
+0 -> #NUM!	=LN(0)	#NUM!	error	error
+negative -> #NUM!	=LN(-1)	#NUM!	error	error
+-0.001 -> #NUM!	=LN(-0.001)	#NUM!	error	error
+TRUE -> LN(1) = 0	=LN(TRUE)	0	coercion	number
+FALSE -> LN(0) = #NUM!	=LN(FALSE)	#NUM!	error	error
+text "10"	=LN("10")	2.302585093	coercion	number
+empty string -> #VALUE!	=LN("")	#NUM!	error	error
+#N/A propagation	=LN(NA())	#N/A	error	error
+no args	=LN()	#N/A	error	error
+identity: LN(EXP(3))=3	=LN(EXP(3))	3	nested	number
+identity: EXP(LN(5))=5	=EXP(LN(5))	5	nested	number
+LN(a*b)=LN(a)+LN(b)	=LN(3*4)-LN(3)-LN(4)	0	nested	number
+10 base 10 -> 1	=LOG(10,10)	1	basic	number
+100 base 10 -> 2	=LOG(100,10)	2	basic	number
+8 base 2 -> 3	=LOG(8,2)	3	basic	number
+1 any base -> 0	=LOG(1,10)	0	basic	number
+default base = 10	=LOG(10)	1	basic	number
+default base 100 -> 2	=LOG(100)	2	basic	number
+base e	=LOG(EXP(1),EXP(1))	1	edge	number
+fraction: LOG(0.5, 2) = -1	=LOG(0.5,2)	-1	basic	number
+0 -> #NUM!	=LOG(0)	#NUM!	error	error
+negative -> #NUM!	=LOG(-1)	#NUM!	error	error
+base 1 -> #DIV/0!	=LOG(10,1)	#DIV/0!	error	error
+base 0 -> #NUM!	=LOG(10,0)	#NUM!	error	error
+base negative -> #NUM!	=LOG(10,-2)	#NUM!	error	error
+TRUE -> LOG(1) = 0	=LOG(TRUE)	0	coercion	number
+text "100"	=LOG("100",10)	2	coercion	number
+#N/A propagation	=LOG(NA())	#N/A	error	error
+no args	=LOG()	#N/A	error	error
+identity: LOG(b^x)=x	=LOG(2^5,2)	5	nested	number
+change of base: LOG(8,2)=LOG(8)/LOG(2)	=LOG(8,2)-LOG(8)/LOG(2)	0	nested	number
+1 -> 0	=LOG10(1)	0	basic	number
+10 -> 1	=LOG10(10)	1	basic	number
+100 -> 2	=LOG10(100)	2	basic	number
+1000 -> 3	=LOG10(1000)	3	basic	number
+0.1 -> -1	=LOG10(0.1)	-1	basic	number
+0.01 -> -2	=LOG10(0.01)	-2	basic	number
+2 -> 0.301...	=LOG10(2)	0.3010299957	basic	number
+large: 1E+10	=LOG10(1E+10)	10	edge	number
+very small: 1E-10	=LOG10(1E-10)	-10	edge	number
+0 -> #NUM!	=LOG10(0)	#NUM!	error	error
+negative -> #NUM!	=LOG10(-1)	#NUM!	error	error
+TRUE -> LOG10(1) = 0	=LOG10(TRUE)	0	coercion	number
+FALSE -> LOG10(0) = #NUM!	=LOG10(FALSE)	#NUM!	error	error
+text "100"	=LOG10("100")	2	coercion	number
+empty string -> #VALUE!	=LOG10("")	#NUM!	error	error
+#N/A propagation	=LOG10(NA())	#N/A	error	error
+no args	=LOG10()	#N/A	error	error
+identity: LOG10=LOG(x)/LOG(10)	=LOG10(50)-LOG(50)/LOG(10)	0	nested	number
+10 mod 3 = 1	=MOD(10,3)	1	basic	number
+9 mod 3 = 0	=MOD(9,3)	0	basic	number
+0 mod 5 = 0	=MOD(0,5)	0	edge	number
+5 mod 5 = 0	=MOD(5,5)	0	edge	number
+2 mod 5 = 2 (dividend < divisor)	=MOD(2,5)	2	basic	number
+-10 mod 3 = 2 (sign follows divisor)	=MOD(-10,3)	2	basic	number
+10 mod -3 = -2 (sign follows divisor)	=MOD(10,-3)	-2	basic	number
+-10 mod -3 = -1	=MOD(-10,-3)	-1	basic	number
+decimal: MOD(5.5,2.5) = 0.5	=MOD(5.5,2.5)	0.5	basic	number
+float precision: MOD(1,0.1)	=MOD(1,0.1)	0	edge	number
+divisor 0 -> #DIV/0!	=MOD(10,0)	#DIV/0!	error	error
+large: MOD(1E+15, 7)	=MOD(1E+15,7)	#NUM!	edge	error
+TRUE dividend	=MOD(TRUE,3)	1	coercion	number
+TRUE divisor	=MOD(10,TRUE)	0	coercion	number
+text "10"	=MOD("10",3)	1	coercion	number
+#N/A propagation	=MOD(NA(),3)	#N/A	error	error
+no args	=MOD()	#N/A	error	error
+one arg	=MOD(10)	#N/A	error	error
+identity: a=DIV*b+MOD	=INT(10/3)*3+MOD(10,3)	10	nested	number
+10 -> nearest 3 = 9	=MROUND(10,3)	9	basic	number
+11 -> nearest 3 = 12	=MROUND(11,3)	12	basic	number
+10.5 -> nearest 3 = 9	=MROUND(10.5,3)	12	basic	number
+0 -> 0	=MROUND(0,5)	0	edge	number
+exact multiple	=MROUND(9,3)	9	edge	number
+factor 0.5: 2.3 -> 2.5	=MROUND(2.3,0.5)	2.5	basic	number
+factor 0.1: 2.35 -> 2.4	=MROUND(2.35,0.1)	2.4	basic	number
+both negative	=MROUND(-10,-3)	-9	basic	number
+negative value positive factor	=MROUND(-10,3)	#NUM!	basic	error
+positive value negative factor -> #NUM!	=MROUND(10,-3)	#NUM!	error	error
+factor 0 -> error	=MROUND(10,0)	0	error	number
+TRUE value	=MROUND(TRUE,1)	1	coercion	number
+text "10"	=MROUND("10",3)	9	coercion	number
+#N/A propagation	=MROUND(NA(),3)	#N/A	error	error
+no args	=MROUND()	#N/A	error	error
+one arg	=MROUND(10)	#N/A	error	error
+1 -> 1	=ODD(1)	1	basic	number
+2 -> 3	=ODD(2)	3	basic	number
+3 -> 3	=ODD(3)	3	edge	number
+0 -> 1	=ODD(0)	1	edge	number
+-1 -> -1	=ODD(-1)	-1	edge	number
+-2 -> -3	=ODD(-2)	-3	basic	number
+-3 -> -3	=ODD(-3)	-3	edge	number
+0.1 -> 1	=ODD(0.1)	1	basic	number
+1.9 -> 3	=ODD(1.9)	3	basic	number
+-0.1 -> -1	=ODD(-0.1)	-1	basic	number
+-1.9 -> -3	=ODD(-1.9)	-3	basic	number
+large: 1000000 -> 1000001	=ODD(1000000)	1000001	edge	number
+TRUE -> ODD(1) = 1	=ODD(TRUE)	1	coercion	number
+FALSE -> ODD(0) = 1	=ODD(FALSE)	1	coercion	number
+text "4"	=ODD("4")	5	coercion	number
+empty string -> #VALUE!	=ODD("")	1	error	number
+#N/A propagation	=ODD(NA())	#N/A	error	error
+no args	=ODD()	#N/A	error	error
+result always odd: MOD	=MOD(ABS(ODD(4)),2)	1	nested	number
+PI() value	=PI()	3.141592654	basic	number
+2*PI()	=2*PI()	6.283185307	basic	number
+PI()/2	=PI()/2	1.570796327	basic	number
+PI()/4	=PI()/4	0.7853981634	basic	number
+verify SIN(PI/2)=1	=SIN(PI()/2)	1	nested	number
+verify COS(PI)=-1	=COS(PI())	-1	nested	number
+PI with arg -> error	=PI(1)	#N/A	error	error
+2^10 = 1024	=POWER(2,10)	1024	basic	number
+9^0.5 = 3	=POWER(9,0.5)	3	basic	number
+2^0 = 1	=POWER(2,0)	1	basic	number
+0^0 = 1	=POWER(0,0)	1	edge	number
+0^5 = 0	=POWER(0,5)	0	edge	number
+0^(-1) -> #DIV/0!	=POWER(0,-1)	#NUM!	error	error
+(-2)^3 = -8	=POWER(-2,3)	-8	basic	number
+(-2)^2 = 4	=POWER(-2,2)	4	basic	number
+(-1)^0.5 -> #NUM! (complex)	=POWER(-1,0.5)	#NUM!	error	error
+fractional: 8^(1/3)=2	=POWER(8,1/3)	2	basic	number
+negative exp: 2^(-3)=0.125	=POWER(2,-3)	0.125	basic	number
+large: 2^53	=POWER(2,53)	9007200000000000	edge	number
+overflow -> #NUM!	=POWER(10,309)	#NUM!	error	error
+TRUE base	=POWER(TRUE,5)	1	coercion	number
+text "2"	=POWER("2",10)	1024	coercion	number
+#N/A propagation	=POWER(NA(),2)	#N/A	error	error
+no args	=POWER()	#N/A	error	error
+one arg	=POWER(2)	#N/A	error	error
+identity: POWER(b,x)=b^x	=POWER(2,8)-2^8	0	nested	number
+1 value	=PRODUCT(5)	5	basic	number
+two values	=PRODUCT(2,3)	6	basic	number
+three values	=PRODUCT(2,3,4)	24	basic	number
+include 0 -> 0	=PRODUCT(5,0,3)	0	edge	number
+all same	=PRODUCT(2,2,2,2)	16	basic	number
+include negative	=PRODUCT(-2,3)	-6	basic	number
+two negatives -> positive	=PRODUCT(-2,-3)	6	basic	number
+fraction result	=PRODUCT(0.5,0.5)	0.25	basic	number
+large	=PRODUCT(1E+100,1E+100)	99999999999999996973312221251036165947450327545502362648241750950346848435554075534196338404706251868027512415973882408182135734368278484639385041047239877871023591066789981811181813306167128854888448	edge	number
+overflow -> #NUM!	=PRODUCT(1E+200,1E+200)	#NUM!	error	error
+TRUE -> 1 in product	=PRODUCT(TRUE,5)	5	coercion	number
+FALSE -> 0 in product	=PRODUCT(FALSE,5)	0	coercion	number
+text "5"	=PRODUCT("5",2)	10	coercion	number
+#N/A propagation	=PRODUCT(NA(),2)	#N/A	error	error
+no args -> error	=PRODUCT()	#N/A	error	error
+10/3 = 3 (integer)	=QUOTIENT(10,3)	3	basic	number
+9/3 = 3	=QUOTIENT(9,3)	3	edge	number
+7/2 = 3	=QUOTIENT(7,2)	3	basic	number
+0/5 = 0	=QUOTIENT(0,5)	0	edge	number
+-10/3 = -3 (toward zero)	=QUOTIENT(-10,3)	-3	basic	number
+10/(-3) = -3	=QUOTIENT(10,-3)	-3	basic	number
+-10/(-3) = 3	=QUOTIENT(-10,-3)	3	basic	number
+small dividend: 2/10 = 0	=QUOTIENT(2,10)	0	basic	number
+divisor 0 -> #DIV/0!	=QUOTIENT(10,0)	#DIV/0!	error	error
+decimal numerator 10.9/3 = 3	=QUOTIENT(10.9,3)	3	edge	number
+decimal denominator	=QUOTIENT(10,3.9)	2	edge	number
+TRUE numerator	=QUOTIENT(TRUE,1)	1	coercion	number
+text "10"	=QUOTIENT("10",3)	3	coercion	number
+#N/A propagation	=QUOTIENT(NA(),3)	#N/A	error	error
+no args	=QUOTIENT()	#N/A	error	error
+one arg	=QUOTIENT(10)	#N/A	error	error
+identity: QUOTIENT*divisor+MOD=dividend	=QUOTIENT(10,3)*3+MOD(10,3)	10	nested	number
+180 -> PI	=RADIANS(180)	3.141592654	basic	number
+90 -> PI/2	=RADIANS(90)	1.570796327	basic	number
+45 -> PI/4	=RADIANS(45)	0.7853981634	basic	number
+0 -> 0	=RADIANS(0)	0	basic	number
+360 -> 2*PI	=RADIANS(360)	6.283185307	basic	number
+-90 -> -PI/2	=RADIANS(-90)	-1.570796327	basic	number
+1 degree	=RADIANS(1)	0.0174532925	edge	number
+270 -> 3*PI/2	=RADIANS(270)	4.71238898	basic	number
+TRUE -> RADIANS(1)	=RADIANS(TRUE)	0.0174532925	coercion	number
+FALSE -> 0	=RADIANS(FALSE)	0	coercion	number
+text "180"	=RADIANS("180")	3.141592654	coercion	number
+empty string -> #VALUE!	=RADIANS("")	0	error	number
+#N/A propagation	=RADIANS(NA())	#N/A	error	error
+no args	=RADIANS()	#N/A	error	error
+identity: RADIANS(DEGREES(1))=1	=RADIANS(DEGREES(1))	1	nested	number
+2.5 -> 3 (round half up)	=ROUND(2.5,0)	3	basic	number
+2.4 -> 2	=ROUND(2.4,0)	2	basic	number
+2.6 -> 3	=ROUND(2.6,0)	3	basic	number
+-2.5 -> -3	=ROUND(-2.5,0)	-3	basic	number
+3.5 -> 4	=ROUND(3.5,0)	4	basic	number
+2.45 to 1dp -> 2.5	=ROUND(2.45,1)	2.5	basic	number
+2.449 to 2dp	=ROUND(2.449,2)	2.45	basic	number
+IEEE754 gotcha: ROUND(2.675,2)=2.68	=ROUND(2.675,2)	2.68	edge	number
+ROUND(1.005,2) float gotcha	=ROUND(1.005,2)	1.01	edge	number
+negative places: ROUND(1234,-2)=1200	=ROUND(1234,-2)	1200	basic	number
+negative places: ROUND(1560,-3)=2000	=ROUND(1560,-3)	2000	basic	number
+0 -> 0	=ROUND(0,2)	0	edge	number
+already rounded	=ROUND(2.5,1)	2.5	edge	number
+large decimal places	=ROUND(1.23456789,5)	1.23457	basic	number
+TRUE value	=ROUND(TRUE,0)	1	coercion	number
+text "2.5"	=ROUND("2.5",0)	3	coercion	number
+#N/A propagation	=ROUND(NA(),0)	#N/A	error	error
+no args	=ROUND()	#N/A	error	error
+one arg	=ROUND(2.5)	3	error	number
+2.9 -> 2	=ROUNDDOWN(2.9,0)	2	basic	number
+2.1 -> 2	=ROUNDDOWN(2.1,0)	2	basic	number
+exact: 3.0 -> 3	=ROUNDDOWN(3.0,0)	3	edge	number
+-2.9 -> -2 (toward zero)	=ROUNDDOWN(-2.9,0)	-2	basic	number
+-2.1 -> -2	=ROUNDDOWN(-2.1,0)	-2	basic	number
+to 1dp: 2.99 -> 2.9	=ROUNDDOWN(2.99,1)	2.9	basic	number
+to 2dp: 2.999 -> 2.99	=ROUNDDOWN(2.999,2)	2.99	basic	number
+negative places: 1234 -> 1200	=ROUNDDOWN(1234,-2)	1200	basic	number
+0 -> 0	=ROUNDDOWN(0,2)	0	edge	number
+very small: 0.0001 to 3dp -> 0	=ROUNDDOWN(0.0001,3)	0	edge	number
+TRUE value	=ROUNDDOWN(TRUE,0)	1	coercion	number
+text "2.9"	=ROUNDDOWN("2.9",0)	2	coercion	number
+#N/A propagation	=ROUNDDOWN(NA(),0)	#N/A	error	error
+no args	=ROUNDDOWN()	#N/A	error	error
+compare with TRUNC for positive	=ROUNDDOWN(2.9,0)-TRUNC(2.9,0)	0	nested	number
+2.1 -> 3	=ROUNDUP(2.1,0)	3	basic	number
+2.9 -> 3	=ROUNDUP(2.9,0)	3	basic	number
+exact: 3.0 -> 3	=ROUNDUP(3.0,0)	3	edge	number
+-2.1 -> -3 (away from zero)	=ROUNDUP(-2.1,0)	-3	basic	number
+-2.9 -> -3	=ROUNDUP(-2.9,0)	-3	basic	number
+to 1dp: 2.01 -> 2.1	=ROUNDUP(2.01,1)	2.1	basic	number
+to 2dp: 2.001 -> 2.01	=ROUNDUP(2.001,2)	2.01	basic	number
+negative places: 1201 -> 1300	=ROUNDUP(1201,-2)	1300	basic	number
+0 -> 0	=ROUNDUP(0,2)	0	edge	number
+very small positive -> 1	=ROUNDUP(0.0001,0)	1	edge	number
+TRUE value	=ROUNDUP(TRUE,0)	1	coercion	number
+text "2.1"	=ROUNDUP("2.1",0)	3	coercion	number
+#N/A propagation	=ROUNDUP(NA(),0)	#N/A	error	error
+no args	=ROUNDUP()	#N/A	error	error
+ROUNDUP >= ROUND for positive	=ROUNDUP(2.4,0)-ROUND(2.4,0)	1	nested	number
+0 -> 1	=SEC(0)	1	basic	number
+PI() -> -1	=SEC(PI())	-1	basic	number
+PI()/3	=SEC(PI()/3)	2	basic	number
+PI()/4 -> sqrt(2)	=SEC(PI()/4)	1.414213562	basic	number
+PI()/6 -> 2/sqrt(3)	=SEC(PI()/6)	1.154700538	basic	number
+negative: -PI()/3	=SEC(-PI()/3)	2	basic	number
+near PI/2 (large value)	=SEC(PI()/2-0.0001)	10000.00002	edge	number
+2*PI() -> 1	=SEC(2*PI())	1	edge	number
+TRUE -> SEC(1)	=SEC(TRUE)	1.850815718	coercion	number
+FALSE -> SEC(0) = 1	=SEC(FALSE)	1	coercion	number
+text "0"	=SEC("0")	1	coercion	number
+empty string -> #VALUE!	=SEC("")	1	error	number
+#N/A propagation	=SEC(NA())	#N/A	error	error
+no args	=SEC()	#N/A	error	error
+identity: SEC=1/COS	=SEC(0.5)-1/COS(0.5)	0	nested	number
+identity: SEC(ACOS(0.5))=2	=SEC(ACOS(0.5))	2	nested	number
+0 -> 1	=SECH(0)	1	basic	number
+1	=SECH(1)	0.6480542737	basic	number
+-1 -> same as SECH(1)	=SECH(-1)	0.6480542737	basic	number
+2	=SECH(2)	0.2658022288	basic	number
+large: 100 -> ~0	=SECH(100)	0	edge	number
+TRUE -> SECH(1)	=SECH(TRUE)	0.6480542737	coercion	number
+FALSE -> SECH(0) = 1	=SECH(FALSE)	1	coercion	number
+text "1"	=SECH("1")	0.6480542737	coercion	number
+empty string -> #VALUE!	=SECH("")	1	error	number
+#N/A propagation	=SECH(NA())	#N/A	error	error
+no args	=SECH()	#N/A	error	error
+identity: SECH=1/COSH	=SECH(1)-1/COSH(1)	0	nested	number
+symmetry: SECH(-x)=SECH(x)	=SECH(-2)-SECH(2)	0	nested	number
+positive integer -> 1	=SIGN(5)	1	basic	number
+positive decimal -> 1	=SIGN(0.001)	1	basic	number
+negative integer -> -1	=SIGN(-5)	-1	basic	number
+negative decimal -> -1	=SIGN(-0.001)	-1	basic	number
+zero -> 0	=SIGN(0)	0	edge	number
+large positive -> 1	=SIGN(1E+300)	1	edge	number
+large negative -> -1	=SIGN(-1E+300)	-1	edge	number
+very small positive -> 1	=SIGN(1E-300)	1	edge	number
+TRUE -> SIGN(1) = 1	=SIGN(TRUE)	1	coercion	number
+FALSE -> SIGN(0) = 0	=SIGN(FALSE)	0	coercion	number
+text "5"	=SIGN("5")	1	coercion	number
+text "-3"	=SIGN("-3")	-1	coercion	number
+empty string -> #VALUE!	=SIGN("")	0	error	number
+#N/A propagation	=SIGN(NA())	#N/A	error	error
+no args	=SIGN()	#N/A	error	error
+too many args	=SIGN(1,2)	#N/A	error	error
+SIGN(x)*ABS(x)=x	=SIGN(-7)*ABS(-7)	-7	nested	number
+0 -> 0	=SIN(0)	0	basic	number
+PI()/2 -> 1	=SIN(PI()/2)	1	basic	number
+PI() -> ~0	=SIN(PI())	0	basic	number
+PI()/6 -> 0.5	=SIN(PI()/6)	0.5	basic	number
+PI()/3 -> sqrt(3)/2	=SIN(PI()/3)	0.8660254038	basic	number
+PI()/4 -> sqrt(2)/2	=SIN(PI()/4)	0.7071067812	basic	number
+-PI()/2 -> -1	=SIN(-PI()/2)	-1	basic	number
+3*PI()/2 -> -1	=SIN(3*PI()/2)	-1	basic	number
+2*PI() -> ~0 (full cycle)	=SIN(2*PI())	0	edge	number
+large angle: 1000	=SIN(1000)	0.8268795405	edge	number
+TRUE -> SIN(1)	=SIN(TRUE)	0.8414709848	coercion	number
+FALSE -> SIN(0) = 0	=SIN(FALSE)	0	coercion	number
+text "0"	=SIN("0")	0	coercion	number
+empty string -> #VALUE!	=SIN("")	0	error	number
+#N/A propagation	=SIN(NA())	#N/A	error	error
+no args	=SIN()	#N/A	error	error
+Pythagorean identity	=SIN(0.7)^2+COS(0.7)^2	1	nested	number
+identity: SIN(ASIN(0.5))	=SIN(ASIN(0.5))	0.5	nested	number
+0 -> 0	=SINH(0)	0	basic	number
+1	=SINH(1)	1.175201194	basic	number
+-1 -> -SINH(1)	=SINH(-1)	-1.175201194	basic	number
+2	=SINH(2)	3.626860408	basic	number
+0.5	=SINH(0.5)	0.5210953055	basic	number
+large: 100	=SINH(100)	13440599999999999972343820298170975538642944	edge	number
+near overflow: 709	=SINH(709)	41092000000000000302661163631584040024768970042660194581303872042167473906796715265122590388792111068001376081629728049068036634187809478944318529883218804876175770585153781859338390399794156349183802469375916037849771030769355487287122936311681071758483557050455166536536712173320729787139367993046992945152	edge	number
+very small: 0.001	=SINH(0.001)	0.0010000002	edge	number
+TRUE -> SINH(1)	=SINH(TRUE)	1.175201194	coercion	number
+FALSE -> SINH(0) = 0	=SINH(FALSE)	0	coercion	number
+text "1"	=SINH("1")	1.175201194	coercion	number
+empty string -> #VALUE!	=SINH("")	0	error	number
+#N/A propagation	=SINH(NA())	#N/A	error	error
+no args	=SINH()	#N/A	error	error
+identity: SINH(ASINH(2))	=SINH(ASINH(2))	2	nested	number
+antisymmetry: SINH(-x)=-SINH(x)	=SINH(-2)+SINH(2)	0	nested	number
+4 -> 2	=SQRT(4)	2	basic	number
+9 -> 3	=SQRT(9)	3	basic	number
+2 -> 1.4142...	=SQRT(2)	1.414213562	basic	number
+0 -> 0	=SQRT(0)	0	edge	number
+1 -> 1	=SQRT(1)	1	basic	number
+0.25 -> 0.5	=SQRT(0.25)	0.5	basic	number
+large: 1E+16	=SQRT(1E+16)	100000000	edge	number
+very small: 1E-16	=SQRT(1E-16)	0.00000001	edge	number
+negative -> #NUM!	=SQRT(-1)	#NUM!	error	error
+-0.001 -> #NUM!	=SQRT(-0.001)	#NUM!	error	error
+TRUE -> SQRT(1) = 1	=SQRT(TRUE)	1	coercion	number
+FALSE -> SQRT(0) = 0	=SQRT(FALSE)	0	coercion	number
+text "4"	=SQRT("4")	2	coercion	number
+empty string -> #VALUE!	=SQRT("")	0	error	number
+#N/A propagation	=SQRT(NA())	#N/A	error	error
+no args	=SQRT()	#N/A	error	error
+identity: SQRT(x)^2=x	=SQRT(5)^2	5	nested	number
+SQRT(x)=POWER(x,0.5)	=SQRT(7)-POWER(7,0.5)	0	nested	number
+0 -> 0	=TAN(0)	0	basic	number
+PI()/4 -> 1	=TAN(PI()/4)	1	basic	number
+-PI()/4 -> -1	=TAN(-PI()/4)	-1	basic	number
+PI()/6 -> 1/sqrt(3)	=TAN(PI()/6)	0.5773502692	basic	number
+PI()/3 -> sqrt(3)	=TAN(PI()/3)	1.732050808	basic	number
+near PI/2 (large value)	=TAN(PI()/2-0.00001)	100000	edge	number
+PI() -> ~0	=TAN(PI())	0	edge	number
+2*PI() -> ~0	=TAN(2*PI())	0	edge	number
+large angle: 1000	=TAN(1000)	1.470324156	edge	number
+TRUE -> TAN(1)	=TAN(TRUE)	1.557407725	coercion	number
+FALSE -> TAN(0) = 0	=TAN(FALSE)	0	coercion	number
+text "0"	=TAN("0")	0	coercion	number
+empty string -> #VALUE!	=TAN("")	0	error	number
+#N/A propagation	=TAN(NA())	#N/A	error	error
+no args	=TAN()	#N/A	error	error
+identity: TAN=SIN/COS	=TAN(0.5)-SIN(0.5)/COS(0.5)	0	nested	number
+identity: TAN(ATAN(1))=1	=TAN(ATAN(1))	1	nested	number
+0 -> 0	=TANH(0)	0	basic	number
+1	=TANH(1)	0.761594156	basic	number
+-1 -> -TANH(1)	=TANH(-1)	-0.761594156	basic	number
+0.5	=TANH(0.5)	0.4621171573	basic	number
+large: 10 -> ~1	=TANH(10)	0.9999999959	edge	number
+large: 100 -> 1	=TANH(100)	1	edge	number
+very large -> 1	=TANH(1E+10)	1	edge	number
+very negative -> -1	=TANH(-1E+10)	-1	edge	number
+small: 0.001 -> ~0.001	=TANH(0.001)	0.0009999997	edge	number
+TRUE -> TANH(1)	=TANH(TRUE)	0.761594156	coercion	number
+FALSE -> TANH(0) = 0	=TANH(FALSE)	0	coercion	number
+text "1"	=TANH("1")	0.761594156	coercion	number
+empty string -> #VALUE!	=TANH("")	0	error	number
+#N/A propagation	=TANH(NA())	#N/A	error	error
+no args	=TANH()	#N/A	error	error
+identity: TANH(ATANH(0.5))	=TANH(ATANH(0.5))	0.5	nested	number
+antisymmetry: TANH(-x)=-TANH(x)	=TANH(-2)+TANH(2)	0	nested	number
+range: always in (-1,1)	=ABS(TANH(5))<1	TRUE	nested	boolean
+2.9 -> 2	=TRUNC(2.9)	2	basic	number
+2.1 -> 2	=TRUNC(2.1)	2	basic	number
+exact: 3 -> 3	=TRUNC(3)	3	edge	number
+0 -> 0	=TRUNC(0)	0	edge	number
+-2.9 -> -2 (toward zero, not floor)	=TRUNC(-2.9)	-2	basic	number
+-2.1 -> -2	=TRUNC(-2.1)	-2	basic	number
+TRUNC vs INT for negative	=TRUNC(-2.5)-INT(-2.5)	1	edge	number
+to 1dp: 3.456 -> 3.4	=TRUNC(3.456,1)	3.4	basic	number
+to 2dp: 3.456 -> 3.45	=TRUNC(3.456,2)	3.45	basic	number
+to -1: 1234 -> 1230	=TRUNC(1234,-1)	1230	basic	number
+to -2: 1234 -> 1200	=TRUNC(1234,-2)	1200	basic	number
+large: TRUNC(1E+15)	=TRUNC(1E+15)	1000000000000000	edge	number
+very small: TRUNC(0.0001)	=TRUNC(0.0001)	0	edge	number
+TRUE -> TRUNC(1) = 1	=TRUNC(TRUE)	1	coercion	number
+FALSE -> TRUNC(0) = 0	=TRUNC(FALSE)	0	coercion	number
+text "2.9"	=TRUNC("2.9")	2	coercion	number
+empty string -> #VALUE!	=TRUNC("")	0	error	number
+#N/A propagation	=TRUNC(NA())	#N/A	error	error
+no args	=TRUNC()	#N/A	error	error
+10 in base 2 -> "1010"	=BASE(10,2)	1010	basic	number
+255 in base 16 -> "FF"	=BASE(255,16)	FF	basic	string
+8 in base 8 -> "10"	=BASE(8,8)	10	basic	number
+0 in base 10 -> "0"	=BASE(0,10)	0	basic	number
+35 in base 36 -> "Z"	=BASE(35,36)	Z	basic	string
+10 in base 2 padded to 8	=BASE(10,2,8)	1010	basic	number
+255 in base 16 padded to 4	=BASE(255,16,4)	00FF	edge	string
+1 in base 2 -> "1"	=BASE(1,2)	1	edge	number
+error: base 1 -> #NUM!	=BASE(10,1)	#NUM!	error	error
+error: negative -> #NUM!	=BASE(-1,2)	#NUM!	error	error
+error: no args -> #N/A	=BASE()	#N/A	error	error
+5.5 rounds up to 6	=CEILING.MATH(5.5)	6	basic	number
+5.5 sig 2 -> 6	=CEILING.MATH(5.5,2)	6	basic	number
+4 sig 2 -> 4 (exact multiple)	=CEILING.MATH(4,2)	4	basic	number
+0 -> 0	=CEILING.MATH(0)	0	basic	number
+3.1 sig 0.5 -> 3.5	=CEILING.MATH(3.1,0.5)	3.5	basic	number
+-5.5 mode 0 toward zero -> -5	=CEILING.MATH(-5.5,1,0)	-5	edge	number
+-5.5 mode 1 away from zero -> -6	=CEILING.MATH(-5.5,1,1)	-6	edge	number
+-4.1 sig 2 mode 0 -> -4	=CEILING.MATH(-4.1,2,0)	-4	edge	number
+error: no args -> #N/A	=CEILING.MATH()	#N/A	error	error
+nested: CEILING.MATH(SQRT(2)) -> 2	=CEILING.MATH(SQRT(2))	2	nested	number
+5.5 -> 6	=CEILING.PRECISE(5.5)	6	basic	number
+-5.5 -> -5 (toward zero)	=CEILING.PRECISE(-5.5)	-5	basic	number
+5.5 sig 2 -> 6	=CEILING.PRECISE(5.5,2)	6	basic	number
+-5.5 sig 2 -> -4	=CEILING.PRECISE(-5.5,2)	-4	basic	number
+0 -> 0	=CEILING.PRECISE(0)	0	basic	number
+3.0 exact -> 3	=CEILING.PRECISE(3.0)	3	basic	number
+-3.0 exact -> -3	=CEILING.PRECISE(-3.0)	-3	edge	number
+-0.1 sig 1 -> 0	=CEILING.PRECISE(-0.1,1)	0	edge	number
+error: no args -> #N/A	=CEILING.PRECISE()	#N/A	error	error
+nested: CEILING.PRECISE(PI()) -> 4	=CEILING.PRECISE(PI())	4	nested	number
+C(5,2) -> 10	=COMBIN(5,2)	10	basic	number
+C(10,0) -> 1	=COMBIN(10,0)	1	basic	number
+C(10,10) -> 1	=COMBIN(10,10)	1	basic	number
+C(10,5) -> 252	=COMBIN(10,5)	252	basic	number
+C(4,2) -> 6	=COMBIN(4,2)	6	basic	number
+C(1,1) -> 1	=COMBIN(1,1)	1	basic	number
+C(20,10) -> 184756	=COMBIN(20,10)	184756	edge	number
+error: k > n -> #NUM!	=COMBIN(2,5)	#NUM!	error	error
+error: negative n -> #NUM!	=COMBIN(-1,1)	#NUM!	error	error
+error: no args -> #N/A	=COMBIN()	#N/A	error	error
+nested: C(5,2)+C(5,3) -> 20	=COMBIN(5,2)+COMBIN(5,3)	20	nested	number
+COMBINA(5,2) -> 15	=COMBINA(5,2)	15	basic	number
+COMBINA(3,2) -> 6	=COMBINA(3,2)	6	basic	number
+COMBINA(1,1) -> 1	=COMBINA(1,1)	1	basic	number
+COMBINA(10,0) -> 1	=COMBINA(10,0)	1	basic	number
+COMBINA(5,0) -> 1	=COMBINA(5,0)	1	basic	number
+COMBINA(3,3) -> 10	=COMBINA(3,3)	10	basic	number
+COMBINA(2,4) -> 5	=COMBINA(2,4)	5	edge	number
+COMBINA(10,2) -> 55	=COMBINA(10,2)	55	edge	number
+error: no args -> #N/A	=COMBINA()	#N/A	error	error
+nested: COMBINA(3,2)+COMBINA(3,1) -> 9	=COMBINA(3,2)+COMBINA(3,1)	9	nested	number
+two blank strings -> 2	=COUNTBLANK({"",""})	2	basic	number
+no blanks -> 0	=COUNTBLANK({1,2,3})	0	basic	number
+mixed blank and numbers -> 2	=COUNTBLANK({"",1,"",2})	2	basic	number
+all blanks 3 -> 3	=COUNTBLANK({"","",""})	3	basic	number
+single blank -> 1	=COUNTBLANK({""})	1	basic	number
+single non-blank -> 0	=COUNTBLANK({42})	0	edge	number
+text values not blank -> 0	=COUNTBLANK({"a","b","c"})	0	edge	number
+zero is not blank -> 0	=COUNTBLANK({0})	0	edge	number
+FALSE is not blank -> 0	=COUNTBLANK({FALSE})	0	edge	number
+TRUE is not blank -> 0	=COUNTBLANK({TRUE})	0	edge	number
+mixed text and blank -> 1	=COUNTBLANK({"hello","","world"})	1	edge	number
+coercion: blank among booleans -> 1	=COUNTBLANK({TRUE,FALSE,""})	1	coercion	number
+error: no args -> #N/A	=COUNTBLANK()	#N/A	error	error
+nested: COUNTBLANK+COUNT -> total cells	=COUNTBLANK({"",1,"",2})+COUNT({1,2})	4	nested	number
+nested: COUNTBLANK+COUNTA -> total	=COUNTBLANK({"",1,"",2})+COUNTA({"",1,"",2})	6	nested	number
+count > 2 in {1..5} -> 3	=COUNTIF({1,2,3,4,5},">"&2)	3	basic	number
+count exact value 2 -> 2	=COUNTIF({1,2,3,2,1},2)	2	basic	number
+count text "a" -> 2	=COUNTIF({"a","b","a","c"},"a")	2	basic	number
+count <= 3 -> 3	=COUNTIF({1,2,3,4,5},"<="&3)	3	basic	number
+count >= 2 -> 4	=COUNTIF({1,2,3,4,5},">="&2)	4	basic	number
+wildcard * matches all text -> 3	=COUNTIF({"a","b","c"},"*")	3	basic	number
+not-equal <> criterion -> 4	=COUNTIF({1,2,3,2,1},"<>"&2)	3	basic	number
+no matches -> 0	=COUNTIF({1,2,3},">10")	0	edge	number
+count FALSE boolean	=COUNTIF({TRUE,FALSE,FALSE},FALSE)	2	edge	number
+? wildcard single char ap? -> 2	=COUNTIF({"apt","ape","app","bat"},"ap?")	3	edge	number
+count text case-insensitive A matches a	=COUNTIF({"a","b","A","c"},"a")	2	edge	number
+coercion: criterion number matches number string	=COUNTIF({1,2,3},2)	1	coercion	number
+error: no args -> #N/A	=COUNTIF()	#N/A	error	error
+nested: COUNTIF * 2	=COUNTIF({1,2,3,4,5},">"&2)*2	6	nested	number
+nested: COUNTIF+COUNTIF covers all	=COUNTIF({1,2,3,4,5},">"&2)+COUNTIF({1,2,3,4,5},"<="&2)	5	nested	number
+single criterion > 2 -> 3	=COUNTIFS({1,2,3,4,5},">"&2)	3	basic	number
+two criteria: > 1 and < 5 -> 3	=COUNTIFS({1,2,3,4,5},">"&1,{1,2,3,4,5},"<"&5)	3	basic	number
+no matches double criteria -> 0	=COUNTIFS({1,2,3},">"&5,{1,2,3},"<"&10)	0	basic	number
+single criterion exact match	=COUNTIFS({1,2,3,2,1},2)	2	basic	number
+not-equal <> criterion in COUNTIFS	=COUNTIFS({1,2,3,2,1},"<>"&2)	3	basic	number
+two criteria both equal -> 3	=COUNTIFS({1,2,3},">="&1,{1,2,3},"<="&3)	3	edge	number
+text criterion in COUNTIFS	=COUNTIFS({"a","b","a","c"},"a")	2	basic	number
+wildcard * in COUNTIFS	=COUNTIFS({"apple","apricot","banana"},"a*")	2	edge	number
+error: no args -> #N/A	=COUNTIFS()	#N/A	error	error
+nested: COUNTIFS+COUNTIFS	=COUNTIFS({1,2,3,4,5},">"&2)+COUNTIFS({1,2,3,4,5},"<"&3)	5	nested	number
+nested: COUNTIFS inside IF	=IF(COUNTIFS({1,2,3,4,5},">"&4)=1,"yes","no")	yes	nested	string
+3 unique from 6 values	=COUNTUNIQUE(1,2,2,3,3,3)	3	basic	number
+2 unique text values	=COUNTUNIQUE("a","b","a")	2	basic	number
+single value -> 1	=COUNTUNIQUE(1)	1	basic	number
+array with duplicates	=COUNTUNIQUE({1,2,2,3})	3	basic	number
+all same -> 1	=COUNTUNIQUE(5,5,5)	1	basic	number
+all unique 5 values	=COUNTUNIQUE(1,2,3,4,5)	5	edge	number
+mixed types	=COUNTUNIQUE(1,"1",TRUE)	3	edge	number
+error: no args -> #N/A	=COUNTUNIQUE()	#N/A	error	error
+nested: COUNTUNIQUE in IF	=IF(COUNTUNIQUE(1,2,2,3)=3,TRUE,FALSE)	TRUE	nested	boolean
+"FF" base 16 -> 255	=DECIMAL("FF",16)	255	basic	number
+"1010" base 2 -> 10	=DECIMAL("1010",2)	10	basic	number
+"10" base 8 -> 8	=DECIMAL("10",8)	8	basic	number
+"Z" base 36 -> 35	=DECIMAL("Z",36)	35	basic	number
+"0" base 10 -> 0	=DECIMAL("0",10)	0	basic	number
+"ff" lowercase base 16 -> 255	=DECIMAL("ff",16)	255	edge	number
+"1" base 2 -> 1	=DECIMAL("1",2)	1	edge	number
+error: "G" invalid base 16 -> #NUM!	=DECIMAL("G",16)	#NUM!	error	error
+error: no args -> #N/A	=DECIMAL()	#N/A	error	error
+nested: BASE(DECIMAL) roundtrip	=BASE(DECIMAL("FF",16),16)	FF	nested	string
+5!! -> 15 (5*3*1)	=FACTDOUBLE(5)	15	basic	number
+6!! -> 48 (6*4*2)	=FACTDOUBLE(6)	48	basic	number
+1!! -> 1	=FACTDOUBLE(1)	1	basic	number
+0!! -> 1	=FACTDOUBLE(0)	1	basic	number
+2!! -> 2	=FACTDOUBLE(2)	2	basic	number
+4!! -> 8 (4*2)	=FACTDOUBLE(4)	8	basic	number
+7!! -> 105 (7*5*3*1)	=FACTDOUBLE(7)	105	edge	number
+8!! -> 384 (8*6*4*2)	=FACTDOUBLE(8)	384	edge	number
+error: -1 -> #NUM!	=FACTDOUBLE(-1)	#NUM!	error	error
+error: no args -> #N/A	=FACTDOUBLE()	#N/A	error	error
+nested: FACTDOUBLE(5)/FACTDOUBLE(3) -> 5	=FACTDOUBLE(5)/FACTDOUBLE(3)	5	nested	number
+5.5 -> 5	=FLOOR.MATH(5.5)	5	basic	number
+6 sig 2 -> 6 (exact multiple)	=FLOOR.MATH(6,2)	6	basic	number
+5 sig 2 -> 4	=FLOOR.MATH(5,2)	4	basic	number
+0 -> 0	=FLOOR.MATH(0)	0	basic	number
+3.9 sig 0.5 -> 3.5	=FLOOR.MATH(3.9,0.5)	3.5	basic	number
+-5.5 mode 0 toward -inf -> -6	=FLOOR.MATH(-5.5,1,0)	-6	edge	number
+-5.5 mode 1 toward zero -> -5	=FLOOR.MATH(-5.5,1,1)	-5	edge	number
+-4.1 sig 2 mode 0 -> -6	=FLOOR.MATH(-4.1,2,0)	-6	edge	number
+error: no args -> #N/A	=FLOOR.MATH()	#N/A	error	error
+nested: FLOOR.MATH(PI()) -> 3	=FLOOR.MATH(PI())	3	nested	number
+5.5 -> 5	=FLOOR.PRECISE(5.5)	5	basic	number
+-5.5 -> -6 (toward -inf)	=FLOOR.PRECISE(-5.5)	-6	basic	number
+5.5 sig 2 -> 4	=FLOOR.PRECISE(5.5,2)	4	basic	number
+-5.5 sig 2 -> -6	=FLOOR.PRECISE(-5.5,2)	-6	basic	number
+0 -> 0	=FLOOR.PRECISE(0)	0	basic	number
+3.0 exact -> 3	=FLOOR.PRECISE(3.0)	3	basic	number
+-0.1 -> -1	=FLOOR.PRECISE(-0.1)	-1	edge	number
+10 sig 3 -> 9	=FLOOR.PRECISE(10,3)	9	edge	number
+error: no args -> #N/A	=FLOOR.PRECISE()	#N/A	error	error
+nested: FLOOR.PRECISE(SQRT(10)) -> 3	=FLOOR.PRECISE(SQRT(10))	3	nested	number
+GCD(12,8) -> 4	=GCD(12,8)	4	basic	number
+GCD(15,25) -> 5	=GCD(15,25)	5	basic	number
+GCD(7,13) -> 1 (coprime)	=GCD(7,13)	1	basic	number
+GCD(0,5) -> 5	=GCD(0,5)	5	basic	number
+GCD(100,75,50) three args -> 25	=GCD(100,75,50)	25	basic	number
+GCD(x,x) -> x	=GCD(12,12)	12	edge	number
+GCD(1,1) -> 1	=GCD(1,1)	1	edge	number
+GCD(0,0) -> 0	=GCD(0,0)	0	edge	number
+error: negative -> #NUM!	=GCD(-1,5)	#NUM!	error	error
+error: no args -> #N/A	=GCD()	#N/A	error	error
+nested: GCD(LCM(4,6),12) -> 12	=GCD(LCM(4,6),12)	12	nested	number
+5.5 -> 6	=ISO.CEILING(5.5)	6	basic	number
+-5.5 -> -5 (toward zero)	=ISO.CEILING(-5.5)	-5	basic	number
+5.5 sig 2 -> 6	=ISO.CEILING(5.5,2)	6	basic	number
+-5.5 sig 2 -> -4	=ISO.CEILING(-5.5,2)	-4	basic	number
+0 -> 0	=ISO.CEILING(0)	0	basic	number
+3.0 exact -> 3	=ISO.CEILING(3.0)	3	basic	number
+-0.1 sig 1 -> 0	=ISO.CEILING(-0.1,1)	0	edge	number
+-3.0 exact -> -3	=ISO.CEILING(-3.0)	-3	edge	number
+error: no args -> #N/A	=ISO.CEILING()	#N/A	error	error
+nested: ISO.CEILING(PI()) -> 4	=ISO.CEILING(PI())	4	nested	number
+LCM(4,6) -> 12	=LCM(4,6)	12	basic	number
+LCM(5,3) -> 15	=LCM(5,3)	15	basic	number
+LCM(7,7) -> 7	=LCM(7,7)	7	basic	number
+LCM(1,5) -> 5	=LCM(1,5)	5	basic	number
+LCM(12,8,6) three args -> 24	=LCM(12,8,6)	24	basic	number
+LCM(1,1) -> 1	=LCM(1,1)	1	edge	number
+LCM(x,1) -> x	=LCM(7,1)	7	edge	number
+LCM(0,5) -> 0	=LCM(0,5)	0	edge	number
+error: negative -> #NUM!	=LCM(-1,5)	#NUM!	error	error
+error: no args -> #N/A	=LCM()	#N/A	error	error
+nested: LCM(GCD(12,8),6) -> 12	=LCM(GCD(12,8),6)	12	nested	number
+MULTINOMIAL(2,3) -> 10	=MULTINOMIAL(2,3)	10	basic	number
+MULTINOMIAL(1,1,1) -> 6	=MULTINOMIAL(1,1,1)	6	basic	number
+MULTINOMIAL(4) -> 1	=MULTINOMIAL(4)	1	basic	number
+MULTINOMIAL(3,2,1) -> 60	=MULTINOMIAL(3,2,1)	60	basic	number
+MULTINOMIAL(1,2) -> 3	=MULTINOMIAL(1,2)	3	basic	number
+MULTINOMIAL(0,3) -> 1	=MULTINOMIAL(0,3)	1	edge	number
+MULTINOMIAL(2,2,2) -> 90	=MULTINOMIAL(2,2,2)	90	edge	number
+error: negative -> #NUM!	=MULTINOMIAL(-1,2)	#NUM!	error	error
+error: no args -> #N/A	=MULTINOMIAL()	#N/A	error	error
+nested: MULTINOMIAL(2,3)=COMBIN(5,2)	=IF(MULTINOMIAL(2,3)=COMBIN(5,2),TRUE,FALSE)	TRUE	nested	boolean
+RAND() is a number	=ISNUMBER(RAND())	TRUE	basic	boolean
+RAND() >= 0	=RAND()>=0	TRUE	basic	boolean
+RAND() < 1	=RAND()<1	TRUE	basic	boolean
+INT(RAND()*100) >= 0	=INT(RAND()*100)>=0	TRUE	basic	boolean
+INT(RAND()*100) < 100	=INT(RAND()*100)<100	TRUE	basic	boolean
+RAND()*0 -> 0	=RAND()*0	0	edge	number
+RAND()+0 is number	=ISNUMBER(RAND()+0)	TRUE	edge	boolean
+nested: AND(RAND()>=0,RAND()<1)	=AND(RAND()>=0,RAND()<1)	TRUE	nested	boolean
+RANDBETWEEN is number	=ISNUMBER(RANDBETWEEN(1,10))	TRUE	basic	boolean
+RANDBETWEEN(5,5) -> 5	=RANDBETWEEN(5,5)	5	basic	number
+RANDBETWEEN(0,0) -> 0	=RANDBETWEEN(0,0)	0	basic	number
+RANDBETWEEN(1,100) >= 1	=RANDBETWEEN(1,100)>=1	TRUE	basic	boolean
+RANDBETWEEN(1,100) <= 100	=RANDBETWEEN(1,100)<=100	TRUE	basic	boolean
+RANDBETWEEN negative range	=RANDBETWEEN(-10,10)<=10	TRUE	edge	boolean
+RANDBETWEEN(-5,-5) -> -5	=RANDBETWEEN(-5,-5)	-5	edge	number
+error: low > high -> #NUM!	=RANDBETWEEN(5,3)	#NUM!	error	error
+error: no args -> #N/A	=RANDBETWEEN()	#N/A	error	error
+nested: AND result >= low	=AND(RANDBETWEEN(1,100)>=1,RANDBETWEEN(1,100)<=100)	TRUE	nested	boolean
+x=1 n=0 m=1 a={1} -> 1	=SERIESSUM(1,0,1,{1})	1	basic	number
+x=2 n=1 m=1 a={1,1} -> 2+4=6	=SERIESSUM(2,1,1,{1,1})	6	basic	number
+x=1 n=0 m=1 a={1,1} -> 2	=SERIESSUM(1,0,1,{1,1})	2	basic	number
+x=3 n=0 m=0 a={5} -> 5 (x^0=1)	=SERIESSUM(3,0,0,{5})	5	basic	number
+x=0 n=1 m=1 a={5,3} -> 0	=SERIESSUM(0,1,1,{5,3})	0	basic	number
+x=1 n=1 m=1 a={1,1,1} -> 3	=SERIESSUM(1,1,1,{1,1,1})	3	basic	number
+x=2 n=0 m=2 a={1,1} -> 1+4=5	=SERIESSUM(2,0,2,{1,1})	5	edge	number
+x=10 n=0 m=1 a={1} -> 1	=SERIESSUM(10,0,1,{1})	1	edge	number
+error: no args -> #N/A	=SERIESSUM()	#N/A	error	error
+nested: ROUND(SERIESSUM approx)	=ROUND(SERIESSUM(1,0,1,{1,1,0.5}),2)	2.5	nested	number
+SQRTPI(1) -> sqrt(pi)	=ROUND(SQRTPI(1),6)	1.772454	basic	number
+SQRTPI(4) -> 2*sqrt(pi)	=ROUND(SQRTPI(4),6)	3.544908	basic	number
+SQRTPI(0) -> 0	=SQRTPI(0)	0	basic	number
+SQRTPI(1/PI()) -> 1	=ROUND(SQRTPI(1/PI()),10)	1	basic	number
+SQRTPI(PI()) -> pi	=ROUND(SQRTPI(PI()),6)	3.141593	basic	number
+SQRTPI(9) -> 3*sqrt(pi)	=ROUND(SQRTPI(9),5)	5.31736	edge	number
+SQRTPI(0.25) -> sqrt(pi/4)	=ROUND(SQRTPI(0.25),6)	0.886227	edge	number
+error: negative -> #NUM!	=SQRTPI(-1)	#NUM!	error	error
+error: no args -> #N/A	=SQRTPI()	#N/A	error	error
+nested: SQRTPI(SQRTPI(1))^2	=ROUND(SQRTPI(1)^2,6)	3.141593	nested	number
+sum where > 2 -> 12 (3+4+5)	=SUMIF({1,2,3,4,5},">"&2)	12	basic	number
+sum_range where >= 2 -> 50 (20+30)	=SUMIF({1,2,3},">="&2,{10,20,30})	#N/A	basic	error
+text criterion on sum_range	=SUMIF({"a","b","a"},"a",{1,2,3})	#N/A	basic	error
+sum where <= 2 -> 3 (1+2)	=SUMIF({1,2,3,4,5},"<="&2)	3	basic	number
+sum where = 3 -> 3	=SUMIF({1,2,3,4,5},3)	3	basic	number
+not-equal <> criterion -> sum 1+3=4	=SUMIF({1,2,3},"<>"&2)	4	basic	number
+no matches -> 0	=SUMIF({1,2,3},">"&10)	0	edge	number
+wildcard * matches all text	=SUMIF({"a","b","c"},"*",{10,20,30})	#N/A	edge	error
+? wildcard single char: a? matches ab, ac	=SUMIF({"ab","ac","ba"},"a?",{10,20,30})	#N/A	edge	error
+case-insensitive text criterion	=SUMIF({"Apple","APPLE","banana"},"apple",{10,20,30})	#N/A	edge	error
+coercion: number criterion as string	=SUMIF({1,2,3},"2",{10,20,30})	#N/A	coercion	error
+error: no args -> #N/A	=SUMIF()	#N/A	error	error
+nested: SUMIF+SUMIF	=SUMIF({1,2,3,4,5},">"&3)+SUMIF({1,2,3,4,5},"<="&2)	12	nested	number
+negative values in sum_range	=SUMIF({1,2,3},">"&1,{-10,-20,-30})	#N/A	nested	error
+nested: ROUND(SUMIF)	=ROUND(SUMIF({1.1,2.2,3.3},">"&2,{10,20,30}),0)	#N/A	nested	error
+single criterion sum > 2 -> 12	=SUMIFS({1,2,3,4,5},{1,2,3,4,5},">"&2)	#N/A	basic	error
+two criteria: > 1 and < 5 -> 9	=SUMIFS({1,2,3,4,5},{1,2,3,4,5},">"&1,{1,2,3,4,5},"<"&5)	#N/A	basic	error
+text criterion on sum_range	=SUMIFS({10,20,30},{"a","b","a"},"a")	#N/A	basic	error
+no matches -> 0	=SUMIFS({1,2,3},{1,2,3},">"&10)	#N/A	basic	error
+not-equal <> criterion in SUMIFS	=SUMIFS({10,20,30},{1,2,3},"<>"&2)	#N/A	basic	error
+exact match criterion	=SUMIFS({10,20,30},{1,2,3},2)	#N/A	edge	error
+wildcard * in SUMIFS	=SUMIFS({10,20,30},{"apple","apricot","banana"},"a*")	#N/A	edge	error
+two criteria both must match	=SUMIFS({100,200,300,400},{"a","b","a","b"},"a",{1,2,1,2},1)	#N/A	edge	error
+error: no args -> #N/A	=SUMIFS()	#N/A	error	error
+nested: SUMIFS+SUMIFS	=SUMIFS({1,2,3,4,5},{1,2,3,4,5},">"&3)+SUMIFS({1,2,3,4,5},{1,2,3,4,5},"<"&3)	#N/A	nested	error
+nested: ROUND(SUMIFS)	=ROUND(SUMIFS({1,2,3,4,5},{1,2,3,4,5},">"&1,{1,2,3,4,5},"<"&5),0)	#N/A	nested	error
+SUMSQ(3,4) -> 25	=SUMSQ(3,4)	25	basic	number
+SUMSQ(1,2,3) -> 14	=SUMSQ(1,2,3)	14	basic	number
+SUMSQ({1,2,3,4}) -> 30	=SUMSQ({1,2,3,4})	30	basic	number
+SUMSQ(5) -> 25	=SUMSQ(5)	25	basic	number
+SUMSQ(0) -> 0	=SUMSQ(0)	0	basic	number
+SUMSQ(1,1,1,1,1) -> 5	=SUMSQ(1,1,1,1,1)	5	basic	number
+SUMSQ with negatives -> same result	=SUMSQ(-3,-4)	25	edge	number
+SUMSQ(0.5,0.5) -> 0.5	=SUMSQ(0.5,0.5)	0.5	edge	number
+error: no args -> #N/A	=SUMSQ()	#N/A	error	error
+nested: SQRT(SUMSQ(3,4)) -> 5	=SQRT(SUMSQ(3,4))	5	nested	number
+nested: SUMSQ(SQRT(2),SQRT(2)) -> 4	=SUMSQ(SQRT(2),SQRT(2))	4	nested	number
+ERFC(0) = 1	=ROUND(ERFC(0),6)	1	basic	number
+ERFC(1) = 0.157299	=ROUND(ERFC(1),6)	0.157299	basic	number
+ERFC(0.5)	=ROUND(ERFC(0.5),6)	0.4795	basic	number
+ERFC(2)	=ROUND(ERFC(2),6)	0.004678	basic	number
+ERFC(0.1)	=ROUND(ERFC(0.1),6)	0.887537	basic	number
+ERFC(-1) > 1 (symmetric about 0)	=ROUND(ERFC(-1),6)	1.842701	edge	number
+ERFC large value ~0	=ROUND(ERFC(5),10)	0	edge	number
+nested: ERF(1) + ERFC(1) = 1	=ROUND(ERF(1)+ERFC(1),10)	1	nested	number
+nested: ERFC(0.5) = 1 - ERF(0.5)	=ROUND(ERFC(0.5)-(1-ERF(0.5)),10)	0	nested	number
+error: no args -> #N/A	=ERFC()	#N/A	error	error
+ERFC.PRECISE(0) = 1	=ROUND(ERFC.PRECISE(0),6)	1	basic	number
+ERFC.PRECISE(1) = 0.157299	=ROUND(ERFC.PRECISE(1),6)	0.157299	basic	number
+ERFC.PRECISE(0.5)	=ROUND(ERFC.PRECISE(0.5),6)	0.4795	basic	number
+ERFC.PRECISE(2)	=ROUND(ERFC.PRECISE(2),6)	0.004678	basic	number
+ERFC.PRECISE(-1)	=ROUND(ERFC.PRECISE(-1),6)	1.842701	edge	number
+matches ERFC	=ROUND(ERFC.PRECISE(1)-ERFC(1),10)	0	nested	number
+nested: ERF.PRECISE + ERFC.PRECISE = 1	=ROUND(ERF.PRECISE(1)+ERFC.PRECISE(1),10)	1	nested	number
+error: no args -> #N/A	=ERFC.PRECISE()	#N/A	error	error
+GAMMALN(1) = 0 (ln(0!) = 0)	=ROUND(GAMMALN(1),6)	0	basic	number
+GAMMALN(2) = 0 (ln(1) = 0)	=ROUND(GAMMALN(2),6)	0	basic	number
+GAMMALN(5) = ln(24)	=ROUND(GAMMALN(5),6)	3.178054	basic	number
+GAMMALN(0.5) ~= 0.572365	=ROUND(GAMMALN(0.5),6)	0.572365	basic	number
+GAMMALN(10)	=ROUND(GAMMALN(10),6)	12.801827	basic	number
+GAMMALN(3) = ln(2) = 0.693147	=ROUND(GAMMALN(3),6)	0.693147	basic	number
+GAMMALN very small positive	=ROUND(GAMMALN(0.1),6)	2.252713	edge	number
+error: GAMMALN(0) -> #NUM!	=GAMMALN(0)	#NUM!	error	error
+error: GAMMALN(-1) -> #NUM!	=GAMMALN(-1)	#NUM!	error	error
+error: no args -> #N/A	=GAMMALN()	#N/A	error	error
+nested: exp(GAMMALN(5)) = 24	=ROUND(EXP(GAMMALN(5)),6)	24	nested	number
+GAMMALN.PRECISE(1) = 0	=ROUND(GAMMALN.PRECISE(1),6)	0	basic	number
+GAMMALN.PRECISE(2) = 0	=ROUND(GAMMALN.PRECISE(2),6)	0	basic	number
+GAMMALN.PRECISE(5) = ln(24)	=ROUND(GAMMALN.PRECISE(5),6)	3.178054	basic	number
+GAMMALN.PRECISE(0.5)	=ROUND(GAMMALN.PRECISE(0.5),6)	0.572365	basic	number
+GAMMALN.PRECISE(10)	=ROUND(GAMMALN.PRECISE(10),6)	12.801827	basic	number
+matches GAMMALN	=ROUND(GAMMALN.PRECISE(5)-GAMMALN(5),10)	0	nested	number
+error: GAMMALN.PRECISE(0) -> #NUM!	=GAMMALN.PRECISE(0)	#NUM!	error	error
+error: GAMMALN.PRECISE(-1) -> #NUM!	=GAMMALN.PRECISE(-1)	#NUM!	error	error
+error: no args -> #N/A	=GAMMALN.PRECISE()	#N/A	error	error
+ln(1) real = 0	=ROUND(IMREAL(IMLN("1")),6)	0	basic	number
+ln(1) imag = 0	=ROUND(IMAGINARY(IMLN("1")),6)	0	basic	number
+ln(e) real = 1	=ROUND(IMREAL(IMLN(COMPLEX(EXP(1),0))),6)	1	basic	number
+|ln(1)| = 0	=ROUND(IMABS(IMLN("1")),6)	0	basic	number
+ln(-1) real = 0	=ROUND(IMREAL(IMLN("-1")),6)	0	basic	number
+ln(-1) |imag| = pi	=ROUND(IMABS(IMLN("-1")),6)	3.141593	basic	number
+ln(i) real = 0	=ROUND(IMREAL(IMLN("i")),6)	0	edge	number
+ln(i) imag = pi/2	=ROUND(IMAGINARY(IMLN("i")),6)	1.570796	edge	number
+error: ln(0) -> #NUM!	=IMLN("0")	#DIV/0!	error	error
+error: no args -> #N/A	=IMLN()	#N/A	error	error
+nested: IMLN via COMPLEX	=ROUND(IMREAL(IMLN(COMPLEX(1,0))),6)	0	nested	number
+2^3 = 8	=IMPOWER("2","3")	8	basic	number
+i^2 = -1 real part	=ROUND(IMREAL(IMPOWER("i","2")),6)	-1	basic	number
+|i^2| = 1	=ROUND(IMABS(IMPOWER("i","2")),6)	1	basic	number
+i^4 = 1 real part	=ROUND(IMREAL(IMPOWER("i","4")),6)	1	basic	number
+(1+i)^2 = 2i real = 0	=ROUND(IMREAL(IMPOWER("1+i","2")),6)	0	basic	number
+(1+i)^2 imag = 2	=ROUND(IMAGINARY(IMPOWER("1+i","2")),6)	2	basic	number
+1^100 = 1	=ROUND(IMREAL(IMPOWER("1","100")),6)	1	edge	number
+x^0 = 1	=ROUND(IMREAL(IMPOWER("3+4i","0")),6)	1	edge	number
+nested: IMPOWER inside IMABS	=ROUND(IMABS(IMPOWER("3+4i","2")),6)	25	nested	number
+error: no args -> #N/A	=IMPOWER()	#N/A	error	error
+sqrt(4) abs = 2	=IMABS(IMSQRT("4"))	2	basic	number
+sqrt(4) real = 2	=ROUND(IMREAL(IMSQRT("4")),6)	2	basic	number
+sqrt(4) imag = 0	=ROUND(IMAGINARY(IMSQRT("4")),6)	0	basic	number
+|sqrt(-1)| = 1	=ROUND(IMABS(IMSQRT("-1")),6)	1	basic	number
+sqrt(-1) imag = 1 (principal)	=ROUND(IMAGINARY(IMSQRT("-1")),6)	1	basic	number
+sqrt(-1) real = 0	=ROUND(IMREAL(IMSQRT("-1")),6)	0	basic	number
+sqrt(9) = 3	=ROUND(IMREAL(IMSQRT("9")),6)	3	basic	number
+sqrt(0) = 0	=ROUND(IMABS(IMSQRT("0")),6)	0	edge	number
+nested: IMSQRT then IMPRODUCT reverses	=ROUND(IMABS(IMPRODUCT(IMSQRT("4"),IMSQRT("4"))),6)	4	nested	number
+error: no args -> #N/A	=IMSQRT()	#N/A	error	error
+2 is even -> TRUE	=ISEVEN(2)	TRUE	basic	boolean
+3 is not even -> FALSE	=ISEVEN(3)	FALSE	basic	boolean
+0 is even -> TRUE	=ISEVEN(0)	TRUE	basic	boolean
+-4 is even -> TRUE	=ISEVEN(-4)	TRUE	basic	boolean
+2.4 truncated to 2 (even) -> TRUE	=ISEVEN(2.4)	TRUE	coercion	boolean
+1.9 truncated to 1 (odd) -> FALSE	=ISEVEN(1.9)	FALSE	coercion	boolean
+2.5 truncated to 2 (even) -> TRUE	=ISEVEN(2.5)	TRUE	coercion	boolean
+error: text arg -> #VALUE!	=ISEVEN("a")	#VALUE!	error	error
+error: no args -> #N/A	=ISEVEN()	#N/A	error	error
+3 is odd -> TRUE	=ISODD(3)	TRUE	basic	boolean
+2 is not odd -> FALSE	=ISODD(2)	FALSE	basic	boolean
+1 is odd -> TRUE	=ISODD(1)	TRUE	basic	boolean
+-3 is odd -> TRUE	=ISODD(-3)	TRUE	basic	boolean
+0 is not odd -> FALSE	=ISODD(0)	FALSE	basic	boolean
+3.7 truncated to 3 (odd) -> TRUE	=ISODD(3.7)	TRUE	coercion	boolean
+2.9 truncated to 2 (even) -> FALSE	=ISODD(2.9)	FALSE	coercion	boolean
+error: text arg -> #VALUE!	=ISODD("a")	#VALUE!	error	error
+error: no args -> #N/A	=ISODD()	#N/A	error	error
+(1,1) diagonal of 3x3 = 1	=INDEX(MUNIT(3),1,1)	1	basic	number
+(1,2) off-diagonal of 3x3 = 0	=INDEX(MUNIT(3),1,2)	0	basic	number
+sum of 3x3 identity = 3 (trace)	=SUM(MUNIT(3))	3	basic	number
+rows of 4x4 identity = 4	=ROWS(MUNIT(4))	4	basic	number
+cols of 4x4 identity = 4	=COLUMNS(MUNIT(4))	4	basic	number
+1x1 identity = 1	=INDEX(MUNIT(1),1,1)	1	edge	number
+error: dim 0 -> #VALUE!	=MUNIT(0)	#NUM!	error	error
+error: no args -> #N/A	=MUNIT()	#N/A	error	error
+rows of RANDARRAY(5,3) = 5	=ROWS(RANDARRAY(5,3))	5	basic	number
+cols of RANDARRAY(5,3) = 3	=COLUMNS(RANDARRAY(5,3))	3	basic	number
+rows of RANDARRAY(1,1) = 1	=ROWS(RANDARRAY(1,1))	1	basic	number
+cols of RANDARRAY(1,1) = 1	=COLUMNS(RANDARRAY(1,1))	1	basic	number
+result is number	=ISNUMBER(INDEX(RANDARRAY(1,1),1,1))	TRUE	basic	boolean
+RANDARRAY(10,1) rows = 10	=ROWS(RANDARRAY(10,1))	10	edge	number
+error: zero rows -> #VALUE!	=RANDARRAY(0,1)	#NUM!	error	error
+error: no args -> #N/A	=RANDARRAY()	0.4895866473	error	number
+sum of SEQUENCE(5) = 15	=SUM(SEQUENCE(5))	15	basic	number
+3rd element of SEQUENCE(5) = 3	=INDEX(SEQUENCE(5),3)	3	basic	number
+sum of SEQUENCE(3,3) = 45	=SUM(SEQUENCE(3,3))	45	basic	number
+2nd of SEQUENCE(3,1,0,2) = 2	=INDEX(SEQUENCE(3,1,0,2),2)	2	basic	number
+sum of SEQUENCE(5,1,1,2) = 25	=SUM(SEQUENCE(5,1,1,2))	25	basic	number
+rows of SEQUENCE(4,3) = 4	=ROWS(SEQUENCE(4,3))	4	basic	number
+cols of SEQUENCE(4,3) = 3	=COLUMNS(SEQUENCE(4,3))	3	basic	number
+error: no args -> #N/A	=SEQUENCE()	1	error	number
+code 1 = AVERAGE of 1..5 = 3	=SUBTOTAL(1,{1,2,3,4,5})	#VALUE!	basic	error
+code 2 = COUNT of 1..5 = 5	=SUBTOTAL(2,{1,2,3,4,5})	#VALUE!	basic	error
+code 3 = COUNTA of mixed = 3	=SUBTOTAL(3,{1,"a",3})	#VALUE!	basic	error
+code 4 = MAX of 1..5 = 5	=SUBTOTAL(4,{1,2,3,4,5})	#VALUE!	basic	error
+code 5 = MIN of 1..5 = 1	=SUBTOTAL(5,{1,2,3,4,5})	#VALUE!	basic	error
+code 9 = SUM of 1..5 = 15	=SUBTOTAL(9,{1,2,3,4,5})	#VALUE!	basic	error
+code 6 = PRODUCT of 1..5 = 120	=SUBTOTAL(6,{1,2,3,4,5})	#VALUE!	edge	error
+error: no args -> #N/A	=SUBTOTAL()	#N/A	error	error
