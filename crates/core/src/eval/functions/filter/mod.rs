@@ -296,11 +296,6 @@ pub fn columns_fn(args: &[Value]) -> Value {
 mod tests;
 
 pub fn register_filter(registry: &mut Registry) {
-    registry.register_eager("FILTER",  filter_fn,  FunctionMeta { category: "filter", signature: "FILTER(array, include, [if_empty])",  description: "Filter an array by a boolean mask" });
-    registry.register_eager("SORT",    sort_fn,    FunctionMeta { category: "filter", signature: "SORT(array, [sort_index], [is_ascending], [by_col])", description: "Sort an array" });
-    registry.register_eager("SORTN",   sortn_fn,   FunctionMeta { category: "filter", signature: "SORTN(array, [n], [display_ties_mode], ...)", description: "Return top N rows of an array sorted" });
-    registry.register_eager("UNIQUE",  unique_fn,  FunctionMeta { category: "filter", signature: "UNIQUE(array, [by_col], [exactly_once])", description: "Return unique rows or columns from an array" });
-    registry.register_eager("INDEX",   index_fn,   FunctionMeta { category: "filter", signature: "INDEX(array, row_num, [col_num])",      description: "Return element at given row/col from array" });
-    registry.register_eager("ROWS",    rows_fn,    FunctionMeta { category: "filter", signature: "ROWS(array)",                           description: "Return the number of rows in an array" });
-    registry.register_eager("COLUMNS", columns_fn, FunctionMeta { category: "filter", signature: "COLUMNS(array)",                        description: "Return the number of columns in an array" });
+    registry.register_eager("FILTER", filter_fn, FunctionMeta { category: "filter", signature: "FILTER(array, include, [if_empty])",  description: "Filter an array by a boolean mask" });
+    registry.register_eager("SORTN",  sortn_fn,  FunctionMeta { category: "filter", signature: "SORTN(array, [n], [display_ties_mode], ...)", description: "Return top N rows of an array sorted" });
 }

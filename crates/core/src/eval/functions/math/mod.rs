@@ -126,10 +126,6 @@ pub fn register_math(registry: &mut Registry) {
     registry.register_eager("SUBTOTAL",  subtotal::subtotal_fn, FunctionMeta { category: "math", signature: "SUBTOTAL(function_code, ref1, ...)",         description: "Apply function to a list (not supported with arrays)" });
 
     // Special functions
-    registry.register_eager("ERF",              special_fn::erf_fn,              FunctionMeta { category: "math", signature: "ERF(lower_limit, [upper_limit])", description: "Error function" });
-    registry.register_eager("ERF.PRECISE",      special_fn::erf_precise_fn,      FunctionMeta { category: "math", signature: "ERF.PRECISE(x)",                 description: "Error function (precise)" });
-    registry.register_eager("ERFC",             special_fn::erfc_fn,             FunctionMeta { category: "math", signature: "ERFC(x)",                        description: "Complementary error function" });
-    registry.register_eager("ERFC.PRECISE",     special_fn::erfc_precise_fn,     FunctionMeta { category: "math", signature: "ERFC.PRECISE(x)",               description: "Complementary error function (precise)" });
     registry.register_eager("GAMMALN",          special_fn::gammaln_fn,          FunctionMeta { category: "math", signature: "GAMMALN(x)",                     description: "Natural logarithm of the gamma function" });
     registry.register_eager("GAMMALN.PRECISE",  special_fn::gammaln_precise_fn,  FunctionMeta { category: "math", signature: "GAMMALN.PRECISE(x)",            description: "Natural logarithm of the gamma function (precise)" });
 }

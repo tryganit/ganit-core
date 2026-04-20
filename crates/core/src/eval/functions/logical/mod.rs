@@ -40,7 +40,6 @@ pub fn register_logical(registry: &mut Registry) {
     registry.register_lazy("N",         info::n_fn,                 FunctionMeta { category: "logical", signature: "N(value)",                             description: "Convert value to number" });
     registry.register_lazy("TYPE",      info::type_fn,              FunctionMeta { category: "logical", signature: "TYPE(value)",                          description: "Number indicating value type" });
     registry.register_lazy("ISREF",     is_checks::isref_fn,        FunctionMeta { category: "logical", signature: "ISREF(value)",                         description: "True if value is a cell reference" });
-    registry.register_lazy("ISFORMULA", is_checks::isformula_fn,    FunctionMeta { category: "logical", signature: "ISFORMULA(ref)",                       description: "True if cell contains a formula" });
     registry.register_lazy("CELL",      cell_fn::cell_fn,           FunctionMeta { category: "logical", signature: "CELL(info_type, reference)",             description: "Returns information about a cell" });
     registry.register_lazy("ISDATE",    is_checks::isdate_fn,        FunctionMeta { category: "logical", signature: "ISDATE(value)",                        description: "True if value is a date" });
     registry.register_lazy("LAMBDA",   lambda::lambda_fn,           FunctionMeta { category: "logical", signature: "LAMBDA(param1, ..., body)",             description: "Create a lambda function" });

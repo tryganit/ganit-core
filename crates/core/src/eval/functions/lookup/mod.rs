@@ -16,15 +16,6 @@ mod tests;
 
 pub fn register_lookup(registry: &mut Registry) {
     registry.register_eager(
-        "INDIRECT",
-        indirect::indirect_fn,
-        FunctionMeta {
-            category: "lookup",
-            signature: "INDIRECT(ref_text, [a1])",
-            description: "Returns the value of a cell reference given as a string",
-        },
-    );
-    registry.register_eager(
         "ADDRESS",
         address::address_fn,
         FunctionMeta {
@@ -58,24 +49,6 @@ pub fn register_lookup(registry: &mut Registry) {
             category: "lookup",
             signature: "COLUMN([cell_ref])",
             description: "Returns the column number of a cell reference",
-        },
-    );
-    registry.register_lazy(
-        "ROWS",
-        row_col::rows_fn,
-        FunctionMeta {
-            category: "lookup",
-            signature: "ROWS(array_or_range)",
-            description: "Returns the number of rows in an array or range",
-        },
-    );
-    registry.register_lazy(
-        "COLUMNS",
-        row_col::columns_fn,
-        FunctionMeta {
-            category: "lookup",
-            signature: "COLUMNS(array_or_range)",
-            description: "Returns the number of columns in an array or range",
         },
     );
     registry.register_eager(
@@ -130,33 +103,6 @@ pub fn register_lookup(registry: &mut Registry) {
             category: "lookup",
             signature: "XMATCH(search_key, lookup_array, [match_mode], [search_mode])",
             description: "Modern MATCH function with match and search mode options",
-        },
-    );
-    registry.register_lazy(
-        "FORMULATEXT",
-        misc::formulatext_fn,
-        FunctionMeta {
-            category: "lookup",
-            signature: "FORMULATEXT(reference)",
-            description: "Returns the formula string of a cell reference",
-        },
-    );
-    registry.register_lazy(
-        "GETPIVOTDATA",
-        misc::getpivotdata_fn,
-        FunctionMeta {
-            category: "lookup",
-            signature: "GETPIVOTDATA(value_name, pivot_table, ...)",
-            description: "Returns data from a pivot table",
-        },
-    );
-    registry.register_lazy(
-        "OFFSET",
-        misc::offset_fn,
-        FunctionMeta {
-            category: "lookup",
-            signature: "OFFSET(reference, rows, cols, [height], [width])",
-            description: "Returns a reference offset from a base reference",
         },
     );
     registry.register_lazy(

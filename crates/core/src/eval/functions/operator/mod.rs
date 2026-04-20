@@ -412,9 +412,4 @@ pub fn register_operator(registry: &mut Registry) {
         signature: "ISBETWEEN(value, lower, upper, [lower_inclusive], [upper_inclusive])",
         description: "Returns TRUE if value is between lower and upper bounds",
     });
-    registry.register_eager("UNIQUE", unique_fn, FunctionMeta {
-        category: "operator",
-        signature: "UNIQUE(array, [by_col], [exactly_once])",
-        description: "Returns unique rows or columns from an array",
-    });
 }

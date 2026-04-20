@@ -33,7 +33,7 @@ fn fixture(name: &str) -> PathBuf {
     fixture_dir().join(name)
 }
 
-/// Decode xlsx `_xNNNN_` XML-escape sequences (e.g. `_x0001_` -> U+0001).
+/// Decode xlsx `_xNNNN_` XML-escape sequences (e.g. `_x0001_` → U+0001).
 fn decode_xlsx_escapes(s: &str) -> String {
     let mut result = String::new();
     let mut rest = s;
@@ -75,12 +75,15 @@ fn parse_error_string(s: &str) -> Option<ErrorKind> {
 }
 
 /// Parse a `{1,2,3}` or `{1,2,3;4,5,6}` array literal into a flat Vec<Value>.
+/// Used for the `array` expected_type where the oracle value is ARRAYTOTEXT output.
 fn parse_array_literal(s: &str) -> Option<Vec<Value>> {
     let s = s.trim();
     if !s.starts_with('{') || !s.ends_with('}') {
         return None;
     }
     let inner = &s[1..s.len() - 1];
+    // ARRAYTOTEXT with mode=1 uses comma separators and semicolons for row breaks.
+    // For our purposes (1D arrays), just split on commas and semicolons.
     let items: Vec<&str> = inner.split(|c| c == ',' || c == ';').collect();
     let mut result = Vec::new();
     for item in items {
@@ -103,15 +106,23 @@ fn parse_array_literal(s: &str) -> Option<Vec<Value>> {
 /// Parse expected_value string into a Value according to expected_type.
 pub fn parse_expected(value: &str, expected_type: &str) -> Option<Value> {
     match expected_type {
-        "number" => value.parse::<f64>().ok().map(Value::Number),
+        "number" => {
+            value.parse::<f64>().ok().map(Value::Number)
+        }
         "boolean" => match value.to_uppercase().as_str() {
             "TRUE"  => Some(Value::Bool(true)),
             "FALSE" => Some(Value::Bool(false)),
             _       => None,
         },
         "error" => parse_error_string(value).map(Value::Error),
-        "string" => Some(Value::Text(decode_xlsx_escapes(value))),
-        "array"  => Some(Value::Text(value.to_string())),
+        "string" => {
+            // Decode xlsx `_xNNNN_` XML escapes preserved from the migration.
+            Some(Value::Text(decode_xlsx_escapes(value)))
+        }
+        "array"  => {
+            // Store the array literal string as-is; comparison handled in values_match
+            Some(Value::Text(value.to_string()))
+        }
         _ => Some(Value::Text(value.to_string())),
     }
 }
@@ -135,6 +146,7 @@ fn flatten_array(v: &Value) -> Vec<Value> {
 
 pub fn values_match(actual: &Value, expected: &Value, expected_type: &str) -> bool {
     if expected_type == "array" {
+        // expected is stored as Text(array_literal)
         let literal = match expected {
             Value::Text(s) => s.as_str(),
             _ => return false,
@@ -159,6 +171,7 @@ pub fn values_match(actual: &Value, expected: &Value, expected_type: &str) -> bo
         (Value::Date(a), Value::Number(b)) => {
             (a - b).abs() <= b.abs() * 1e-4 + 1e-10
         }
+        // Oracle artifact: xlsx/TSV stores numeric-looking text as a number.
         (Value::Text(s), Value::Number(b)) => {
             if let Ok(v) = s.trim().parse::<f64>() {
                 (v - b).abs() <= b.abs() * 1e-9 + 1e-10
@@ -166,6 +179,7 @@ pub fn values_match(actual: &Value, expected: &Value, expected_type: &str) -> bo
                 false
             }
         }
+        // Control characters: oracle may strip them → empty string
         (Value::Text(s), Value::Text(e)) if e.is_empty() => {
             s.chars().all(|c| (c as u32) < 32)
         }
@@ -216,13 +230,13 @@ fn run_tsv_fixture(path: &Path) {
             continue;
         }
 
-        let desc           = record[0].trim();
-        let formula        = record[1].trim();
+        let desc          = record[0].trim();
+        let formula       = record[1].trim();
         // NOTE: do NOT trim expected_str — values like "  Hello World" have meaningful
         // leading whitespace (e.g. PROPER("  hello world") preserves leading spaces).
-        let expected_str   = &record[2];
+        let expected_str  = &record[2];
         let _test_category = record[3].trim();
-        let expected_type  = record[4].trim();
+        let expected_type = record[4].trim();
 
         if formula.is_empty() || expected_str.trim().is_empty() {
             continue;
@@ -355,7 +369,7 @@ fn financial_conformance() {
 /// Known-bug regression baseline (T2.2).
 ///
 /// Each row here represents a confirmed bug.  The test deliberately does NOT
-/// panic on failures -- failures are the expected outcome until the
+/// panic on failures — failures are the expected outcome until the
 /// corresponding fix lands.  When a bug is fixed, its row will start
 /// passing; the test will still succeed (pass count goes up, fail count
 /// goes down).  Remove fixed rows from this file or move them to the
@@ -366,7 +380,7 @@ fn bugs_conformance() {
 }
 
 // ---------------------------------------------------------------------------
-// Conformance report generator -- writes target/conformance-report.json
+// Conformance report generator — writes target/conformance-report.json
 // ---------------------------------------------------------------------------
 
 #[test]
@@ -405,7 +419,7 @@ fn generate_conformance_report() {
 }
 
 // ---------------------------------------------------------------------------
-// T2.3 -- per-function conformance coverage gate (initially ignored)
+// T2.3 — per-function conformance coverage gate (initially ignored)
 // ---------------------------------------------------------------------------
 
 #[test]

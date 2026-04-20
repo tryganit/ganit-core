@@ -157,7 +157,7 @@ pub fn register_statistical(registry: &mut Registry) {
     registry.register_eager("T.INV.2T",  di::t_inv_2t_fn,  FunctionMeta { category: "statistical", signature: "T.INV.2T(p,df)", description: "Student's t two-tailed inverse" });
     registry.register_eager("TINV",      di::tinv_fn,      FunctionMeta { category: "statistical", signature: "TINV(p,df)", description: "Student's t two-tailed inverse (legacy)" });
     registry.register_eager("T.TEST",    di::t_test_fn,    FunctionMeta { category: "statistical", signature: "T.TEST(array1,array2,tails,type)", description: "Student's t-test" });
-    registry.register_eager("TTEST",     di::ttest_fn,     FunctionMeta { category: "statistical", signature: "TTEST(array1,array2,tails,type)", description: "Student's t-test (legacy)" });
+    registry.register_alias("TTEST", "T.TEST");
 
     registry.register_eager("F.DIST",    di::f_dist_fn,    FunctionMeta { category: "statistical", signature: "F.DIST(x,df1,df2,cumulative)", description: "F CDF/PDF" });
     registry.register_eager("F.DIST.RT", di::f_dist_rt_fn, FunctionMeta { category: "statistical", signature: "F.DIST.RT(x,df1,df2)", description: "F right-tail CDF" });

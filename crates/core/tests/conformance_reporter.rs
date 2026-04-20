@@ -1,19 +1,34 @@
 // crates/core/tests/conformance_reporter.rs
 //
-// Collects pass/fail counts per fixture TSV and writes target/conformance-report.json.
+// Collects pass/fail counts per TSV fixture and writes target/conformance-report.json.
 // Called by the generate_conformance_report test in conformance.rs.
 
-use truecalc_core::{evaluate, ErrorKind, Value};
+use truecalc_core::{evaluate, Value};
 use std::collections::HashMap;
 use std::path::Path;
 
 // ---------------------------------------------------------------------------
-// Oracle helpers (mirrors of the same functions in conformance.rs)
-// Duplicated here so that conformance_reporter.rs compiles as a standalone
-// integration test target (where super:: would be out of scope).
+// Oracle helpers — shared logic duplicated from conformance.rs because
+// conformance_reporter.rs compiles as a standalone integration-test module
 // ---------------------------------------------------------------------------
 
-fn parse_error_string(s: &str) -> Option<ErrorKind> {
+fn parse_expected(value: &str, expected_type: &str) -> Option<Value> {
+    use truecalc_core::ErrorKind;
+    match expected_type {
+        "number" => value.parse::<f64>().ok().map(Value::Number),
+        "boolean" => match value.to_uppercase().as_str() {
+            "TRUE"  => Some(Value::Bool(true)),
+            "FALSE" => Some(Value::Bool(false)),
+            _       => None,
+        },
+        "error" => parse_error_string(value).map(Value::Error),
+        "string" | "array" => Some(Value::Text(value.to_string())),
+        _ => Some(Value::Text(value.to_string())),
+    }
+}
+
+fn parse_error_string(s: &str) -> Option<truecalc_core::ErrorKind> {
+    use truecalc_core::ErrorKind;
     match s {
         "#DIV/0!" => Some(ErrorKind::DivByZero),
         "#VALUE!" => Some(ErrorKind::Value),
@@ -25,31 +40,6 @@ fn parse_error_string(s: &str) -> Option<ErrorKind> {
         "#ERROR!" => Some(ErrorKind::Value),
         _         => None,
     }
-}
-
-fn decode_xlsx_escapes(s: &str) -> String {
-    let mut result = String::new();
-    let mut rest = s;
-    while let Some(start) = rest.find("_x") {
-        result.push_str(&rest[..start]);
-        let after = &rest[start + 2..];
-        if let Some(end) = after.find('_') {
-            let hex = &after[..end];
-            if hex.len() == 4 && hex.chars().all(|c| c.is_ascii_hexdigit()) {
-                if let Ok(n) = u32::from_str_radix(hex, 16) {
-                    if let Some(c) = char::from_u32(n) {
-                        result.push(c);
-                        rest = &after[end + 1..];
-                        continue;
-                    }
-                }
-            }
-        }
-        result.push_str("_x");
-        rest = after;
-    }
-    result.push_str(rest);
-    result
 }
 
 fn parse_array_literal(s: &str) -> Option<Vec<Value>> {
@@ -75,21 +65,6 @@ fn parse_array_literal(s: &str) -> Option<Vec<Value>> {
         }
     }
     Some(result)
-}
-
-fn parse_expected_reporter(value: &str, expected_type: &str) -> Option<Value> {
-    match expected_type {
-        "number" => value.parse::<f64>().ok().map(Value::Number),
-        "boolean" => match value.to_uppercase().as_str() {
-            "TRUE"  => Some(Value::Bool(true)),
-            "FALSE" => Some(Value::Bool(false)),
-            _       => None,
-        },
-        "error" => parse_error_string(value).map(Value::Error),
-        "string" => Some(Value::Text(decode_xlsx_escapes(value))),
-        "array"  => Some(Value::Text(value.to_string())),
-        _ => Some(Value::Text(value.to_string())),
-    }
 }
 
 fn flatten_array(v: &Value) -> Vec<Value> {
@@ -119,7 +94,7 @@ fn infer_type(v: &Value) -> &'static str {
     }
 }
 
-fn values_match_reporter(actual: &Value, expected: &Value, expected_type: &str) -> bool {
+fn values_match(actual: &Value, expected: &Value, expected_type: &str) -> bool {
     if expected_type == "array" {
         let literal = match expected {
             Value::Text(s) => s.as_str(),
@@ -134,13 +109,13 @@ fn values_match_reporter(actual: &Value, expected: &Value, expected_type: &str) 
             return false;
         }
         return actual_items.iter().zip(expected_items.iter()).all(|(a, e)| {
-            values_match_reporter(a, e, infer_type(e))
+            values_match(a, e, infer_type(e))
         });
     }
 
     match (actual, expected) {
         (Value::Number(a), Value::Number(b)) => (a - b).abs() <= b.abs() * 1e-4 + 1e-10,
-        (Value::Date(a), Value::Number(b)) => (a - b).abs() <= b.abs() * 1e-4 + 1e-10,
+        (Value::Date(a), Value::Number(b))   => (a - b).abs() <= b.abs() * 1e-4 + 1e-10,
         (Value::Text(s), Value::Number(b)) => {
             if let Ok(v) = s.trim().parse::<f64>() {
                 (v - b).abs() <= b.abs() * 1e-9 + 1e-10
@@ -148,9 +123,7 @@ fn values_match_reporter(actual: &Value, expected: &Value, expected_type: &str) 
                 false
             }
         }
-        (Value::Text(s), Value::Text(e)) if e.is_empty() => {
-            s.chars().all(|c| (c as u32) < 32)
-        }
+        (Value::Text(s), Value::Text(e)) if e.is_empty() => s.chars().all(|c| (c as u32) < 32),
         (Value::Text(s), Value::Text(e)) => s == e,
         (Value::Error(a), Value::Error(b)) => a == b,
         _ => actual == expected,
@@ -233,14 +206,10 @@ impl ConformanceReport {
 pub const KNOWN_DEVIATIONS: &[KnownDeviation] = &[];
 
 /// Collect pass/fail for a single TSV fixture file. Returns results without panicking.
-/// `category` is the logical name used in the JSON (e.g. "math", "text").
 pub fn collect_tsv_fixture_results(path: &Path, category: &str, report: &mut ConformanceReport) {
     if !path.exists() {
         return;
     }
-
-    let vars: HashMap<String, Value> = HashMap::new();
-    let entry = report.by_category.entry(category.to_string()).or_default();
 
     let mut rdr = match csv::ReaderBuilder::new()
         .delimiter(b'\t')
@@ -251,37 +220,38 @@ pub fn collect_tsv_fixture_results(path: &Path, category: &str, report: &mut Con
         Err(_) => return,
     };
 
+    let vars: HashMap<String, Value> = HashMap::new();
+    let entry = report.by_category.entry(category.to_string()).or_default();
+
     for (row_idx, result) in rdr.records().enumerate() {
         let record = match result {
             Ok(r) => r,
             Err(_) => continue,
         };
-
         if record.len() < 5 {
             continue;
         }
 
         let desc          = record[0].trim().to_string();
         let formula       = record[1].trim().to_string();
-        let expected_str  = record[2].to_string();
+        let expected_str  = record[2].trim().to_string();
         let expected_type = record[4].trim().to_string();
 
-        if formula.is_empty() || expected_str.trim().is_empty() {
+        if formula.is_empty() || expected_str.is_empty() {
             continue;
         }
-
         if is_volatile_formula(&formula) {
             continue;
         }
 
-        let expected = match parse_expected_reporter(&expected_str, &expected_type) {
+        let expected = match parse_expected(&expected_str, &expected_type) {
             Some(v) => v,
             None => continue,
         };
 
         entry.total += 1;
         let actual = evaluate(&formula, &vars);
-        if values_match_reporter(&actual, &expected, &expected_type) {
+        if values_match(&actual, &expected, &expected_type) {
             entry.passed += 1;
         } else {
             entry.failures.push(format!(

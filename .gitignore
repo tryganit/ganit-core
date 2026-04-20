@@ -17,6 +17,7 @@
 
 # git worktrees
 .worktrees/
+.claude/
 
 # generated docs (except superpowers specs/plans)
 docs/*
