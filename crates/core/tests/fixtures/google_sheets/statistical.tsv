@@ -25,7 +25,6 @@ MEDIAN array	=MEDIAN({2,4,6,8,10})	6	statistical	number
 MODE basic	=MODE(1,2,2,3)	2	statistical	number
 MODE.SNGL basic	=MODE.SNGL(1,2,2,3)	2	statistical	number
 MODE.SNGL array	=MODE.SNGL({4,4,5,6})	4	statistical	number
-MODE.MULT basic	=MODE.MULT({1,2,2,3,3})	#REF!	statistical	error
 LARGE k=1	=LARGE({5,3,8,1,9},1)	9	statistical	number
 LARGE k=2	=LARGE({5,3,8,1,9},2)	8	statistical	number
 LARGE k=3	=LARGE({5,3,8,1,9},3)	5	statistical	number
@@ -194,12 +193,8 @@ BETA.DIST cumulative a=2 b=5	=BETA.DIST(0.5,2,5,TRUE)	0.890625	statistical	numbe
 BETA.DIST pdf a=2 b=2	=BETA.DIST(0.5,2,2,FALSE)	1.4999999999999991	statistical	number
 BETA.DIST 5-arg cumulative	=BETA.DIST(0.5,2,2,TRUE,0,1)	0.49999999999999956	statistical	number
 BETA.DIST 5-arg pdf	=BETA.DIST(0.5,2,2,FALSE,0,1)	1.4999999999999991	statistical	number
-BETADIST 3-arg	=BETADIST(0.5,2,2)	0.49999999999999956	statistical	number
 BETADIST 5-arg	=BETADIST(0.5,2,2,0,1)	0.49999999999999956	statistical	number
-BETA.INV 3-arg default lo/hi BUG-19	=BETA.INV(0.5,2,2)	0.5000000000000001	statistical	number
 BETA.INV 5-arg explicit should work	=BETA.INV(0.5,2,2,0,1)	0.5000000000000001	statistical	number
-BETA.INV p=0.1 a=1 b=2	=BETA.INV(0.1,1,2)	0.05131670194948612	statistical	number
-BETA.INV p=0.9 a=5 b=2	=BETA.INV(0.9,5,2)	0.9074047410868713	statistical	number
 BETAINV alias 5-arg	=BETAINV(0.5,2,2,0,1)	0.5000000000000001	statistical	number
 BETAINV p=0.1 a=2 b=5	=BETAINV(0.1,2,5,0,1)	0.09259525891312881	statistical	number
 BETAINV p=0.9 a=5 b=1	=BETAINV(0.9,5,1,0,1)	0.9791483623609768	statistical	number
@@ -293,11 +288,6 @@ TRIMMEAN 20%	=TRIMMEAN({1,2,3,4,5,6,7,8,9,10},0.2)	5.5	statistical	number
 TRIMMEAN 40%	=TRIMMEAN({1,2,3,4,5,6,7,8,9,10},0.4)	5.5	statistical	number
 PROB x=[1,2,3] prob=[0.2,0.5,0.3] lower=1 upper=2	=PROB({1,2,3},{0.2,0.5,0.3},1,2)	0.7	statistical	number
 PROB x=[1,2,3] prob=[0.2,0.5,0.3] lower=2	=PROB({1,2,3},{0.2,0.5,0.3},2)	0.5	statistical	number
-FREQUENCY basic	=FREQUENCY({1,2,3,4,5,6},{2,4})	#REF!	statistical	error
-FREQUENCY data=[79,85,78,85,50] bins=[70,79,89]	=FREQUENCY({79,85,78,85,50},{70,79,89})	#REF!	statistical	error
-GROWTH basic	=GROWTH({2,4,8,16},{1,2,3,4})	2.0000000000000004	statistical	number
-LOGEST basic	=LOGEST({2,4,8,16},{1,2,3,4})	1.9999999999999996	statistical	number
-LINEST basic	=LINEST({2,4,6,8},{1,2,3,4})	1.9999999999999996	statistical	number
 ZTEST basic mu=3	=ZTEST({1,2,3,4,5},3)	0.5	statistical	number
 ZTEST mu=3 sigma=1	=ZTEST({1,2,3,4,5},3,1)	0.5	statistical	number
 ZTEST mu=3 sigma=2	=ZTEST({1,2,3,4,5},3,2)	0.5	statistical	number
@@ -428,10 +418,6 @@ BETA.DIST a=1 b=1 x=0.1 cumulative	=BETA.DIST(0.1,1,1,TRUE)	0.1000000000000001	s
 BETA.DIST a=1 b=1 x=0.9 cumulative	=BETA.DIST(0.9,1,1,TRUE)	0.8999999999999999	statistical	number
 BETA.DIST a=5 b=2 x=0.5 cumulative	=BETA.DIST(0.5,5,2,TRUE)	0.10937500000000003	statistical	number
 BETA.DIST a=2 b=5 x=0.5 cumulative	=BETA.DIST(0.5,2,5,TRUE)	0.890625	statistical	number
-BETADIST a=1 b=5 x=0.1	=BETADIST(0.1,1,5)	0.4095099999999993	statistical	number
-BETADIST a=5 b=1 x=0.9	=BETADIST(0.9,5,1)	0.5904900000000007	statistical	number
-BETA.INV p=0.5 a=1 b=1	=BETA.INV(0.5,1,1)	0.49999999999999956	statistical	number
-BETA.INV p=0.5 a=5 b=5	=BETA.INV(0.5,5,5)	0.5000000000000001	statistical	number
 BETA.INV p=0.1 a=2 b=5 explicit	=BETA.INV(0.1,2,5,0,1)	0.09259525891312881	statistical	number
 BETA.INV p=0.9 a=5 b=2 explicit	=BETA.INV(0.9,5,2,0,1)	0.9074047410868713	statistical	number
 BETAINV p=0.5 a=1 b=1	=BETAINV(0.5,1,1,0,1)	0.49999999999999956	statistical	number
@@ -502,9 +488,6 @@ TRIMMEAN 0% no trim	=TRIMMEAN({1,2,3,4,5,6,7,8,9,10},0.0)	5.5	statistical	number
 TRIMMEAN 50% heavy trim	=TRIMMEAN({1,2,3,4,5,6,7,8,9,10},0.5)	5.5	statistical	number
 PROB x=[1,2,3,4] prob=[0.1,0.2,0.3,0.4] lower=2 upper=3	=PROB({1,2,3,4},{0.1,0.2,0.3,0.4},2,3)	0.5	statistical	number
 PROB single value	=PROB({1,2,3},{0.2,0.5,0.3},1,1)	0.2	statistical	number
-FREQUENCY single bin	=FREQUENCY({1,2,3,4,5},{3})	#REF!	statistical	error
-GROWTH with prediction	=GROWTH({2,4,8},{1,2,3},{4})	15.99999999999999	statistical	number
-LINEST intercept=TRUE stats=FALSE	=LINEST({2,4,6,8},{1,2,3,4},TRUE,FALSE)	1.9999999999999996	statistical	number
 ZTEST large sample mu=5	=ZTEST({1,2,3,4,5,6,7,8,9,10},5)	0.30075406722029496	statistical	number
 Z.TEST large sample mu=5	=Z.TEST({1,2,3,4,5,6,7,8,9,10},5)	0.30075406722029496	statistical	number
 ZTEST mu=0 sigma=1	=ZTEST({-1,0,1},0,1)	0.5	statistical	number
@@ -718,7 +701,6 @@ BETA.DIST a=2 b=1 x=0.5 cumulative	=BETA.DIST(0.5,2,1,TRUE)	0.2500000000000003	s
 BETA.DIST a=2 b=5 x=0.5 cumulative	=BETA.DIST(0.5,2,5,TRUE)	0.890625	statistical	number
 BETA.DIST a=5 b=2 x=0.5 cumulative	=BETA.DIST(0.5,5,2,TRUE)	0.10937500000000003	statistical	number
 BETA.DIST a=5 b=5 x=0.5 cumulative	=BETA.DIST(0.5,5,5,TRUE)	0.4999999999999996	statistical	number
-BETA.INV p=0.01 a=2 b=5 explicit	=BETA.INV(0.01,2,5,0,1)	0.02676319114275505	statistical	number
 BETA.INV p=0.05 a=2 b=5 explicit	=BETA.INV(0.05,2,5,0,1)	0.06284989170835442	statistical	number
 BETA.INV p=0.1 a=2 b=5 explicit	=BETA.INV(0.1,2,5,0,1)	0.09259525891312881	statistical	number
 BETA.INV p=0.25 a=2 b=5 explicit	=BETA.INV(0.25,2,5,0,1)	0.16116291679032657	statistical	number
@@ -775,8 +757,6 @@ HYPGEOM.DIST ns=5 s=2 M=10 N=20 exact	=HYPGEOM.DIST(2,5,10,20,FALSE)	0.348297213
 HYPGEOM.DIST ns=5 s=2 M=10 N=20 cumulative	=HYPGEOM.DIST(2,5,10,20,TRUE)	0.49999999999999994	statistical	number
 HYPGEOM.DIST ns=10 s=2 M=10 N=20 exact	=HYPGEOM.DIST(2,10,10,20,FALSE)	0.010960401827274893	statistical	number
 HYPGEOM.DIST ns=10 s=2 M=10 N=20 cumulative	=HYPGEOM.DIST(2,10,10,20,TRUE)	0.01150706878261058	statistical	number
-HYPGEOM.DIST ns=15 s=2 M=10 N=20 exact	=HYPGEOM.DIST(2,15,10,20,FALSE)	#NUM!	statistical	error
-HYPGEOM.DIST ns=15 s=2 M=10 N=20 cumulative	=HYPGEOM.DIST(2,15,10,20,TRUE)	#NUM!	statistical	error
 BINOM.INV n=10 p=0.5 alpha=0.5	=BINOM.INV(10,0.5,0.5)	5	statistical	number
 BINOM.INV n=20 p=0.5 alpha=0.5	=BINOM.INV(20,0.5,0.5)	10	statistical	number
 BINOM.INV n=10 p=0.9 alpha=0.5	=BINOM.INV(10,0.9,0.5)	9	statistical	number

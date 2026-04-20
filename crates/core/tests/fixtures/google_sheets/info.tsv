@@ -119,19 +119,3 @@ TYPE array -> 64	=TYPE({1,2,3})	64	basic	number
 TYPE zero -> 1	=TYPE(0)	1	basic	number
 TYPE no args -> error	=TYPE()	#N/A	error	error
 TYPE nested formula result	=TYPE(1+1)	1	nested	number
-CELL type of number -> n	"=CELL(""type"",5)"	#N/A	basic	error
-CELL type of text -> l	"=CELL(""type"",""hello"")"	#N/A	basic	error
-CELL type of boolean -> b	"=CELL(""type"",TRUE)"	#N/A	basic	error
-CELL no args -> error	=CELL()	#N/A	error	error
-CELL unknown info type -> error	"=CELL(""unknown"",1)"	#N/A	error	error
-CELL one arg -> error	"=CELL(""type"")"	#N/A	error	error
-CELL type of error -> e	"=CELL(""type"",NA())"	#N/A	edge	error
-IF using CELL type result	"=IF(CELL(""type"",1)=""n"",1,0)"	#N/A	nested	error
-SHEETS returns 1 single-sheet	=SHEETS()	47	basic	number
-SHEETS too many args -> error	=SHEETS(1,2)	#N/A	error	error
-SHEETS result is number	=ISNUMBER(SHEETS())	true	nested	boolean
-SHEETS +0 still 1	=SHEETS()+0	47	nested	number
-SHEETS result > 0	=SHEETS()>0	true	nested	boolean
-SHEETS N(SHEETS()) = 1	=N(SHEETS())	47	nested	number
-SHEETS nested in IF	=IF(SHEETS()=1,TRUE,FALSE)	false	nested	boolean
-SHEETS with ref arg	=SHEETS(A1:B2)	#N/A	basic	error

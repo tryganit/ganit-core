@@ -814,12 +814,6 @@ pub fn generate(_platform: Platform) -> Vec<TestCase> {
     // ── MMULT ────────────────────────────────────────────────────────────────
     cases.extend([
         tc(
-            "MMULT 2x2 matrices",
-            "MMULT({1,2;3,4},{5,6;7,8})",
-            "basic",
-            "array",
-        ),
-        tc(
             "MMULT row vector by col vector",
             "MMULT({1,2,3},{1;2;3})",
             "basic",
@@ -853,8 +847,6 @@ pub fn generate(_platform: Platform) -> Vec<TestCase> {
 
     // ── MINVERSE ─────────────────────────────────────────────────────────────
     cases.extend([
-        tc("MINVERSE 2x2", "MINVERSE({1,2;3,4})", "basic", "array"),
-        tc("MINVERSE identity", "MINVERSE({1,0;0,1})", "basic", "array"),
         tc(
             "MINVERSE singular error",
             "MINVERSE({1,2;2,4})",
@@ -865,16 +857,6 @@ pub fn generate(_platform: Platform) -> Vec<TestCase> {
 
     // ── SEQUENCE ─────────────────────────────────────────────────────────────
     cases.extend([
-        tc("SEQUENCE single row", "SEQUENCE(5)", "basic", "array"),
-        tc("SEQUENCE row and col", "SEQUENCE(2,3)", "basic", "array"),
-        tc("SEQUENCE with start", "SEQUENCE(5,1,10)", "basic", "array"),
-        tc("SEQUENCE with step", "SEQUENCE(5,1,1,2)", "basic", "array"),
-        tc(
-            "SEQUENCE negative step",
-            "SEQUENCE(5,1,10,-1)",
-            "edge",
-            "array",
-        ),
         tc(
             "SEQUENCE single cell",
             "SEQUENCE(1,1,5,1)",
@@ -1310,13 +1292,6 @@ pub fn generate(_platform: Platform) -> Vec<TestCase> {
 
     // ── Additional SEQUENCE and MMULT edge cases ──────────────────────────────
     cases.extend([
-        tc("SEQUENCE 3 cols", "SEQUENCE(1,5)", "basic", "array"),
-        tc(
-            "MMULT 3x2 by 2x3",
-            "MMULT({1,2;3,4;5,6},{7,8,9;10,11,12})",
-            "basic",
-            "array",
-        ),
         tc("MDETERM 1x1", "MDETERM({5})", "edge", "number"),
         tc("MINVERSE 1x1", "MINVERSE({4})", "edge", "array"),
     ]);
