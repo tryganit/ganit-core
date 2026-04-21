@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.19](https://github.com/truecalc/core/compare/truecalc-core-v0.4.17...truecalc-core-v0.4.19) - 2026-04-21
+
+### Fixed
+
+- update integration tests to expect Error(Ref) for FREQUENCY and MODE.MULT
+- resolve 7 conformance bugs (MARGINOFERROR, FREQUENCY, MODE.MULT, IMCOTH, IMTANH)
+- support inline array args for PRODUCT, SUBTOTAL, SUMIFS, AVERAGEIFS, MAXIFS, MINIFS, DSUM, DAVERAGE
+- unwrap array results to first element in scalar evaluation context
+
+### Other
+
+- Merge pull request #495 from truecalc/release-plz-2026-04-21T05-55-29Z
+- re-evaluate all fixtures against GAS oracle; restore 29 oracle-verified coverage rows
+- Merge pull request #497 from truecalc/feat/488-array-scalar-context
+
 ## [0.4.18](https://github.com/truecalc/core/compare/truecalc-core-v0.4.17...truecalc-core-v0.4.18) - 2026-04-21
 
 ### Fixed
