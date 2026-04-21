@@ -162,6 +162,18 @@ fn type_rank(v: &Value) -> u8 {
 fn eval_binary(op: &BinaryOp, lv: Value, rv: Value) -> Value {
     // ── Array broadcasting ───────────────────────────────────────────────────
     match (&lv, &rv) {
+        (Value::Array(lelems), Value::Array(relems)) => {
+            // Element-wise operation when both operands are arrays of the same length.
+            if lelems.len() != relems.len() {
+                return Value::Error(ErrorKind::Value);
+            }
+            let result: Vec<Value> = lelems
+                .iter()
+                .zip(relems.iter())
+                .map(|(l, r)| eval_binary(op, l.clone(), r.clone()))
+                .collect();
+            return Value::Array(result);
+        }
         (Value::Array(elems), _) => {
             let result: Vec<Value> = elems
                 .iter()
