@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.17](https://github.com/truecalc/core/compare/truecalc-core-v0.4.16...truecalc-core-v0.4.17) - 2026-04-21
+
+### Fixed
+
+- implement ROMAN(number, style) and fix boolean coercion in array arithmetic
+- remove stale SORTBY descending entry from bugs.tsv
+
+### Other
+
+- Merge pull request #494 from truecalc/feat/485-im-return-type
+- Merge pull request #493 from truecalc/feat/489-statistical-math-bugs
+- Merge pull request #492 from truecalc/feat/490-roman-boolean-coercion
+- Merge pull request #481 from truecalc/release-plz-2026-04-21T01-03-24Z
+
 ## [0.4.16](https://github.com/truecalc/core/compare/truecalc-core-v0.4.14...truecalc-core-v0.4.16) - 2026-04-21
 
 ### Added
