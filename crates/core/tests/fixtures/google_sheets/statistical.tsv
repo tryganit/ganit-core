@@ -795,3 +795,8 @@ AVERAGE 10 values	=AVERAGE({1,2,3,4,5,6,7,8,9,10})	5.5	statistical	number
 STDEV 10 values	=STDEV({1,2,3,4,5,6,7,8,9,10})	3.0276503540974917	statistical	number
 MEDIAN 10 values	=MEDIAN({1,2,3,4,5,6,7,8,9,10})	5.5	statistical	number
 VAR 10 values	=VAR({1,2,3,4,5,6,7,8,9,10})	9.166666666666666	statistical	number
+BETA.INV three-arg default bounds	=BETA.INV(0.5,2,2)	0.5000000000000001	statistical	number
+BETA.INV p=0.1 a=1 b=2	=BETA.INV(0.1,1,2)	0.05131670194948612	statistical	number
+BETA.INV p=0.9 a=5 b=2	=BETA.INV(0.9,5,2)	0.9074047410868713	statistical	number
+BETA.INV p=0.5 a=1 b=1	=BETA.INV(0.5,1,1)	0.49999999999999956	statistical	number
+BETA.INV p=0.5 a=5 b=5	=BETA.INV(0.5,5,5)	0.5000000000000001	statistical	number

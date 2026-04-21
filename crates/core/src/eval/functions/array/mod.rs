@@ -74,6 +74,17 @@ fn to_f64(v: &Value) -> Option<f64> {
     }
 }
 
+/// Case-insensitive equality for scalar Values (used by UNIQUE).
+fn values_equal_1d(a: &Value, b: &Value) -> bool {
+    match (a, b) {
+        (Value::Number(x), Value::Number(y)) => x == y,
+        (Value::Bool(x), Value::Bool(y)) => x == y,
+        (Value::Text(x), Value::Text(y)) => x.to_uppercase() == y.to_uppercase(),
+        (Value::Empty, Value::Empty) => true,
+        _ => false,
+    }
+}
+
 // ── ROWS ─────────────────────────────────────────────────────────────────────
 
 pub(crate) fn rows_fn(args: &[Value]) -> Value {
@@ -444,6 +455,7 @@ pub(crate) fn sort_fn(args: &[Value]) -> Value {
     if let Some(e) = check_arity(args, 1, 4) {
         return e;
     }
+    let is_1d = matches!(&args[0], Value::Array(outer) if !outer.iter().any(|e| matches!(e, Value::Array(_))));
     let mut grid = to_2d(&args[0]);
     let sort_col = if args.len() >= 2 {
         match to_f64(&args[1]) {
@@ -462,6 +474,16 @@ pub(crate) fn sort_fn(args: &[Value]) -> Value {
     } else {
         true
     };
+
+    if is_1d {
+        // 1D: sort the elements within the single row
+        let mut elems = grid.into_iter().next().unwrap_or_default();
+        elems.sort_by(|a, b| {
+            let cmp = compare_values_sort(a, b);
+            if ascending { cmp } else { cmp.reverse() }
+        });
+        return Value::Array(elems);
+    }
 
     grid.sort_by(|a, b| {
         let va = a.get(sort_col).unwrap_or(&Value::Empty);
@@ -487,6 +509,48 @@ fn sortby_fn(args: &[Value]) -> Value {
     if let Some(e) = check_arity(args, 2, usize::MAX) {
         return e;
     }
+    let is_1d = matches!(&args[0], Value::Array(outer) if !outer.iter().any(|e| matches!(e, Value::Array(_))));
+
+    if is_1d {
+        // 1D: treat each element as a separate item to sort
+        let elems = flatten_val(&args[0]);
+        let n = elems.len();
+
+        let mut sort_keys: Vec<(Vec<Value>, bool)> = Vec::new();
+        let mut i = 1;
+        while i < args.len() {
+            let key_vals = flatten_val(&args[i]);
+            if key_vals.len() != n {
+                return Value::Error(ErrorKind::Value);
+            }
+            let ascending = if i + 1 < args.len() {
+                match to_f64(&args[i + 1]) {
+                    Some(v) => v >= 0.0,
+                    None => true,
+                }
+            } else {
+                true
+            };
+            sort_keys.push((key_vals, ascending));
+            i += 2;
+        }
+
+        let mut indices: Vec<usize> = (0..n).collect();
+        indices.sort_by(|&ra, &rb| {
+            for (keys, asc) in &sort_keys {
+                let va = keys.get(ra).unwrap_or(&Value::Empty);
+                let vb = keys.get(rb).unwrap_or(&Value::Empty);
+                let cmp = compare_values_sort(va, vb);
+                if cmp != std::cmp::Ordering::Equal {
+                    return if *asc { cmp } else { cmp.reverse() };
+                }
+            }
+            std::cmp::Ordering::Equal
+        });
+
+        return Value::Array(indices.iter().map(|&r| elems[r].clone()).collect());
+    }
+
     let grid = to_2d(&args[0]);
     let nrows = grid.len();
 
@@ -534,10 +598,31 @@ pub(crate) fn unique_fn(args: &[Value]) -> Value {
     if let Some(e) = check_arity(args, 1, 3) {
         return e;
     }
+    let is_1d = matches!(&args[0], Value::Array(outer) if !outer.iter().any(|e| matches!(e, Value::Array(_))));
     let grid = to_2d(&args[0]);
     // by_col defaults to false (deduplicate rows)
     let by_col = args.get(1).map(|v| matches!(v, Value::Bool(true))).unwrap_or(false);
     let exactly_once = args.get(2).map(|v| matches!(v, Value::Bool(true))).unwrap_or(false);
+
+    // For 1D arrays, deduplicate individual elements (not rows)
+    if is_1d && !by_col {
+        let elems = flatten_val(&args[0]);
+        let mut seen: Vec<Value> = Vec::new();
+        let mut counts: Vec<usize> = Vec::new();
+        for elem in &elems {
+            if let Some(pos) = seen.iter().position(|s| values_equal_1d(s, elem)) {
+                counts[pos] += 1;
+            } else {
+                seen.push(elem.clone());
+                counts.push(1);
+            }
+        }
+        let result: Vec<Value> = seen.into_iter().zip(counts)
+            .filter(|(_, cnt)| !exactly_once || *cnt == 1)
+            .map(|(v, _)| v)
+            .collect();
+        return Value::Array(result);
+    }
 
     if by_col {
         // Deduplicate columns

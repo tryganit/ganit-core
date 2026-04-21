@@ -4,6 +4,7 @@ use crate::types::{ErrorKind, Value};
 
 /// `VALUE(text)` — parses a text string to a number. Returns `#VALUE!` if unparseable.
 /// Empty string returns 0, matching Google Sheets behaviour.
+/// Handles comma-formatted numbers (`1,234.56`), percentages (`12%`), and currency (`$42`).
 pub fn value_fn(args: &[Value]) -> Value {
     if let Some(err) = check_arity(args, 1, 1) {
         return err;
@@ -16,10 +17,28 @@ pub fn value_fn(args: &[Value]) -> Value {
     if trimmed.is_empty() {
         return Value::Number(0.0);
     }
-    match trimmed.parse::<f64>() {
-        Ok(n) => Value::Number(n),
-        Err(_) => Value::Error(ErrorKind::Value),
+    // Try direct parse first
+    if let Ok(n) = trimmed.parse::<f64>() {
+        return Value::Number(n);
     }
+    // Handle percentage: "12%" → 0.12
+    if let Some(pct) = trimmed.strip_suffix('%') {
+        if let Ok(n) = pct.trim().replace(',', "").parse::<f64>() {
+            return Value::Number(n / 100.0);
+        }
+    }
+    // Handle currency prefix: "$42" → 42
+    if let Some(rest) = trimmed.strip_prefix('$') {
+        if let Ok(n) = rest.trim().replace(',', "").parse::<f64>() {
+            return Value::Number(n);
+        }
+    }
+    // Handle comma-formatted numbers: "1,234.56" → 1234.56
+    let no_commas = trimmed.replace(',', "");
+    if let Ok(n) = no_commas.parse::<f64>() {
+        return Value::Number(n);
+    }
+    Value::Error(ErrorKind::Value)
 }
 
 #[cfg(test)]

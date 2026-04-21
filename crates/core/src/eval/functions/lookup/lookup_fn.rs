@@ -1,6 +1,6 @@
 use crate::eval::functions::check_arity;
 use crate::types::{ErrorKind, Value};
-use super::array_utils::{flatten_to_flat, values_equal, value_compare};
+use super::array_utils::{flatten_to_flat, values_equal, value_compare, wildcard_match_value, has_wildcards};
 
 /// `LOOKUP(search_key, search_range, [result_range])`
 /// Approximate lookup in sorted range (binary search semantics, but linear scan OK).
@@ -96,6 +96,14 @@ pub fn xlookup_fn(args: &[Value]) -> Value {
             }
             res
         }
+        2 => {
+            // Wildcard match
+            if has_wildcards(search_key) {
+                lookup_array.iter().position(|v| wildcard_match_value(search_key, v))
+            } else {
+                lookup_array.iter().position(|v| values_equal(v, search_key))
+            }
+        }
         _ => lookup_array.iter().position(|v| values_equal(v, search_key)),
     };
 
@@ -134,41 +142,76 @@ pub fn xmatch_fn(args: &[Value]) -> Value {
 
     match match_mode {
         0 => {
-            // Exact match
-            match lookup_array.iter().position(|v| values_equal(v, search_key)) {
+            // Exact match (with wildcard support when pattern has * or ?)
+            let pos = if has_wildcards(search_key) {
+                lookup_array.iter().position(|v| wildcard_match_value(search_key, v))
+            } else {
+                lookup_array.iter().position(|v| values_equal(v, search_key))
+            };
+            match pos {
                 Some(idx) => Value::Number((idx + 1) as f64),
                 None => Value::Error(ErrorKind::NA),
             }
         }
         1 => {
-            // Less than or equal (sorted ascending)
-            let mut result: Option<usize> = None;
+            // Exact match or next larger (smallest value >= search_key)
+            let mut best_pos: Option<usize> = None;
+            let mut best_val: Option<&Value> = None;
             for (i, v) in lookup_array.iter().enumerate() {
-                match value_compare(v, search_key) {
-                    Some(std::cmp::Ordering::Less) | Some(std::cmp::Ordering::Equal) => {
-                        result = Some(i + 1);
+                if values_equal(v, search_key) {
+                    return Value::Number((i + 1) as f64);
+                }
+                if let Some(std::cmp::Ordering::Greater) = value_compare(v, search_key) {
+                    // v > search_key; update if this is the smallest such value seen
+                    let is_better = match best_val {
+                        None => true,
+                        Some(bv) => value_compare(v, bv) == Some(std::cmp::Ordering::Less),
+                    };
+                    if is_better {
+                        best_pos = Some(i + 1);
+                        best_val = Some(v);
                     }
-                    _ => break,
                 }
             }
-            match result {
+            match best_pos {
                 Some(pos) => Value::Number(pos as f64),
                 None => Value::Error(ErrorKind::NA),
             }
         }
         -1 => {
-            // Greater than or equal (sorted descending)
-            let mut result: Option<usize> = None;
+            // Find largest value <= search_key (exact match or next smaller).
+            let mut best_pos: Option<usize> = None;
+            let mut best_val: Option<&Value> = None;
             for (i, v) in lookup_array.iter().enumerate() {
                 match value_compare(v, search_key) {
-                    Some(std::cmp::Ordering::Greater) | Some(std::cmp::Ordering::Equal) => {
-                        result = Some(i + 1);
+                    Some(std::cmp::Ordering::Less) | Some(std::cmp::Ordering::Equal) => {
+                        // v <= search_key; update if this is the largest such value seen
+                        let is_better = match best_val {
+                            None => true,
+                            Some(bv) => value_compare(v, bv) == Some(std::cmp::Ordering::Greater),
+                        };
+                        if is_better {
+                            best_pos = Some(i + 1);
+                            best_val = Some(v);
+                        }
                     }
-                    _ => break,
+                    _ => {}
                 }
             }
-            match result {
+            match best_pos {
                 Some(pos) => Value::Number(pos as f64),
+                None => Value::Error(ErrorKind::NA),
+            }
+        }
+        2 => {
+            // Wildcard match
+            let pos = if has_wildcards(search_key) {
+                lookup_array.iter().position(|v| wildcard_match_value(search_key, v))
+            } else {
+                lookup_array.iter().position(|v| values_equal(v, search_key))
+            };
+            match pos {
+                Some(idx) => Value::Number((idx + 1) as f64),
                 None => Value::Error(ErrorKind::NA),
             }
         }

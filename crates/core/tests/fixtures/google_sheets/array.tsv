@@ -149,3 +149,5 @@ FREQUENCY all in one bin	=ARRAYTOTEXT(FREQUENCY({1,1,1},{5}), 1)	#NAME?	array	er
 UNIQUE after SORT	=ARRAYTOTEXT(UNIQUE(SORT({3,1,2,1,3},1,1)), 1)	#NAME?	array	error
 SORT after UNIQUE	=ARRAYTOTEXT(SORT(UNIQUE({3,1,2,1,3}),1,1), 1)	#NAME?	array	error
 TRANSPOSE then BYROW sum rows	=ARRAYTOTEXT(BYROW(TRANSPOSE({1,2;3,4}),LAMBDA(r,SUM(r))), 1)	#NAME?	array	error
+UNIQUE exactly_once TRUE	=UNIQUE({1,2,2,3},FALSE,TRUE)	{1,3}	basic	array
+SORT 1D descending	=SORT({3,1,2},1,-1)	{3,2,1}	basic	array

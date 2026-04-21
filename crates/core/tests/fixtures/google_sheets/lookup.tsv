@@ -94,3 +94,15 @@ ROWS vertical array 3 rows	=ROWS({1;2;3})	3	lookup	number
 COLUMNS vertical array 1 col	=COLUMNS({1;2;3})	1	lookup	number
 ROW range reference B3:D5	=ROW(B3:D5)	3	lookup	number
 COLUMN range reference B3:D5	=COLUMN(B3:D5)	2	lookup	number
+XLOOKUP wildcard match_mode=2	"=XLOOKUP(""b*"",{""a"",""ba"",""bc""},{1,2,3},,2)"	2	basic	number
+XMATCH wildcard match_mode=2	"=XMATCH(""b*"",{""a"",""ba"",""bc""},2)"	2	basic	number
+MATCH wildcard match_type=0	"=MATCH(""b*"",{""a"",""ba"",""bc""},0)"	2	basic	number
+XLOOKUP wildcard match_mode=2 BUG-12	"=XLOOKUP(""b*"",{""a"",""ba"",""bc""},{1,2,3},,2)"	2	lookup	number
+XLOOKUP wildcard match_mode=2 matches second	"=XLOOKUP(""b*"",{""x"",""ba"",""bc""},{1,2,3},,2)"	2	lookup	number
+XLOOKUP wildcard match_mode=2 prefix a	"=XLOOKUP(""a*"",{""a"",""ba"",""bc""},{1,2,3},,2)"	1	lookup	number
+XMATCH approx match_mode=1 sorted asc	=XMATCH(2.5,{1,2,3,4,5},1)	3	lookup	number
+XMATCH wildcard match_mode=2 BUG-13	"=XMATCH(""b*"",{""a"",""ba"",""bc""},2)"	2	lookup	number
+XMATCH wildcard match_mode=2 prefix x	"=XMATCH(""x*"",{""x1"",""x2"",""y""},2)"	1	lookup	number
+XMATCH reverse approx search_mode=-1 BUG-13	=XMATCH(3.5,{1,2,3,4,5},-1)	3	lookup	number
+MATCH wildcard match_type=0 BUG-14	"=MATCH(""b*"",{""a"",""ba"",""bc""},0)"	2	lookup	number
+MATCH wildcard question mark match_type=0	"=MATCH(""b?"",{""a"",""ba"",""bc""},0)"	2	lookup	number

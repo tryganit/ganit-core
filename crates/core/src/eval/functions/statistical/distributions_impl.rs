@@ -976,14 +976,19 @@ pub fn betadist_fn(args: &[Value]) -> Value {
 // BETA.INV / BETAINV
 // ---------------------------------------------------------------------------
 pub fn beta_inv_fn(args: &[Value]) -> Value {
-    if args.len() < 5 {
+    if args.len() < 3 {
         return Value::Error(ErrorKind::NA);
     }
     let p = match as_f64(&args[0]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) };
     let alpha = match as_f64(&args[1]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) };
     let beta = match as_f64(&args[2]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) };
-    let lo = match as_f64(&args[3]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) };
-    let hi = match as_f64(&args[4]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) };
+    // lo and hi are optional; default to 0 and 1
+    let lo = if args.len() >= 4 {
+        match as_f64(&args[3]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) }
+    } else { 0.0 };
+    let hi = if args.len() >= 5 {
+        match as_f64(&args[4]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) }
+    } else { 1.0 };
     if p < 0.0 || p > 1.0 || alpha <= 0.0 || beta <= 0.0 || lo >= hi {
         return Value::Error(ErrorKind::Num);
     }

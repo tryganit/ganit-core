@@ -1,6 +1,6 @@
 use crate::eval::functions::check_arity;
 use crate::types::{ErrorKind, Value};
-use super::array_utils::{flatten_to_rows, flatten_to_flat, values_equal, value_compare};
+use super::array_utils::{flatten_to_rows, flatten_to_flat, values_equal, value_compare, wildcard_match_value, has_wildcards};
 
 /// `INDEX(array, row, [col])` — returns the value at row/col of array.
 /// Row and col are 1-based. Returns #REF! if out of bounds.
@@ -93,9 +93,14 @@ pub fn match_fn(args: &[Value]) -> Value {
 
     match match_type {
         0 => {
-            // Exact match
+            // Exact match (wildcard supported when pattern contains * or ?)
             for (i, v) in flat.iter().enumerate() {
-                if values_equal(v, search_key) {
+                let matched = if has_wildcards(search_key) {
+                    wildcard_match_value(search_key, v)
+                } else {
+                    values_equal(v, search_key)
+                };
+                if matched {
                     return Value::Number((i + 1) as f64);
                 }
             }
