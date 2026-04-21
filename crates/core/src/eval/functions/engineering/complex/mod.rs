@@ -144,16 +144,14 @@ pub(super) fn parse_complex(s: &str) -> Option<Complex> {
 }
 
 /// Format a complex number back to a string using the given suffix ('i' or 'j').
+/// Always returns `Value::Text` — even for purely real results — to match
+/// the Google Sheets contract that all IM* functions return a text string.
 pub(super) fn format_complex(c: Complex, suffix: char) -> Value {
     let re = c.re;
     let im = c.im;
 
-    // Clean up near-zero values
-    let re = if re.abs() < 1e-10 { 0.0 } else { re };
-    let im = if im.abs() < 1e-10 { 0.0 } else { im };
-
     if im == 0.0 {
-        return Value::Number(re);
+        return Value::Text(format_num(re));
     }
 
     let re_str = if re == 0.0 {
@@ -172,7 +170,7 @@ pub(super) fn format_complex(c: Complex, suffix: char) -> Value {
 
     let result = if re == 0.0 {
         im_str
-    } else if im > 0.0 || im == 1.0 {
+    } else if im > 0.0 {
         format!("{}+{}", re_str, im_str)
     } else {
         format!("{}{}", re_str, im_str)
@@ -181,12 +179,57 @@ pub(super) fn format_complex(c: Complex, suffix: char) -> Value {
     Value::Text(result)
 }
 
+/// Format a float component using Google Sheets' 15-significant-figure rules:
+/// - Whole numbers are printed without a decimal point.
+/// - Very small (|x| < 1e-9) or very large (|x| >= 1e15) values use uppercase
+///   scientific notation with up to 15 sig figs (e.g. `6.12323399573677E-17`).
+/// - All other values use decimal notation with up to 15 sig figs, trailing
+///   zeros stripped.
 fn format_num(n: f64) -> String {
-    // Use integer if it's a whole number
+    if n == 0.0 {
+        return "0".to_string();
+    }
     if n.fract() == 0.0 && n.abs() < 1e15 {
-        format!("{}", n as i64)
+        return format!("{}", n as i64);
+    }
+
+    let abs = n.abs();
+
+    if !(1e-9..1e15).contains(&abs) {
+        // Scientific notation: 14 decimal places = 15 significant figures.
+        let s = format!("{:.14e}", n);
+        let (mantissa, exp_part) = s.split_once('e').unwrap();
+        let exp_num: i32 = exp_part.parse().unwrap();
+        let mantissa = mantissa.trim_end_matches('0').trim_end_matches('.');
+        // GS uses uppercase E with a sign and at least 2 digits in the exponent.
+        format!("{}E{:+03}", mantissa, exp_num)
     } else {
-        format!("{}", n)
+        // Convert via 15-sig-fig scientific notation, then render as decimal.
+        let s = format!("{:.14e}", n);
+        let (mantissa, exp_part) = s.split_once('e').unwrap();
+        let exp_num: i32 = exp_part.parse().unwrap();
+        let mantissa_stripped = mantissa.trim_end_matches('0').trim_end_matches('.');
+        let sign = if n < 0.0 { "-" } else { "" };
+        let mantissa_abs = mantissa_stripped.trim_start_matches('-');
+        let digits: String = mantissa_abs.chars().filter(|c| *c != '.').collect();
+
+        if exp_num < 0 {
+            let leading_zeros = (-exp_num - 1) as usize;
+            format!("{}0.{}{}", sign, "0".repeat(leading_zeros), digits)
+        } else {
+            let int_part_len = (exp_num + 1) as usize;
+            if int_part_len >= digits.len() {
+                format!(
+                    "{}{}{}",
+                    sign,
+                    digits,
+                    "0".repeat(int_part_len - digits.len())
+                )
+            } else {
+                let (int_part, frac_part) = digits.split_at(int_part_len);
+                format!("{}{}.{}", sign, int_part, frac_part)
+            }
+        }
     }
 }
 

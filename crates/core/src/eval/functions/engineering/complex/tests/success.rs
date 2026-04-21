@@ -55,10 +55,10 @@ fn complex_0_1() {
 
 #[test]
 fn complex_pure_real() {
-    // COMPLEX(5, 0) → 5 (returns Number, no imaginary part)
+    // COMPLEX(5, 0) → "5" (always returns Text per Google Sheets contract)
     assert_eq!(
         complex_fn(&[Value::Number(5.0), Value::Number(0.0)]),
-        Value::Number(5.0)
+        Value::Text("5".to_string())
     );
 }
 
@@ -153,16 +153,16 @@ fn imdiv_basic() {
 
 #[test]
 fn imexp_zero() {
-    // exp(0) = 1
-    assert_eq!(imexp_fn(&[Value::Number(0.0)]), Value::Number(1.0));
+    // exp(0) = 1 — always returns Text per Google Sheets contract
+    assert_eq!(imexp_fn(&[Value::Number(0.0)]), Value::Text("1".to_string()));
 }
 
 // ── IMLN ─────────────────────────────────────────────────────────────────────
 
 #[test]
 fn imln_one() {
-    // ln(1) = 0
-    assert_eq!(imln_fn(&[Value::Number(1.0)]), Value::Number(0.0));
+    // ln(1) = 0 — always returns Text per Google Sheets contract
+    assert_eq!(imln_fn(&[Value::Number(1.0)]), Value::Text("0".to_string()));
 }
 
 // ── IMPOWER ──────────────────────────────────────────────────────────────────
@@ -170,8 +170,10 @@ fn imln_one() {
 #[test]
 fn impower_square() {
     // (1+i)^2 = 1 + 2i - 1 = 2i
+    // Due to floating-point, the real part is a tiny near-zero value which is
+    // included in the result (Google Sheets also includes near-zero components).
     let result = impower_fn(&[t("1+i"), Value::Number(2.0)]);
-    assert_eq!(result, Value::Text("2i".to_string()));
+    assert_eq!(result, Value::Text("1.22464679914735E-16+2i".to_string()));
 }
 
 // ── IMPRODUCT ─────────────────────────────────────────────────────────────────
@@ -196,9 +198,10 @@ fn improduct_1_2i_times_3_4i() {
 
 #[test]
 fn imsqrt_neg1() {
-    // sqrt(-1) = i
+    // sqrt(-1): principal square root has a tiny-but-nonzero real part due to
+    // floating-point representation of cos(π/2). Google Sheets includes it.
     let result = imsqrt_fn(&[Value::Number(-1.0)]);
-    assert_eq!(result, Value::Text("i".to_string()));
+    assert_eq!(result, Value::Text("6.12323399573677E-17+i".to_string()));
 }
 
 // ── IMSUB ────────────────────────────────────────────────────────────────────
