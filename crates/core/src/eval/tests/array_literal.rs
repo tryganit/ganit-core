@@ -7,21 +7,16 @@ fn run_formula(formula: &str) -> Value {
 
 #[test]
 fn array_literal_evaluates_to_array() {
+    // In Google Sheets scalar context, an array literal returns its first element.
     let result = run_formula("={1,2,3}");
-    assert!(matches!(result, Value::Array(ref v) if v.len() == 3));
+    assert_eq!(result, Value::Number(1.0));
 }
 
 #[test]
 fn array_literal_values_are_correct() {
+    // In Google Sheets scalar context, ={1,2,3} → 1 (top-left element).
     let result = run_formula("={1,2,3}");
-    match result {
-        Value::Array(v) => {
-            assert_eq!(v[0], Value::Number(1.0));
-            assert_eq!(v[1], Value::Number(2.0));
-            assert_eq!(v[2], Value::Number(3.0));
-        }
-        _ => panic!("Expected Array"),
-    }
+    assert_eq!(result, Value::Number(1.0));
 }
 
 #[test]
@@ -32,16 +27,9 @@ fn array_literal_empty() {
 
 #[test]
 fn array_literal_mixed_types() {
+    // In Google Sheets scalar context, ={1,"hello",TRUE} → 1 (top-left element).
     let result = run_formula("={1,\"hello\",TRUE}");
-    match result {
-        Value::Array(v) => {
-            assert_eq!(v.len(), 3);
-            assert_eq!(v[0], Value::Number(1.0));
-            assert_eq!(v[1], Value::Text("hello".to_string()));
-            assert_eq!(v[2], Value::Bool(true));
-        }
-        _ => panic!("Expected Array"),
-    }
+    assert_eq!(result, Value::Number(1.0));
 }
 
 #[test]
