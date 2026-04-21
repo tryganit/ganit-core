@@ -4,6 +4,7 @@ use crate::types::Value;
 
 /// Error function (Abramowitz & Stegun approximation 7.1.26, max error < 1.5e-7).
 pub(crate) fn erf(x: f64) -> f64 {
+    if x == 0.0 { return 0.0; }
     if x < 0.0 { return -erf(-x); }
     let t = 1.0 / (1.0 + 0.3275911 * x);
     let poly = t * (0.254829592

@@ -883,7 +883,7 @@ fn minverse_fn(args: &[Value]) -> Value {
     }
     match invert_matrix(mat) {
         Some(inv) => from_2d(inv.into_iter().map(|r| r.into_iter().map(Value::Number).collect()).collect()),
-        None => Value::Error(ErrorKind::Value),
+        None => Value::Error(ErrorKind::Num),
     }
 }
 
