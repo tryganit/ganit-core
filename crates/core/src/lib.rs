@@ -28,7 +28,19 @@ pub fn evaluate(formula: &str, variables: &HashMap<String, Value>) -> Value {
             let ctx = Context::new(variables.clone());
             let registry = Registry::new();
             let mut eval_ctx = EvalCtx::new(ctx, &registry);
-            evaluate_expr(&expr, &mut eval_ctx)
+            first_of_array(evaluate_expr(&expr, &mut eval_ctx))
         }
+    }
+}
+
+/// In Google Sheets, placing an array-returning formula in a single cell yields
+/// the first (top-left) element. This helper replicates that scalar-context
+/// unwrapping: 1-D `[x, y, …]` → `x`, 2-D `[[a, b], …]` → `a`, scalars pass through.
+fn first_of_array(v: Value) -> Value {
+    match v {
+        Value::Array(elems) if !elems.is_empty() => {
+            first_of_array(elems.into_iter().next().unwrap())
+        }
+        other => other,
     }
 }

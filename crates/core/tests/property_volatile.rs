@@ -75,25 +75,16 @@ fn randarray_cells_are_independent() {
     // If result isn't an array of numbers, skip — function may not be implemented
 }
 
-// 4. RANDARRAY(2,3) returns a 2×3 array (6 values total)
+// 4. RANDARRAY(2,3) in scalar context returns the first element (a number in [0,1))
 #[test]
 fn randarray_shape_is_correct() {
     let v = run("=RANDARRAY(2,3)");
-    if let Value::Array(rows) = &v {
-        assert_eq!(rows.len(), 2, "RANDARRAY(2,3) should have 2 rows, got {}", rows.len());
-        for (i, row) in rows.iter().enumerate() {
-            match row {
-                Value::Array(cells) => assert_eq!(
-                    cells.len(), 3,
-                    "RANDARRAY(2,3) row {} should have 3 cells, got {}",
-                    i, cells.len()
-                ),
-                _ => panic!("RANDARRAY(2,3) row {} is not an array: {:?}", i, row),
-            }
-        }
-    } else {
-        panic!("RANDARRAY(2,3) did not return an array: {:?}", v);
-    }
+    // GS scalar context: array-returning formulas yield first element.
+    let n = match &v {
+        Value::Number(n) => *n,
+        other => panic!("RANDARRAY(2,3) did not return a scalar number in GS scalar context: {:?}", other),
+    };
+    assert!(n >= 0.0 && n < 1.0, "RANDARRAY(2,3) first element out of [0,1): {}", n);
 }
 
 // 5. RANDBETWEEN(1,10) returns an integer in [1, 10] on each of 100 calls
