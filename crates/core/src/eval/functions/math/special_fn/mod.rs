@@ -7,6 +7,9 @@ use crate::types::{ErrorKind, Value};
 /// Error function approximation using Abramowitz & Stegun (7.1.26).
 /// Maximum error: 1.5e-7.
 fn erf(x: f64) -> f64 {
+    if x == 0.0 {
+        return 0.0;
+    }
     if x < 0.0 {
         return -erf(-x);
     }

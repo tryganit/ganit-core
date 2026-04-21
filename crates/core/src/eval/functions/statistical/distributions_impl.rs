@@ -954,15 +954,20 @@ pub fn beta_dist_fn(args: &[Value]) -> Value {
 }
 
 // BETADIST (legacy, always CDF with lo/hi)
+// Accepts 3 args (x, alpha, beta) with lo=0, hi=1 defaults, or 5 args.
 pub fn betadist_fn(args: &[Value]) -> Value {
-    if args.len() < 5 {
+    if args.len() < 3 {
         return Value::Error(ErrorKind::NA);
     }
     let x = match as_f64(&args[0]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) };
     let alpha = match as_f64(&args[1]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) };
     let beta = match as_f64(&args[2]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) };
-    let lo = match as_f64(&args[3]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) };
-    let hi = match as_f64(&args[4]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) };
+    let lo = if args.len() >= 4 {
+        match as_f64(&args[3]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) }
+    } else { 0.0 };
+    let hi = if args.len() >= 5 {
+        match as_f64(&args[4]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) }
+    } else { 1.0 };
     if alpha <= 0.0 || beta <= 0.0 || lo >= hi {
         return Value::Error(ErrorKind::Num);
     }
@@ -1162,7 +1167,7 @@ fn hypgeom_impl(args: &[Value], has_cumulative: bool) -> Value {
     let n = n_f as u64;
     let k = k_f as u64;
     let pop = pop_f as u64;
-    if x > n || x > k || n > pop || k > pop {
+    if x > n || x > k || n > pop || k > pop || n > k {
         return Value::Error(ErrorKind::Num);
     }
     if cumulative {

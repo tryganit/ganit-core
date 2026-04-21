@@ -271,22 +271,11 @@ pub fn unary_percent_fn(args: &[Value]) -> Value {
 ///
 /// Returns TRUE if value is between lower and upper.
 /// lower_inclusive defaults to TRUE; upper_inclusive defaults to TRUE.
+/// Supports numeric and text comparisons (text uses lexicographic ordering).
 pub fn isbetween_fn(args: &[Value]) -> Value {
     if let Some(err) = check_arity(args, 3, 5) {
         return err;
     }
-    let value = match to_number(args[0].clone()) {
-        Err(e) => return e,
-        Ok(v) => v,
-    };
-    let lower = match to_number(args[1].clone()) {
-        Err(e) => return e,
-        Ok(v) => v,
-    };
-    let upper = match to_number(args[2].clone()) {
-        Err(e) => return e,
-        Ok(v) => v,
-    };
     let lower_inclusive = if args.len() >= 4 {
         match to_bool(args[3].clone()) {
             Err(e) => return e,
@@ -303,9 +292,44 @@ pub fn isbetween_fn(args: &[Value]) -> Value {
     } else {
         true
     };
-    let lower_ok = if lower_inclusive { value >= lower } else { value > lower };
-    let upper_ok = if upper_inclusive { value <= upper } else { value < upper };
-    Value::Bool(lower_ok && upper_ok)
+    // Use text comparison if all three comparison args are text.
+    // Mixed text+numeric types return #VALUE! (same as GS behavior).
+    let is_text_val = matches!(&args[0], Value::Text(_));
+    let is_text_lo = matches!(&args[1], Value::Text(_));
+    let is_text_hi = matches!(&args[2], Value::Text(_));
+    if is_text_val && is_text_lo && is_text_hi {
+        let value = match to_string_val(args[0].clone()) {
+            Err(e) => return e,
+            Ok(s) => s,
+        };
+        let lower = match to_string_val(args[1].clone()) {
+            Err(e) => return e,
+            Ok(s) => s,
+        };
+        let upper = match to_string_val(args[2].clone()) {
+            Err(e) => return e,
+            Ok(s) => s,
+        };
+        let lower_ok = if lower_inclusive { value >= lower } else { value > lower };
+        let upper_ok = if upper_inclusive { value <= upper } else { value < upper };
+        Value::Bool(lower_ok && upper_ok)
+    } else {
+        let value = match to_number(args[0].clone()) {
+            Err(e) => return e,
+            Ok(v) => v,
+        };
+        let lower = match to_number(args[1].clone()) {
+            Err(e) => return e,
+            Ok(v) => v,
+        };
+        let upper = match to_number(args[2].clone()) {
+            Err(e) => return e,
+            Ok(v) => v,
+        };
+        let lower_ok = if lower_inclusive { value >= lower } else { value > lower };
+        let upper_ok = if upper_inclusive { value <= upper } else { value < upper };
+        Value::Bool(lower_ok && upper_ok)
+    }
 }
 
 // ── Issue #336 — UNIQUE ───────────────────────────────────────────────────────

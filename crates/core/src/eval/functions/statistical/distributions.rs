@@ -14,6 +14,9 @@ use std::f64::consts::{PI, SQRT_2, E};
 /// Approximation of erf(x) using Horner's method (Abramowitz & Stegun 7.1.26).
 /// Max error ≈ 1.5e-7.
 pub fn erf(x: f64) -> f64 {
+    if x == 0.0 {
+        return 0.0;
+    }
     if x < 0.0 {
         return -erf(-x);
     }
@@ -392,7 +395,16 @@ pub fn inv_reg_inc_beta(a: f64, b: f64, p: f64) -> f64 {
         // Cornish-Fisher approximation
         let lam = a / (a + b);
         let t = w * (lam * (1.0 - lam) / (a + b + 1.0)).sqrt();
-        (lam + t).clamp(1e-6, 1.0 - 1e-6)
+        let cf = lam + t;
+        if cf > 0.0 && cf < 1.0 {
+            cf
+        } else {
+            // Cornish-Fisher failed (common for extreme p); use a small-x
+            // approximation: I_x(a,b) ≈ x^a / (a * B(a,b)) for small x
+            let lbeta_ab = lgamma(a) + lgamma(b) - lgamma(a + b);
+            let x0 = (p * a * lbeta_ab.exp()).powf(1.0 / a);
+            x0.clamp(1e-14, 1.0 - 1e-14)
+        }
     };
     // Newton-Raphson with bisection bounds
     let lbeta_ab = lgamma(a) + lgamma(b) - lgamma(a + b);
