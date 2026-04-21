@@ -136,13 +136,56 @@ fn compare_sort_values(a: &Value, b: &Value) -> std::cmp::Ordering {
     }
 }
 
-/// `SORTN(array, [n], [display_ties_mode], [sort_column], [is_ascending], ...)` —
-/// for 1-D horizontal arrays, returns the array unchanged.
+/// `SORTN(array, [n], [display_ties_mode], [sort_column], [is_ascending])` —
+/// returns the top N sorted elements of a 1-D array (or rows of a 2-D array).
 pub fn sortn_fn(args: &[Value]) -> Value {
-    if let Some(err) = check_arity(args, 1, 255) {
+    if let Some(err) = check_arity(args, 1, 5) {
         return err;
     }
-    args[0].clone()
+
+    let n_limit: Option<usize> = args.get(1).and_then(|v| match v {
+        Value::Number(n) => Some(*n as usize),
+        _ => None,
+    });
+
+    let sort_col = args.get(3).and_then(|v| match v {
+        Value::Number(n) => Some(*n as usize),
+        _ => None,
+    }).unwrap_or(1);
+
+    let ascending = args.get(4).map(|v| match v {
+        Value::Bool(b) => *b,
+        Value::Number(n) => *n >= 0.0,
+        _ => true,
+    }).unwrap_or(true);
+
+    match &args[0] {
+        Value::Array(outer) => {
+            let is_2d = outer.iter().any(|e| matches!(e, Value::Array(_)));
+            if is_2d {
+                let mut rows: Vec<Value> = outer.clone();
+                let col_idx = sort_col.saturating_sub(1);
+                rows.sort_by(|a, b| {
+                    let va = match a { Value::Array(r) => r.get(col_idx).cloned().unwrap_or(Value::Empty), other => other.clone() };
+                    let vb = match b { Value::Array(r) => r.get(col_idx).cloned().unwrap_or(Value::Empty), other => other.clone() };
+                    let cmp = compare_sort_values(&va, &vb);
+                    if ascending { cmp } else { cmp.reverse() }
+                });
+                let limit = n_limit.unwrap_or(rows.len()).min(rows.len());
+                Value::Array(rows.into_iter().take(limit).collect())
+            } else {
+                // 1D: sort elements and take top N
+                let mut elems: Vec<Value> = outer.clone();
+                elems.sort_by(|a, b| {
+                    let cmp = compare_sort_values(a, b);
+                    if ascending { cmp } else { cmp.reverse() }
+                });
+                let limit = n_limit.unwrap_or(elems.len()).min(elems.len());
+                Value::Array(elems.into_iter().take(limit).collect())
+            }
+        }
+        other => other.clone(),
+    }
 }
 
 /// `UNIQUE(array, [by_col], [exactly_once])` — for 1-D horizontal arrays,
