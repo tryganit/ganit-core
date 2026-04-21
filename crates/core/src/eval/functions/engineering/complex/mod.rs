@@ -728,6 +728,9 @@ pub fn imtanh_fn(args: &[Value]) -> Value {
             }
             let re = (sinh_re * cosh_re + sinh_im * cosh_im) / denom;
             let im = (sinh_im * cosh_re - sinh_re * cosh_im) / denom;
+            if im == 0.0 {
+                return Value::Text(format!("{}", re));
+            }
             format_complex(Complex::new(re, im), 'i')
         }
     }
@@ -751,6 +754,9 @@ pub fn imcoth_fn(args: &[Value]) -> Value {
             }
             let re = (cosh_re * sinh_re + cosh_im * sinh_im) / denom;
             let im = (cosh_im * sinh_re - cosh_re * sinh_im) / denom;
+            if im == 0.0 {
+                return Value::Text(format!("{}", re));
+            }
             format_complex(Complex::new(re, im), 'i')
         }
     }

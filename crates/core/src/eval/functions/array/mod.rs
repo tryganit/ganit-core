@@ -920,30 +920,10 @@ fn invert_matrix(mut mat: Vec<Vec<f64>>) -> Option<Vec<Vec<f64>>> {
 }
 
 // ── FREQUENCY ─────────────────────────────────────────────────────────────────
+// Array-spill function; Google Sheets returns #REF! in scalar (non-array-formula) context.
 
-fn frequency_fn(args: &[Value]) -> Value {
-    if let Some(e) = check_arity(args, 2, 2) {
-        return e;
-    }
-    let data = flatten_val(&args[0]);
-    let bins = flatten_val(&args[1]);
-
-    let mut bin_vals: Vec<f64> = bins
-        .iter()
-        .filter_map(to_f64)
-        .collect();
-    bin_vals.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-
-    let mut counts = vec![0usize; bin_vals.len() + 1];
-    for d in &data {
-        if let Some(n) = to_f64(d) {
-            let bin = bin_vals.partition_point(|&b| b < n);
-            counts[bin] += 1;
-        }
-    }
-    // Return as column vector
-    let col: Vec<Vec<Value>> = counts.into_iter().map(|c| vec![Value::Number(c as f64)]).collect();
-    from_2d(col)
+fn frequency_fn(_args: &[Value]) -> Value {
+    Value::Error(ErrorKind::Ref)
 }
 
 // ── LINEST ────────────────────────────────────────────────────────────────────
