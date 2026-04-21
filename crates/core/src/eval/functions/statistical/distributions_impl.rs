@@ -1458,29 +1458,20 @@ pub fn ztest_fn(args: &[Value]) -> Value {
 // MARGINOFERROR
 // ---------------------------------------------------------------------------
 pub fn marginoferror_fn(args: &[Value]) -> Value {
-    if args.len() < 2 {
+    if args.len() < 3 {
         return Value::Error(ErrorKind::NA);
     }
-    let data = collect_nums(std::slice::from_ref(&args[0]));
-    let confidence = match as_f64(&args[1]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) };
-    let n = data.len() as f64;
-    if n < 2.0 {
-        return Value::Error(ErrorKind::NA);
-    }
-    let mean = data.iter().sum::<f64>() / n;
-    let var = data.iter().map(|x| (x - mean).powi(2)).sum::<f64>() / (n - 1.0);
-    if var == 0.0 {
+    let alpha = match as_f64(&args[0]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) };
+    let sd    = match as_f64(&args[1]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) };
+    let n     = match as_f64(&args[2]) { Some(v) => v, None => return Value::Error(ErrorKind::Value) };
+    if alpha <= 0.0 || alpha >= 1.0 || sd <= 0.0 || n <= 0.0 {
         return Value::Error(ErrorKind::Num);
     }
-    let stdev = var.sqrt();
-    let alpha = 1.0 - confidence;
-    // Use t-distribution (n-1 degrees of freedom)
-    let df = n - 1.0;
-    let t = d::t_inv(1.0 - alpha / 2.0, df);
-    if !t.is_finite() {
+    let z = d::norm_inv(1.0 - alpha / 2.0, 0.0, 1.0);
+    if !z.is_finite() {
         return Value::Error(ErrorKind::Num);
     }
-    Value::Number(t * stdev / n.sqrt())
+    Value::Number(z * sd / n.sqrt())
 }
 
 // ---------------------------------------------------------------------------
