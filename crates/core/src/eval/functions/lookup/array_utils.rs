@@ -1,5 +1,49 @@
 use crate::types::Value;
 
+/// Glob-style wildcard match for spreadsheet patterns.
+/// `*` matches any sequence of characters; `?` matches any single character.
+/// Match is case-insensitive. The pattern must match the entire text.
+pub fn wildcard_match_value(pattern: &Value, text: &Value) -> bool {
+    let (pat_str, txt_str) = match (pattern, text) {
+        (Value::Text(p), Value::Text(t)) => (p.to_lowercase(), t.to_lowercase()),
+        _ => return false,
+    };
+    let pat: Vec<char> = pat_str.chars().collect();
+    let txt: Vec<char> = txt_str.chars().collect();
+    wildcard_match_chars(&pat, &txt)
+}
+
+fn wildcard_match_chars(pattern: &[char], text: &[char]) -> bool {
+    match (pattern.first(), text.first()) {
+        (None, None) => true,
+        (None, _) => false,
+        (Some('*'), _) => {
+            for i in 0..=text.len() {
+                if wildcard_match_chars(&pattern[1..], &text[i..]) {
+                    return true;
+                }
+            }
+            false
+        }
+        (Some(_), None) => false,
+        (Some(p), Some(t)) => {
+            if *p == '?' || *p == *t {
+                wildcard_match_chars(&pattern[1..], &text[1..])
+            } else {
+                false
+            }
+        }
+    }
+}
+
+/// Returns true if the pattern string contains wildcard characters (* or ?).
+pub fn has_wildcards(v: &Value) -> bool {
+    match v {
+        Value::Text(s) => s.contains('*') || s.contains('?'),
+        _ => false,
+    }
+}
+
 /// Flatten a Value into a list of rows (Vec of Vec<Value>).
 /// A 2D array (Array of Arrays) → each inner Array is a row.
 /// A 1D array (Array of scalars) → one row containing all elements.
