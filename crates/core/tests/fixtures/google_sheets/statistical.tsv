@@ -140,12 +140,12 @@ T.INV.2T p=0.9 df=5	=T.INV.2T(0.9,5)	0.13217517523168643	statistical	number
 TINV p=0.1 df=5	=TINV(0.1,5)	2.015048373333024	statistical	number
 TINV p=0.5 df=5	=TINV(0.5,5)	0.7266868438004224	statistical	number
 TINV p=0.9 df=5	=TINV(0.9,5)	0.13217517523168643	statistical	number
-T.TEST constant-difference paired BUG-03	=T.TEST({1,2,3},{4,5,6},2,1)	#DIV/0!	statistical	error
+T.TEST constant-difference paired	=T.TEST({1,2,3},{4,5,6},2,1)	0	statistical	number
 T.TEST non-constant paired should work	=T.TEST({1,2,3},{1,2,4},2,1)	0.42264973081037394	statistical	number
 T.TEST two-sample equal-variance tails=2 type=2	=T.TEST({1,2,3,4,5},{2,3,4,5,6},2,2)	0.34659350708733405	statistical	number
 T.TEST two-sample unequal-variance tails=2 type=3	=T.TEST({1,2,3,4,5},{2,3,4,5,6},2,3)	0.34659350708733405	statistical	number
-T.TEST one-tailed paired	=T.TEST({1,2,3},{4,5,6},1,1)	#DIV/0!	statistical	error
-TTEST constant-difference paired alias BUG-03	=TTEST({1,2,3},{4,5,6},2,1)	#DIV/0!	statistical	error
+T.TEST one-tailed constant paired	=T.TEST({1,2,3},{4,5,6},1,1)	0	statistical	number
+TTEST constant-difference paired alias	=TTEST({1,2,3},{4,5,6},2,1)	0	statistical	number
 TTEST two-sample equal-variance alias	=TTEST({1,2,3,4,5},{2,3,4,5,6},2,2)	0.34659350708733405	statistical	number
 F.DIST cumulative df1=1 df2=5	=F.DIST(1,1,5,TRUE)	0.6367825323508773	statistical	number
 F.DIST cumulative df1=5 df2=10	=F.DIST(1,5,10,TRUE)	0.5348805734621995	statistical	number
