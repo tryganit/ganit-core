@@ -28,6 +28,46 @@ fn apply_format(n: f64, fmt: &str) -> String {
         return format!("{}%", apply_format(pct_val, pct_fmt));
     }
 
+    // ── Time format: contains time tokens (h, hh, ss, AM/PM) ─────────────────
+    {
+        let lower = fmt.to_lowercase();
+        let is_time_fmt = lower.contains("hh") || lower.contains("ss")
+            || lower.contains("am/pm") || lower.contains("a/p")
+            || (lower.contains('h') && !lower.contains("yyyy") && !lower.contains("yy"));
+        if is_time_fmt {
+            // n is a fraction of a day; 0.5 = noon
+            let total_secs = (n.fract().abs() * 86400.0).round() as u64;
+            let hours = total_secs / 3600;
+            let minutes = (total_secs % 3600) / 60;
+            let seconds = total_secs % 60;
+
+            let use_ampm = lower.contains("am/pm") || lower.contains("a/p");
+            let (display_hours, ampm_str) = if use_ampm {
+                let h12 = if hours == 0 { 12 } else if hours > 12 { hours - 12 } else { hours };
+                let ap = if hours < 12 { "AM" } else { "PM" };
+                (h12, ap)
+            } else {
+                (hours, "")
+            };
+
+            // Replace tokens in order: longest first to avoid partial replacements
+            let mut out = fmt.to_string();
+            // Remove AM/PM or A/P token first
+            out = out.replace("AM/PM", ampm_str);
+            out = out.replace("am/pm", ampm_str);
+            out = out.replace("A/P", ampm_str);
+            out = out.replace("a/p", ampm_str);
+            // Replace hh before h
+            out = out.replace("hh", &format!("{:02}", display_hours));
+            out = out.replace('h', &display_hours.to_string());
+            // Replace ss
+            out = out.replace("ss", &format!("{:02}", seconds));
+            // Replace mm (minutes in time context)
+            out = out.replace("mm", &format!("{:02}", minutes));
+            return out.trim().to_string();
+        }
+    }
+
     // ── Date format: contains date tokens ────────────────────────────────────
     {
         let lower = fmt.to_lowercase();
