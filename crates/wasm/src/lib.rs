@@ -170,3 +170,49 @@ pub fn list_functions() -> Vec<FunctionInfo> {
     serde_json::from_value::<Vec<FunctionInfo>>(functions)
         .unwrap_or_default()
 }
+
+/// A stateful engine bound to a conformance target.
+///
+/// Obtained via `createEngine('google-sheets')`.
+#[wasm_bindgen(js_name = "Engine")]
+pub struct WasmEngine {
+    inner: truecalc_core::Engine,
+}
+
+#[wasm_bindgen]
+impl WasmEngine {
+    /// Evaluate a formula using this engine's conformance target.
+    pub fn evaluate(&self, formula: &str, variables: JsValue) -> EvalResult {
+        let vars_json: serde_json::Value = serde_wasm_bindgen::from_value(variables)
+            .unwrap_or(serde_json::Value::Object(Default::default()));
+
+        let vars: HashMap<String, Value> = match vars_json.as_object() {
+            Some(map) => map
+                .iter()
+                .map(|(k, v)| (k.clone(), json_to_value(v)))
+                .collect(),
+            None => HashMap::new(),
+        };
+
+        match self.inner.evaluate(formula, &vars) {
+            Value::Number(n) | Value::Date(n) => EvalResult::Number { value: n },
+            Value::Text(s) => EvalResult::Text { value: s },
+            Value::Bool(b) => EvalResult::Bool { value: b },
+            Value::Error(e) => EvalResult::Error { error: e.to_string() },
+            Value::Empty => EvalResult::Empty,
+            Value::Array(_) => EvalResult::Error { error: "array not supported".to_string() },
+        }
+    }
+}
+
+/// Create an engine for a specific conformance target.
+///
+/// Supported targets: `"google-sheets"`.
+/// Returns an error for unknown targets.
+#[wasm_bindgen(js_name = "createEngine")]
+pub fn create_engine(target: &str) -> Result<WasmEngine, JsValue> {
+    match target {
+        "google-sheets" => Ok(WasmEngine { inner: truecalc_core::Engine::google_sheets() }),
+        _ => Err(JsValue::from_str(&format!("Unknown conformance target: '{}'", target))),
+    }
+}
