@@ -45,6 +45,10 @@ pub fn subtotal_fn(args: &[Value]) -> Value {
     let func = code % 100;
 
     let rest = &args[1..];
+    // GS returns #VALUE! when range arguments are inline array literals.
+    if rest.iter().any(|a| matches!(a, Value::Array(_))) {
+        return Value::Error(ErrorKind::Value);
+    }
     let mut nums: Vec<f64> = Vec::new();
     for arg in rest {
         collect_numbers(arg, &mut nums);

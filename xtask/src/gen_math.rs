@@ -460,6 +460,17 @@ pub fn generate(_platform: Platform) -> Vec<TestCase> {
             "basic",
             "number",
         ),
+        // additional battle-test cases
+        tc("SUMIF larger range with sum range", r#"SUMIF({1,2,3,4,5},">3",{10,20,30,40,50})"#, "basic", "number"),
+        tc("SUMIF equals criterion", r#"SUMIF({1,2,2,3},"=2",{10,20,30,40})"#, "basic", "number"),
+        tc("SUMIF less than criterion", r#"SUMIF({1,2,3,4},"<3")"#, "basic", "number"),
+        tc("SUMIF gte criterion", r#"SUMIF({1,2,3,4},">=3",{10,20,30,40})"#, "basic", "number"),
+        tc("SUMIF single match", r#"SUMIF({5,10,15},"=10")"#, "edge", "number"),
+        tc("SUMIF all match", r#"SUMIF({1,2,3},">0")"#, "edge", "number"),
+        tc("SUMIF negative values", r#"SUMIF({-1,-2,3},"<0")"#, "edge", "number"),
+        tc("SUMIF mismatched range sizes", r#"SUMIF({1,2,3},">1",{10,20})"#, "edge", "number"),
+        tc("SUMIF exact text match", r#"SUMIF({"a","b","a"},"a")"#, "basic", "number"),
+        tc("SUMIF question mark wildcard", r#"SUMIF({"ab","ac","bc"},"a?",{1,2,3})"#, "basic", "number"),
     ]);
 
     // ── SUMIFS (BUG-02) ───────────────────────────────────────────────────────
@@ -611,6 +622,16 @@ pub fn generate(_platform: Platform) -> Vec<TestCase> {
             "error",
             "error",
         ),
+        // additional battle-test cases
+        tc("AVERAGEIF larger range with avg range", r#"AVERAGEIF({10,20,30},">15",{10,20,30})"#, "basic", "number"),
+        tc("AVERAGEIF equals criterion", r#"AVERAGEIF({1,2,2,3},"=2",{10,20,30,40})"#, "basic", "number"),
+        tc("AVERAGEIF less than", r#"AVERAGEIF({1,2,3,4},"<3")"#, "basic", "number"),
+        tc("AVERAGEIF gte criterion", r#"AVERAGEIF({1,2,3,4},">=3",{10,20,30,40})"#, "basic", "number"),
+        tc("AVERAGEIF single match", r#"AVERAGEIF({5,10,15},"=10")"#, "edge", "number"),
+        tc("AVERAGEIF all match", r#"AVERAGEIF({2,4,6},">0")"#, "edge", "number"),
+        tc("AVERAGEIF negative values", r#"AVERAGEIF({-1,-2,3},"<0")"#, "edge", "number"),
+        tc("AVERAGEIF question mark wildcard", r#"AVERAGEIF({"ab","ac","bc"},"a?",{1,2,3})"#, "basic", "number"),
+        tc("AVERAGEIF single element match", r#"AVERAGEIF({42},"=42")"#, "edge", "number"),
     ]);
 
     // ── AVERAGEIFS (BUG-02) ───────────────────────────────────────────────────

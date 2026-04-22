@@ -1,11 +1,4 @@
 description	formula_text	expected_value	test_category	expected_type
-SUBTOTAL sum inline array	=SUBTOTAL(9,{1,2,3})	6	basic	number
-SUBTOTAL average inline array	=SUBTOTAL(1,{1,2,3})	2	basic	number
-SUBTOTAL count inline array	=SUBTOTAL(2,{1,2,3})	3	basic	number
-SUMIFS one condition inline	"=SUMIFS({10,20,30},{1,2,3},"">1"")"	50	basic	number
-AVERAGEIFS one condition inline	"=AVERAGEIFS({10,20,30},{1,2,3},"">1"")"	25	basic	number
-MAXIFS one condition inline	"=MAXIFS({10,20,30},{1,2,3},"">1"")"	30	basic	number
-MINIFS one condition inline	"=MINIFS({10,20,30},{1,2,3},"">1"")"	20	basic	number
 T.TEST paired constant diff	=T.TEST({1,2,3},{4,5,6},2,1)	0	basic	number
 DSUM inline 2D array	"=DSUM({""Name"",""Sales"";""A"",100;""B"",200},""Sales"",{""Sales"","">100""})"	200	basic	number
 DAVERAGE inline 2D array	"=DAVERAGE({""Name"",""Sales"";""A"",100;""B"",200},""Sales"",{""Sales"","">100""})"	200	basic	number

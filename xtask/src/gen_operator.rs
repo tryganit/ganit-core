@@ -215,6 +215,14 @@ pub fn generate_operator(_platform: Platform) -> Vec<TestCase> {
         tc("CONCAT #DIV/0! propagates", r#"CONCAT(1/0,"x")"#, "error", "error"),
         tc("CONCAT no args -> error", "CONCAT()", "error", "error"),
         tc("CONCAT nested CHAR args", "CONCAT(CHAR(65),CHAR(66))", "nested", "string"),
+        // variadic (3+ args)
+        tc("CONCAT three strings", r#"CONCAT("Hello"," ","World")"#, "basic", "string"),
+        tc("CONCAT four strings", r#"CONCAT("a","b","c","d")"#, "basic", "string"),
+        tc("CONCAT five args mixed", r#"CONCAT("x",1," ",TRUE,"!")"#, "coercion", "string"),
+        tc("CONCAT one arg string", r#"CONCAT("solo")"#, "edge", "string"),
+        tc("CONCAT three numbers", "CONCAT(1,2,3)", "coercion", "string"),
+        tc("CONCAT empty middle arg", r#"CONCAT("a","","b")"#, "edge", "string"),
+        tc("CONCAT error in third arg", r#"CONCAT("a","b",1/0)"#, "error", "error"),
     ]);
 
     // ── ISBETWEEN ────────────────────────────────────────────────────────────

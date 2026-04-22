@@ -15,12 +15,12 @@ fn two_args_returns_na() {
 }
 
 #[test]
-fn array_literal_as_min_range_works() {
-    // Inline array ranges are now supported; min of elements where range > 1 → min([2.0]) = 2.0
+fn array_literal_as_min_range_returns_na() {
+    // GS requires cell ranges, not inline array literals → #N/A
     let arr = Value::Array(vec![Value::Number(1.0), Value::Number(2.0)]);
     let crit = Value::Text(">1".to_string());
     assert_eq!(
         minifs_fn(&[arr.clone(), arr.clone(), crit]),
-        Value::Number(2.0)
+        Value::Error(ErrorKind::NA)
     );
 }

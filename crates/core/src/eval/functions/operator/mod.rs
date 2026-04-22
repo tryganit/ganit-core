@@ -1,5 +1,7 @@
 use crate::eval::coercion::{to_bool, to_number, to_string_val};
-use crate::eval::functions::check_arity;
+use crate::eval::evaluate_expr;
+use crate::eval::functions::{check_arity, EvalCtx};
+use crate::parser::ast::Expr;
 use crate::types::{ErrorKind, Value};
 
 use super::{FunctionMeta, Registry};
@@ -211,15 +213,18 @@ pub fn pow_fn(args: &[Value]) -> Value {
     Value::Number(result)
 }
 
-pub fn concat_fn(args: &[Value]) -> Value {
-    if let Some(e) = check_exact(args, 2) {
-        return e;
+pub fn concat_fn(args: &[Expr], ctx: &mut EvalCtx<'_>) -> Value {
+    // Check arity before evaluating args so wrong-arity beats arg errors (GS behavior).
+    if args.len() != 2 {
+        return Value::Error(ErrorKind::NA);
     }
-    let a = match to_string_val(args[0].clone()) {
+    let a_val = evaluate_expr(&args[0], ctx);
+    let a = match to_string_val(a_val) {
         Ok(s) => s,
         Err(e) => return e,
     };
-    let b = match to_string_val(args[1].clone()) {
+    let b_val = evaluate_expr(&args[1], ctx);
+    let b = match to_string_val(b_val) {
         Ok(s) => s,
         Err(e) => return e,
     };
@@ -426,7 +431,7 @@ pub fn register_operator(registry: &mut Registry) {
     registry.register_internal("LTE", lte_fn);
     // Unary / power
     registry.register_internal("POW", pow_fn);
-    registry.register_internal("CONCAT", concat_fn);
+    registry.register_internal_lazy("CONCAT", concat_fn);
     registry.register_internal("UMINUS", uminus_fn);
     registry.register_internal("UPLUS", uplus_fn);
     registry.register_internal("UNARY_PERCENT", unary_percent_fn);

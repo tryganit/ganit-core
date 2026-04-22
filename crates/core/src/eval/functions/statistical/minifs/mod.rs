@@ -12,6 +12,10 @@ pub fn minifs_fn(args: &[Value]) -> Value {
     if args.len() < 3 || args.len().is_multiple_of(2) {
         return Value::Error(ErrorKind::NA);
     }
+    // GS requires cell ranges, not inline array literals.
+    if args.iter().any(|a| matches!(a, Value::Array(_))) {
+        return Value::Error(ErrorKind::NA);
+    }
     let min_range = flatten_to_vec(&args[0]);
     let num_criteria = (args.len() - 1) / 2;
 
