@@ -542,7 +542,7 @@ pub fn amorlinc_fn(args: &[Value]) -> Value {
     if cost < salvage || cost <= 0.0 || rate <= 0.0 {
         return Value::Error(ErrorKind::Num);
     }
-    if basis < 0 || basis > 4 {
+    if !(0..=4).contains(&basis) {
         return Value::Error(ErrorKind::Num);
     }
     if date_purchased > first_period_s {
