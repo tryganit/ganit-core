@@ -4,6 +4,8 @@
 /// NOMINAL, PDURATION, PPMT, RRI, SLN, SYD, VDB, XIRR, XNPV
 use crate::eval::coercion::to_number;
 use crate::eval::functions::check_arity;
+use crate::eval::functions::date::serial::serial_to_date;
+use crate::eval::functions::financial::bonds::yearfrac;
 use crate::types::{ErrorKind, Value};
 
 fn opt_number(args: &[Value], idx: usize, default: f64) -> Result<f64, Value> {
@@ -154,7 +156,12 @@ pub fn cumipmt_fn(args: &[Value]) -> Value {
     let end    = match to_number(args[4].clone()) { Ok(n) => n, Err(e) => return e };
     let typ    = match to_number(args[5].clone()) { Ok(n) => n, Err(e) => return e };
 
-    let start = start.floor() as i64;
+    if rate <= 0.0 || pv <= 0.0 {
+        return Value::Error(ErrorKind::Num);
+    }
+
+    // GS rounds fractional start_period up (2.8 → 3) and end_period down (4.9 → 4)
+    let start = start.ceil() as i64;
     let end = end.floor() as i64;
 
     if start > end || start < 1 {
@@ -196,7 +203,15 @@ pub fn cumprinc_fn(args: &[Value]) -> Value {
     let end   = match to_number(args[4].clone()) { Ok(n) => n, Err(e) => return e };
     let typ   = match to_number(args[5].clone()) { Ok(n) => n, Err(e) => return e };
 
-    let start = start.floor() as i64;
+    if rate <= 0.0 || pv <= 0.0 {
+        return Value::Error(ErrorKind::Num);
+    }
+
+    // GS treats type as boolean: 0 = end-of-period, any nonzero = beginning-of-period
+    let typ = if typ == 0.0 { 0.0 } else { 1.0 };
+
+    // GS rounds fractional start_period up (2.8 → 3) and end_period down (4.9 → 4)
+    let start = start.ceil() as i64;
     let end = end.floor() as i64;
 
     if start > end || start < 1 {
@@ -318,7 +333,13 @@ pub fn ddb_fn(args: &[Value]) -> Value {
     let period  = match to_number(args[3].clone()) { Ok(n) => n, Err(e) => return e };
     let factor  = match opt_number(args, 4, 2.0) { Ok(n) => n, Err(e) => return e };
 
-    if period > life || life <= 0.0 {
+    if cost < 0.0 || salvage < 0.0 || salvage > cost {
+        return Value::Error(ErrorKind::Num);
+    }
+    if life <= 0.0 || factor <= 0.0 {
+        return Value::Error(ErrorKind::Num);
+    }
+    if period > life || period < 0.0 {
         return Value::Error(ErrorKind::Num);
     }
 
@@ -385,7 +406,7 @@ pub fn db_fn(args: &[Value]) -> Value {
         (r * 1000.0).round() / 1000.0
     };
 
-    if period_i > life_i + 1 {
+    if period_i > life_i {
         return Value::Error(ErrorKind::Num);
     }
 
@@ -417,8 +438,8 @@ pub fn db_fn(args: &[Value]) -> Value {
 // ---------------------------------------------------------------------------
 /// `VDB(cost, salvage, life, start_period, end_period, [factor], [no_switch])`
 ///
-/// Variable-rate declining balance depreciation.
-/// Switches to straight-line when SL > DDB (unless no_switch=TRUE).
+/// Variable-rate declining balance depreciation with optional SL switch.
+/// Fractional periods use integer-period book values scaled by overlap fraction.
 pub fn vdb_fn(args: &[Value]) -> Value {
     if let Some(err) = check_arity(args, 5, 7) {
         return err;
@@ -429,7 +450,6 @@ pub fn vdb_fn(args: &[Value]) -> Value {
     let start_period = match to_number(args[3].clone()) { Ok(n) => n, Err(e) => return e };
     let end_period   = match to_number(args[4].clone()) { Ok(n) => n, Err(e) => return e };
     let factor       = match opt_number(args, 5, 2.0) { Ok(n) => n, Err(e) => return e };
-    // no_switch: for booleans we need special handling
     let no_switch = if args.len() > 6 {
         match &args[6] {
             Value::Bool(b) => *b,
@@ -442,89 +462,61 @@ pub fn vdb_fn(args: &[Value]) -> Value {
         false
     };
 
-    if start_period > end_period {
+    if cost < 0.0 || salvage < 0.0 || salvage > cost {
         return Value::Error(ErrorKind::Num);
     }
-    if life <= 0.0 {
+    if life <= 0.0 || factor <= 0.0 {
+        return Value::Error(ErrorKind::Num);
+    }
+    if start_period < 0.0 || end_period < 0.0 || start_period > end_period {
         return Value::Error(ErrorKind::Num);
     }
 
-    // Compute depreciation for fractional periods using the declining balance method
-    let vdb_period = |start: f64, end: f64, cost: f64, salvage: f64| -> f64 {
-        if start >= end {
-            return 0.0;
-        }
-        let rate = factor / life;
-        // We need to compute depreciation from period start to end.
-        // For integer period: dep_at_period(p) with book value after p periods
-        // First compute book value at start
-        let book_at = |p: f64| -> f64 {
-            if p <= 0.0 {
-                return cost;
-            }
-            // Book value = cost * (1 - rate)^p but capped at salvage
-            let bv = cost * (1.0 - rate).powf(p);
-            if bv < salvage { salvage } else { bv }
-        };
+    // Cap end_period at life
+    let start_period = start_period.min(life);
+    let end_period   = end_period.min(life);
 
-        // For fractional periods, compute integral of depreciation over [start, end]
-        // This is book(start) - book(end) but with possible switch to SL
-        if no_switch {
-            // No SL switch: pure declining balance
-            let bv_start = book_at(start);
-            let bv_end = book_at(end);
-            let dep = bv_start - bv_end;
-            if dep < 0.0 { 0.0 } else { dep }
+    if start_period >= end_period {
+        return Value::Number(0.0);
+    }
+
+    let rate = factor / life;
+    let mut book = cost;
+    let mut switched = false;
+    let mut total = 0.0_f64;
+
+    // Iterate over integer periods [0,1), [1,2), ... up to ceil(end_period).
+    // For each period, compute full-period depreciation using integer bookkeeping,
+    // then scale by the overlap of [start_period, end_period] with that period.
+    let n_periods = end_period.ceil() as i64;
+    for p in 0..n_periods {
+        let period_s = p as f64;
+        let period_e = (p + 1) as f64;
+
+        let ddb = book * rate;
+        let remaining_life = life - period_s;
+        let sl = if remaining_life > 0.0 { (book - salvage) / remaining_life } else { 0.0 };
+        let full_dep = if no_switch {
+            ddb
+        } else if switched || sl >= ddb {
+            switched = true;
+            sl
         } else {
-            // With SL switch: iterate over integer periods in [start, end]
-            // and switch to SL when SL >= DDB
-            let s = start.floor() as i64;
-            let e = end.floor() as i64;
-            let mut total = 0.0;
-            let mut book = book_at(start);
-            let mut switched = false;
+            ddb
+        };
+        let full_dep = full_dep.min(book - salvage).max(0.0);
 
-            // Handle fractional first period [start, ceil(start)]
-            let first_end = (s + 1) as f64;
-            let first_end = first_end.min(end);
-            let first_frac = first_end - start;
+        let overlap = (period_e.min(end_period) - period_s.max(start_period)).max(0.0);
+        total += full_dep * overlap;
 
-            if first_frac > 0.0 {
-                let ddb = book * rate * first_frac;
-                let remaining_life = life - start;
-                let sl = if remaining_life > 0.0 { (book - salvage) / remaining_life * first_frac } else { 0.0 };
-                let dep = if !no_switch && sl >= ddb { switched = true; sl } else { ddb };
-                let dep = dep.min(book - salvage);
-                let dep = dep.max(0.0);
-                total += dep;
-                book -= dep;
-            }
+        book -= full_dep;
+        if book < salvage { book = salvage; }
+    }
 
-            // Handle full integer periods
-            for p in (s + 1)..=e {
-                let period_end = ((p + 1) as f64).min(end);
-                let frac = period_end - p as f64;
-                if frac <= 0.0 { break; }
-
-                let ddb = book * rate * frac;
-                let remaining_life = life - p as f64;
-                let sl = if remaining_life > 0.0 { (book - salvage) / remaining_life * frac } else { 0.0 };
-                let dep = if switched || sl >= ddb { switched = true; sl } else { ddb };
-                let dep = dep.min(book - salvage);
-                let dep = dep.max(0.0);
-                total += dep;
-                book -= dep;
-            }
-
-            total
-        }
-    };
-
-    let result = vdb_period(start_period, end_period, cost, salvage);
-    if !result.is_finite() {
+    if !total.is_finite() {
         return Value::Error(ErrorKind::Num);
     }
-    Value::Number(result)
+    Value::Number(total)
 }
 
 // ---------------------------------------------------------------------------
@@ -533,48 +525,56 @@ pub fn vdb_fn(args: &[Value]) -> Value {
 /// `AMORLINC(cost, date_purchased, first_period, salvage, period, rate, [basis])`
 ///
 /// French linear depreciation for each accounting period.
+/// Periods are 0-indexed: period 0 is prorated by date fraction, periods 1+ are full.
 pub fn amorlinc_fn(args: &[Value]) -> Value {
     if let Some(err) = check_arity(args, 6, 7) {
         return err;
     }
     let cost           = match to_number(args[0].clone()) { Ok(n) => n, Err(e) => return e };
-    let _date_purchased = match to_number(args[1].clone()) { Ok(n) => n, Err(e) => return e };
-    let _first_period  = match to_number(args[2].clone()) { Ok(n) => n, Err(e) => return e };
+    let date_purchased = match to_number(args[1].clone()) { Ok(n) => n, Err(e) => return e };
+    let first_period_s = match to_number(args[2].clone()) { Ok(n) => n, Err(e) => return e };
     let salvage        = match to_number(args[3].clone()) { Ok(n) => n, Err(e) => return e };
     let period         = match to_number(args[4].clone()) { Ok(n) => n, Err(e) => return e };
     let rate           = match to_number(args[5].clone()) { Ok(n) => n, Err(e) => return e };
-    let _basis         = match opt_number(args, 6, 0.0) { Ok(n) => n, Err(e) => return e };
+    let basis_raw      = match opt_number(args, 6, 0.0) { Ok(n) => n, Err(e) => return e };
+    let basis = basis_raw.floor() as i32;
 
-    if cost < salvage {
+    if cost < salvage || cost <= 0.0 || rate <= 0.0 {
         return Value::Error(ErrorKind::Num);
     }
-    if rate <= 0.0 || cost <= 0.0 {
+    if !(0..=4).contains(&basis) {
+        return Value::Error(ErrorKind::Num);
+    }
+    if date_purchased > first_period_s {
         return Value::Error(ErrorKind::Num);
     }
 
-    let per = period.floor() as i64;
-    // AMORLINC: each full period depreciates at rate * cost
-    // Period 1: cost * rate (for the full first year of accounting period)
-    // Subsequent periods: cost * rate, until fully depreciated to salvage
-    let dep_per_period = cost * rate;
-    // Excel AMORLINC: life = INT((cost-salvage)/dep_per_period); period >= life returns 0
-    let life = ((cost - salvage) / dep_per_period).floor() as i64;
-
-    if per < 1 || per >= life {
+    // Fractional periods round up (GS ceiling semantics)
+    let per = period.ceil() as i64;
+    if per < 0 {
         return Value::Number(0.0);
     }
 
-    // Calculate cumulative depreciation before this period
-    let cumulative_before = dep_per_period * (per - 1) as f64;
-    let remaining = cost - salvage - cumulative_before;
+    // Period 0: prorated by the year-fraction from purchase to first_period end
+    let d_purch  = match serial_to_date(date_purchased) { Some(d) => d, None => return Value::Error(ErrorKind::Value) };
+    let d_first  = match serial_to_date(first_period_s) { Some(d) => d, None => return Value::Error(ErrorKind::Value) };
+    let frac     = yearfrac(d_purch, d_first, basis as u32);
+    let dep_full = cost * rate;
+    let first_dep = (dep_full * frac).min(cost - salvage).max(0.0);
+
+    if per == 0 {
+        return Value::Number(first_dep);
+    }
+
+    // Periods 1+: full dep_full each, capped at remaining
+    let cumulative_before = first_dep + (per - 1) as f64 * dep_full;
+    let remaining = (cost - salvage) - cumulative_before;
 
     if remaining <= 0.0 {
         return Value::Number(0.0);
     }
 
-    // This period's depreciation (capped at remaining)
-    let dep = dep_per_period.min(remaining);
-    Value::Number(dep)
+    Value::Number(dep_full.min(remaining))
 }
 
 // ---------------------------------------------------------------------------
@@ -603,15 +603,14 @@ pub fn dollarde_fn(args: &[Value]) -> Value {
 
     // DOLLARDE: decimal part is treated as numerator/fraction.
     // E.g. DOLLARDE(1.02, 16) = 1 + 2/16 = 1.125
-    // The scale is 10^ceil(log10(fraction)) so:
-    //   fraction=8  → scale=10  → numerator = 0.1 * 10 = 1
-    //   fraction=16 → scale=100 → numerator = 0.02 * 100 = 2
+    // Scale to the smallest power of 10 >= fraction to extract the digits.
+    // Do NOT round — preserves sub-digit precision (e.g. DOLLARDE(100.01,8)=100.0125).
     let scale = {
         let mut s = 1i64;
         while s < fraction { s *= 10; }
         s as f64
     };
-    let numerator = (frac_part * scale).round();
+    let numerator = frac_part * scale;
     let result = int_part + (if dollar < 0.0 { -1.0 } else { 1.0 }) * numerator / fraction as f64;
 
     if !result.is_finite() {
@@ -646,13 +645,13 @@ pub fn dollarfr_fn(args: &[Value]) -> Value {
 
     // DOLLARFR: inverse of DOLLARDE. Convert decimal fraction to xxx/fraction notation.
     // E.g. DOLLARFR(1.125, 16) = 1 + 2/100 = 1.02  (since 0.125 * 16 = 2 → write as .02)
-    // numerator = frac_part * fraction, then express as decimal in 10^ceil(log10(fraction)) scale
+    // Do NOT round — preserves sub-unit precision (e.g. DOLLARFR(1.5,1)=1.5).
     let scale = {
         let mut s = 1i64;
         while s < fraction { s *= 10; }
         s as f64
     };
-    let numerator = (frac_part * fraction as f64).round();
+    let numerator = frac_part * fraction as f64;
     let result = int_part + (if dollar < 0.0 { -1.0 } else { 1.0 }) * numerator / scale;
 
     if !result.is_finite() {
@@ -829,6 +828,9 @@ fn duration_calc(args: &[Value], _modified: bool) -> Result<f64, Value> {
     if settlement >= maturity {
         return Err(Value::Error(ErrorKind::Num));
     }
+    if coupon < 0.0 || yld < 0.0 {
+        return Err(Value::Error(ErrorKind::Num));
+    }
 
     let freq = frequency as f64;
     let coupon_per_period = coupon / freq;
@@ -903,6 +905,29 @@ fn flatten_array(v: Value) -> Result<Vec<f64>, Value> {
     }
 }
 
+/// Like flatten_array but skips boolean and text values in array literals.
+/// Used by MIRR/NPV where GS ignores non-numeric types (same as IRR).
+fn flatten_cashflows(v: Value) -> Result<Vec<f64>, Value> {
+    match v {
+        Value::Array(items) => {
+            let mut out = Vec::new();
+            for item in items {
+                match item {
+                    Value::Array(inner) => {
+                        for sub in flatten_cashflows(Value::Array(inner))? {
+                            out.push(sub);
+                        }
+                    }
+                    Value::Bool(_) | Value::Text(_) => {} // ignored per GS semantics
+                    other => out.push(to_number(other)?),
+                }
+            }
+            Ok(out)
+        }
+        other => Ok(vec![to_number(other)?]),
+    }
+}
+
 fn flatten_array_dates(v: Value) -> Result<Vec<f64>, Value> {
     // Same as flatten_array but for date serials (Value::Date is also f64)
     match v {
@@ -961,7 +986,7 @@ pub fn mirr_fn(args: &[Value]) -> Value {
     if let Some(err) = check_arity(args, 3, 3) {
         return err;
     }
-    let cfs = match flatten_array(args[0].clone()) { Ok(v) => v, Err(e) => return e };
+    let cfs = match flatten_cashflows(args[0].clone()) { Ok(v) => v, Err(e) => return e };
     let finance_rate = match to_number(args[1].clone()) { Ok(n) => n, Err(e) => return e };
     let reinvest_rate = match to_number(args[2].clone()) { Ok(n) => n, Err(e) => return e };
 
@@ -990,7 +1015,7 @@ pub fn mirr_fn(args: &[Value]) -> Value {
         }
     }
     if fv_pos == 0.0 {
-        return Value::Error(ErrorKind::Num);
+        return Value::Error(ErrorKind::DivByZero);
     }
 
     let result = (-fv_pos / npv_neg).powf(1.0 / (n as f64 - 1.0)) - 1.0;
@@ -1080,23 +1105,70 @@ pub fn xirr_fn(args: &[Value]) -> Value {
             .sum()
     };
 
+    // Newton-Raphson
     let mut rate = guess;
     for _ in 0..100 {
         let f = xnpv_at(rate);
         let df = dxnpv_at(rate);
-        if !f.is_finite() || !df.is_finite() || df == 0.0 {
-            return Value::Error(ErrorKind::Num);
-        }
+        if !f.is_finite() || !df.is_finite() || df == 0.0 { break; }
         let new_rate = rate - f / df;
+        if new_rate <= -1.0 || !new_rate.is_finite() { break; }
         if (new_rate - rate).abs() < 1e-7 {
-            if !new_rate.is_finite() {
-                return Value::Error(ErrorKind::Num);
-            }
             return Value::Number(new_rate);
         }
         rate = new_rate;
     }
+
+    // Fallback: Brent's method — scan for sign change bracket
+    let candidates: &[f64] = &[
+        -0.999, -0.99, -0.9, -0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2,
+        -0.15, -0.1, -0.05, 0.0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 1.0,
+        2.0, 5.0, 10.0, 50.0, 100.0,
+    ];
+    let mut prev_r = candidates[0];
+    let mut prev_f = xnpv_at(prev_r);
+    for &r in &candidates[1..] {
+        let f_r = xnpv_at(r);
+        // Use strict inequality to avoid triggering on identically-zero xnpv
+        if prev_f * f_r < 0.0 {
+            if let Some(result) = xirr_brent_root(&xnpv_at, prev_r, r, 1e-10) {
+                return Value::Number(result);
+            }
+        }
+        prev_r = r;
+        prev_f = f_r;
+    }
+
     Value::Error(ErrorKind::Num)
+}
+
+fn xirr_brent_root<F: Fn(f64) -> f64>(f: &F, mut a: f64, mut b: f64, tol: f64) -> Option<f64> {
+    let mut fa = f(a);
+    let mut fb = f(b);
+    if !fa.is_finite() || !fb.is_finite() { return None; }
+    if fa.abs() < fb.abs() { std::mem::swap(&mut a, &mut b); std::mem::swap(&mut fa, &mut fb); }
+    let mut c = a; let mut fc = fa; let mut mflag = true; let mut d = 0.0_f64;
+    for _ in 0..200 {
+        if fb.abs() < tol || (b - a).abs() < tol { return Some(b); }
+        let s = if fa != fc && fb != fc {
+            a * fb * fc / ((fa - fb) * (fa - fc))
+                + b * fa * fc / ((fb - fa) * (fb - fc))
+                + c * fa * fb / ((fc - fa) * (fc - fb))
+        } else { b - fb * (b - a) / (fb - fa) };
+        let mid = (a + b) / 2.0;
+        let use_bisect = !(((3.0 * a + b) / 4.0 < s && s < b) || (b < s && s < (3.0 * a + b) / 4.0))
+            || (mflag && (s - b).abs() >= (b - c).abs() / 2.0)
+            || (!mflag && (s - b).abs() >= (c - d).abs() / 2.0)
+            || (mflag && (b - c).abs() < tol)
+            || (!mflag && (c - d).abs() < tol);
+        let s = if use_bisect { mid } else { s };
+        mflag = use_bisect;
+        let fs = f(s);
+        d = c; c = b; fc = fb;
+        if fa * fs < 0.0 { b = s; fb = fs; } else { a = s; fa = fs; }
+        if fa.abs() < fb.abs() { std::mem::swap(&mut a, &mut b); std::mem::swap(&mut fa, &mut fb); }
+    }
+    Some(b)
 }
 
 #[cfg(test)]

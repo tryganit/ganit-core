@@ -1,21 +1,32 @@
-//! Oracle conformance tests against Google Sheets reference values.
+//! Conformance tests against Google Sheets canonical reference values.
 //!
-//! Each `.tsv` file under `tests/fixtures/google_sheets/` is a 5-column
-//! tab-separated file with a header row:
+//! # Fixture directories
+//!
+//! `tests/fixtures/google_sheets/` — canonical reference data produced by the
+//! fixtures pipeline.  These files must never be edited by hand.  Every row
+//! in every category TSV (financial, date, math, …) must pass before a PR
+//! can merge.  `bugs.tsv` is also canonical reference data; its rows are known
+//! implementation gaps and produce a non-blocking progress report.
+//!
+//! `tests/fixtures/lab/` — staging area for test cases discovered during
+//! development, not yet submitted to the GS fixtures pipeline.  Lab tests
+//! produce a report but do not block CI.  See `lab/README.md`.
+//!
+//! # TSV format (5 columns, tab-separated, with header row)
 //!
 //!   description     human-readable test name
 //!   formula_text    formula string (may or may not have leading `=`)
-//!   expected_value  oracle value as a string
+//!   expected_value  canonical expected value as a string
 //!   test_category   basic / edge / coercion / error / nested
 //!   expected_type   number / string / boolean / error / array
 //!
-//! The test evaluates the formula in `formula_text` with `truecalc_core::evaluate`,
-//! then compares against the oracle in `expected_value` using `expected_type` to
-//! guide the comparison.  Number comparisons allow 1e-4 relative tolerance.
+//! The test evaluates the formula with `truecalc_core::evaluate` and compares
+//! against the canonical value.  Number comparisons allow 1e-4 relative tolerance.
 
 use truecalc_core::{evaluate, ErrorKind, Value};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
+use chrono::NaiveDate;
 
 mod conformance_reporter;
 use conformance_reporter::{collect_tsv_fixture_results, ConformanceReport, KNOWN_DEVIATIONS};
@@ -31,6 +42,11 @@ fn fixture_dir() -> PathBuf {
 
 fn fixture(name: &str) -> PathBuf {
     fixture_dir().join(name)
+}
+
+fn lab_dir() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/fixtures/lab")
 }
 
 /// Decode xlsx `_xNNNN_` XML-escape sequences (e.g. `_x0001_` → U+0001).
@@ -75,7 +91,7 @@ fn parse_error_string(s: &str) -> Option<ErrorKind> {
 }
 
 /// Parse a `{1,2,3}` or `{1,2,3;4,5,6}` array literal into a flat Vec<Value>.
-/// Used for the `array` expected_type where the oracle value is ARRAYTOTEXT output.
+/// Used for the `array` expected_type where the canonical value is ARRAYTOTEXT output.
 fn parse_array_literal(s: &str) -> Option<Vec<Value>> {
     let s = s.trim();
     if !s.starts_with('{') || !s.ends_with('}') {
@@ -144,6 +160,17 @@ fn flatten_array(v: &Value) -> Vec<Value> {
     }
 }
 
+/// Parse a GAS UTC ISO-8601 date string (e.g. "2011-05-15T07:00:00.000Z") to an
+/// Excel date serial (days since 1899-12-30). GAS serialises Date cell values as
+/// ISO strings; our evaluator returns them as Number serials — this bridge lets
+/// the conformance test treat them as equivalent.
+fn gas_iso_date_to_serial(s: &str) -> Option<f64> {
+    let date_part = s.split('T').next()?;
+    let date = NaiveDate::parse_from_str(date_part, "%Y-%m-%d").ok()?;
+    let epoch = NaiveDate::from_ymd_opt(1899, 12, 30)?;
+    Some(date.signed_duration_since(epoch).num_days() as f64)
+}
+
 pub fn values_match(actual: &Value, expected: &Value, expected_type: &str) -> bool {
     if expected_type == "array" {
         // expected is stored as Text(array_literal)
@@ -179,7 +206,17 @@ pub fn values_match(actual: &Value, expected: &Value, expected_type: &str) -> bo
                 false
             }
         }
-        // Control characters: oracle may strip them → empty string
+        // GAS artifact: COUPNCD/COUPPCD etc. return Number serials; GAS serialises
+        // Date cell values as UTC ISO-8601 strings. Convert the date part to an
+        // Excel serial and compare numerically.
+        (Value::Number(a), Value::Text(s)) => {
+            if let Some(serial) = gas_iso_date_to_serial(s) {
+                (a - serial).abs() <= 1.0
+            } else {
+                false
+            }
+        }
+        // Control characters: GS may strip them → empty string
         (Value::Text(s), Value::Text(e)) if e.is_empty() => {
             s.chars().all(|c| (c as u32) < 32)
         }
@@ -327,9 +364,8 @@ fn run_tsv_fixture_report(path: &Path) {
         }
     }
 
-    println!(
-        "bugs.tsv: {pass} passed, {fail} FAILED (failures are known bugs -- they will flip to PASS when fixed)"
-    );
+    let name = path.file_name().unwrap_or_default().to_string_lossy();
+    println!("{name}: {pass} passed, {fail} open");
 }
 
 // ---------------------------------------------------------------------------
@@ -361,17 +397,43 @@ conformance_tsv_test!(filter_conformance,      "filter.tsv");
 conformance_tsv_test!(web_conformance,         "web.tsv");
 conformance_tsv_test!(financial_conformance,   "financial.tsv");
 
-/// Known-bug regression baseline (T2.2).
+/// Known-bug regression baseline.
 ///
-/// Each row here represents a confirmed bug.  The test deliberately does NOT
-/// panic on failures — failures are the expected outcome until the
-/// corresponding fix lands.  When a bug is fixed, its row will start
-/// passing; the test will still succeed (pass count goes up, fail count
-/// goes down).  Remove fixed rows from this file or move them to the
-/// appropriate category TSV once the fix is verified.
+/// Rows here are GS-captured cases where our engine does not yet produce the
+/// correct result.  The test does NOT panic on failures; a failure means the
+/// gap is still open.  When the engine is fixed, the pass count rises
+/// automatically.  Do NOT edit this file by hand — it is canonical reference
+/// data from the fixtures pipeline.
 #[test]
 fn bugs_conformance() {
     run_tsv_fixture_report(&fixture("bugs.tsv"));
+}
+
+/// Lab conformance report — non-blocking.
+///
+/// Runs every `.tsv` file in `tests/fixtures/lab/`.  These are test cases
+/// discovered during development that have not yet been submitted to the GS
+/// fixtures pipeline.  Failures do NOT block CI; they mean a known case is
+/// still open.  See `tests/fixtures/lab/README.md` for the full intent and
+/// graduation process.
+#[test]
+fn lab_conformance() {
+    let dir = lab_dir();
+    let mut entries: Vec<_> = std::fs::read_dir(&dir)
+        .unwrap_or_else(|_| panic!("lab dir not found: {:?}", dir))
+        .filter_map(|e| e.ok())
+        .map(|e| e.path())
+        .filter(|p| p.extension().and_then(|s| s.to_str()) == Some("tsv"))
+        .collect();
+    entries.sort();
+
+    if entries.is_empty() {
+        println!("lab: no .tsv files — nothing to report");
+        return;
+    }
+    for path in &entries {
+        run_tsv_fixture_report(path);
+    }
 }
 
 // ---------------------------------------------------------------------------

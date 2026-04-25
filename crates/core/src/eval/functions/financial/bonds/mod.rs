@@ -47,13 +47,27 @@ fn is_leap(year: i32) -> bool {
 }
 
 /// US 30/360 day count (NASD convention).
+fn is_end_of_feb(date: NaiveDate) -> bool {
+    if date.month() != 2 { return false; }
+    let is_leap = (date.year() % 4 == 0 && date.year() % 100 != 0) || date.year() % 400 == 0;
+    date.day() == (if is_leap { 29 } else { 28 })
+}
+
 fn days_30_360_us(start: NaiveDate, end: NaiveDate) -> i64 {
     let (mut d1, m1, y1) = (start.day() as i64, start.month() as i64, start.year() as i64);
     let (mut d2, m2, y2) = (end.day() as i64, end.month() as i64, end.year() as i64);
+    // Last day of February is treated as 30th (NASD convention)
+    if is_end_of_feb(start) {
+        d1 = 30;
+    }
     if d1 == 31 {
         d1 = 30;
     }
     if d2 == 31 && d1 == 30 {
+        d2 = 30;
+    }
+    // If end is also end of February and d1 was adjusted to 30, treat d2 as 30
+    if d1 == 30 && is_end_of_feb(end) {
         d2 = 30;
     }
     (y2 - y1) * 360 + (m2 - m1) * 30 + (d2 - d1)
@@ -145,23 +159,39 @@ pub fn coupon_period_days(pcd: NaiveDate, ncd: NaiveDate, frequency: u32, basis:
     }
 }
 
+fn last_day_of_month(year: i32, month: u32) -> NaiveDate {
+    let next_month_start = if month == 12 {
+        NaiveDate::from_ymd_opt(year + 1, 1, 1).unwrap()
+    } else {
+        NaiveDate::from_ymd_opt(year, month + 1, 1).unwrap()
+    };
+    next_month_start - Duration::days(1)
+}
+
+fn is_last_day_of_month(date: NaiveDate) -> bool {
+    date == last_day_of_month(date.year(), date.month())
+}
+
 /// Add months to a date, snapping to end-of-month if necessary.
+///
+/// End-of-month convention: if the input date is the last day of its month
+/// (e.g. Jun 30, Dec 31, Feb 28/29), the result is also the last day of the
+/// target month. This preserves coupon-date alignment for bonds with
+/// end-of-month maturity dates (e.g. Dec 31 maturity: coupon dates are
+/// Jun 30 and Dec 31, not Jun 30 and Dec 30).
 pub fn add_months(date: NaiveDate, months: i32) -> NaiveDate {
     let total_months = date.year() * 12 + date.month() as i32 - 1 + months;
     let year = total_months / 12;
     let month = (total_months % 12 + 1) as u32;
+
+    if is_last_day_of_month(date) {
+        // Preserve EOM: return last day of target month
+        return last_day_of_month(year, month);
+    }
+
     let day = date.day();
-    // Try the same day, fall back to end of month
     NaiveDate::from_ymd_opt(year, month, day)
-        .unwrap_or_else(|| {
-            // end of month
-            let next_month = if month == 12 {
-                NaiveDate::from_ymd_opt(year + 1, 1, 1).unwrap()
-            } else {
-                NaiveDate::from_ymd_opt(year, month + 1, 1).unwrap()
-            };
-            next_month - Duration::days(1)
-        })
+        .unwrap_or_else(|| last_day_of_month(year, month))
 }
 
 /// Months per coupon period.
@@ -229,7 +259,7 @@ pub fn accrint_fn(args: &[Value]) -> Value {
         Err(e) => return e,
     };
 
-    if rate < 0.0 || par <= 0.0 {
+    if rate <= 0.0 || par <= 0.0 {
         return Value::Error(ErrorKind::Num);
     }
 
@@ -342,7 +372,7 @@ pub fn accrintm_fn(args: &[Value]) -> Value {
         Err(e) => return e,
     };
 
-    if rate < 0.0 || par <= 0.0 {
+    if rate <= 0.0 || par <= 0.0 {
         return Value::Error(ErrorKind::Num);
     }
 
@@ -418,6 +448,10 @@ pub fn coupdays_fn(args: &[Value]) -> Value {
 /// `COUPDAYSNC(settlement, maturity, frequency, [basis])`
 ///
 /// Days from settlement to the next coupon date.
+///
+/// For basis=0 (US 30/360) we use COUPDAYS − COUPDAYBS (complement formula)
+/// because US 30/360 is not additive across the D=31 end-of-month boundary.
+/// For all other bases, direct `days_between(settlement, ncd)` is correct.
 pub fn coupdaysnc_fn(args: &[Value]) -> Value {
     if let Some(err) = check_arity(args, 3, 4) {
         return err;
@@ -426,9 +460,17 @@ pub fn coupdaysnc_fn(args: &[Value]) -> Value {
         Ok(v) => v,
         Err(e) => return e,
     };
+    let pcd = prev_coupon_date(settlement, maturity, frequency);
     let ncd = next_coupon_date(settlement, maturity, frequency);
-    let days = days_between(settlement, ncd, basis);
-    Value::Number(days as f64)
+
+    let days = if basis == 0 {
+        let period_days = coupon_period_days(pcd, ncd, frequency, basis);
+        let elapsed = days_between(pcd, settlement, basis);
+        period_days - elapsed as f64
+    } else {
+        days_between(settlement, ncd, basis) as f64
+    };
+    Value::Number(days)
 }
 
 // ---------------------------------------------------------------------------
@@ -569,7 +611,7 @@ pub fn disc_fn(args: &[Value]) -> Value {
     if settlement >= maturity {
         return Value::Error(ErrorKind::Num);
     }
-    if redemption <= 0.0 {
+    if pr <= 0.0 || redemption <= 0.0 {
         return Value::Error(ErrorKind::Num);
     }
 
@@ -633,7 +675,7 @@ pub fn intrate_fn(args: &[Value]) -> Value {
     if settlement >= maturity {
         return Value::Error(ErrorKind::Num);
     }
-    if investment <= 0.0 {
+    if investment <= 0.0 || redemption <= 0.0 {
         return Value::Error(ErrorKind::Num);
     }
 
@@ -757,23 +799,29 @@ pub fn price_calc(
     };
 
     let yld_f = yld / freq;
-    let a = coupon / (1.0 + yld_f).powf(dsc_e);
+
+    // Accrued interest (dirty − clean adjustment): coupon * A/E
+    // A = days from prev coupon to settlement.
+    // For basis=0,1,4: A+DSC=E by construction so (1-dsc_e) = A/E.
+    // For basis=2,3 (actual/360, actual/365): actual days pcd→settlement +
+    // actual days settlement→ncd ≠ period_days, so compute A explicitly.
+    let days_pcd_to_settlement = days_between(pcd, settlement, basis) as f64;
+    let ai = coupon * days_pcd_to_settlement / period_days;
 
     if (1.0 + yld_f) == 1.0 {
-        // yld = 0 case
+        // yld = 0 case: dirty price is sum of all future cash flows, minus AI
         let coupon_sum = coupon * n;
-        return redemption + coupon_sum - coupon * (1.0 - dsc_e);
+        return redemption + coupon_sum - ai;
     }
 
-    // Price = redemption / (1+yld/f)^(n-1+dsc_e) + sum of coupons
-    let mut price = redemption / (1.0 + yld_f).powf(n - 1.0 + dsc_e);
-
-    // Sum coupon PVs
+    // Dirty price = redemption / (1+yld/f)^(n-1+dsc_e) + sum of coupon PVs
+    let mut dirty = redemption / (1.0 + yld_f).powf(n - 1.0 + dsc_e);
     for k in 1..=(n as i32) {
-        price += coupon / (1.0 + yld_f).powf(k as f64 - 1.0 + dsc_e);
+        dirty += coupon / (1.0 + yld_f).powf(k as f64 - 1.0 + dsc_e);
     }
-    let _ = a;
-    price
+
+    // Clean price = dirty price − accrued interest
+    dirty - ai
 }
 
 // ---------------------------------------------------------------------------
@@ -824,7 +872,7 @@ pub fn pricedisc_fn(args: &[Value]) -> Value {
     if settlement >= maturity {
         return Value::Error(ErrorKind::Num);
     }
-    if redemption <= 0.0 {
+    if discount <= 0.0 || redemption <= 0.0 {
         return Value::Error(ErrorKind::Num);
     }
 
@@ -889,6 +937,9 @@ pub fn pricemat_fn(args: &[Value]) -> Value {
     };
 
     if settlement >= maturity {
+        return Value::Error(ErrorKind::Num);
+    }
+    if rate < 0.0 || yld < 0.0 {
         return Value::Error(ErrorKind::Num);
     }
 
@@ -962,6 +1013,9 @@ pub fn received_fn(args: &[Value]) -> Value {
     if settlement >= maturity {
         return Value::Error(ErrorKind::Num);
     }
+    if investment <= 0.0 || discount <= 0.0 {
+        return Value::Error(ErrorKind::Num);
+    }
 
     let yf = yearfrac(settlement, maturity, basis);
     let denom = 1.0 - discount * yf;
@@ -1019,7 +1073,7 @@ pub fn tbillprice_fn(args: &[Value]) -> Value {
     if settlement >= maturity {
         return Value::Error(ErrorKind::Num);
     }
-    if discount <= 0.0 {
+    if discount <= 0.0 || discount >= 1.0 {
         return Value::Error(ErrorKind::Num);
     }
 
@@ -1074,6 +1128,9 @@ pub fn tbillyield_fn(args: &[Value]) -> Value {
     }
 
     let dsm = tbill_dsm(settlement, maturity);
+    if dsm > 366.0 {
+        return Value::Error(ErrorKind::Num);
+    }
     let result = (100.0 - pr) / pr * 360.0 / dsm;
     if !result.is_finite() {
         return Value::Error(ErrorKind::Num);
@@ -1115,7 +1172,8 @@ pub fn tbilleq_fn(args: &[Value]) -> Value {
     if settlement >= maturity {
         return Value::Error(ErrorKind::Num);
     }
-    if discount <= 0.0 {
+    // discount must be strictly between 0 and 1
+    if discount <= 0.0 || discount >= 1.0 {
         return Value::Error(ErrorKind::Num);
     }
 
@@ -1126,14 +1184,22 @@ pub fn tbilleq_fn(args: &[Value]) -> Value {
     }
 
     let result = if dsm <= 182.0 {
+        // Simple bond-equivalent yield formula
         365.0 * discount / (360.0 - discount * dsm)
     } else {
-        // For >182 days, Google Sheets still uses the simple formula in practice.
-        let denom = 360.0 - discount * dsm;
-        if denom == 0.0 {
+        // Compound formula for >182 days:
+        // y = (-D + sqrt(D² - (2D−1)·(1−1/P))) / (D−0.5)
+        // where D = DSM/365, P = 1 − discount·DSM/360
+        let p = 1.0 - discount * dsm / 360.0;
+        if p <= 0.0 {
             return Value::Error(ErrorKind::Num);
         }
-        365.0 * discount / denom
+        let d = dsm / 365.0;
+        let inside = d * d - (2.0 * d - 1.0) * (1.0 - 1.0 / p);
+        if inside < 0.0 {
+            return Value::Error(ErrorKind::Num);
+        }
+        (-d + inside.sqrt()) / (d - 0.5)
     };
 
     if !result.is_finite() {
@@ -1292,12 +1358,9 @@ pub fn yielddisc_fn(args: &[Value]) -> Value {
     if settlement >= maturity {
         return Value::Error(ErrorKind::Num);
     }
-    if pr <= 0.0 {
+    if pr <= 0.0 || redemption <= 0.0 {
         return Value::Error(ErrorKind::Num);
     }
-    // pr >= redemption means zero or negative yield — allowed (returns 0 or negative), but
-    // let's match Google Sheets: pr >= redemption gives 0 (not NUM), per fixture row11.
-    // The test says YIELDDISC(date,date,100,100) = 0, not #NUM!
 
     let yf = yearfrac(settlement, maturity, basis);
     if yf == 0.0 {
@@ -1366,7 +1429,10 @@ pub fn yieldmat_fn(args: &[Value]) -> Value {
     if settlement >= maturity {
         return Value::Error(ErrorKind::Num);
     }
-    if pr <= 0.0 {
+    if issue >= settlement {
+        return Value::Error(ErrorKind::Num);
+    }
+    if pr <= 0.0 || rate < 0.0 {
         return Value::Error(ErrorKind::Num);
     }
 
