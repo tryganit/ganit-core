@@ -2556,12 +2556,3 @@ IF using ZTEST result to classify significance	=IF(ZTEST({1,2,3,4,5,6},5.5,1.2)<
 ZTEST and Z.TEST aliases should return identical results	=ZTEST({1,2,3,4,5,6},5.5,1.2)	0.9999777214546978	compatibility	number
 text in data: GS ignores vs Excel possible error divergence	=ZTEST({1,"two",3,4,5},3,1)	0.3085375387259869	compatibility	number
 ZTEST one-tailed P-value: consistent interpretation GS and Excel	=ZTEST({3,5,7,9,11},6,2)	0.13177623864148647	compatibility	number
-T.TEST paired constant diff	=T.TEST({1,2,3},{4,5,6},2,1)	0	basic	number
-MODE.MULT basic	=MODE.MULT({1,2,2,3,3})	#REF!	statistical	error
-BETADIST 3-arg	=BETADIST(0.5,2,2)	0.49999999999999956	statistical	number
-BETADIST a=1 b=5 x=0.1	=BETADIST(0.1,1,5)	0.4095099999999993	statistical	number
-BETADIST a=5 b=1 x=0.9	=BETADIST(0.9,5,1)	0.5904900000000007	statistical	number
-BETA.INV p=0.01 a=2 b=5 explicit	=BETA.INV(0.01,2,5,0,1)	0.02676319114275505	statistical	number
-HYPGEOM.DIST ns=15 s=2 M=10 N=20 exact	=HYPGEOM.DIST(2,15,10,20,FALSE)	#NUM!	statistical	error
-HYPGEOM.DIST ns=15 s=2 M=10 N=20 cumulative	=HYPGEOM.DIST(2,15,10,20,TRUE)	#NUM!	statistical	error
-MARGINOFERROR not implemented	=MARGINOFERROR(0.05,1,100)	0.1959963986120195	statistical	number

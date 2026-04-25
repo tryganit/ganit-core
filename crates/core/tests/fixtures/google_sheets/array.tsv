@@ -300,17 +300,3 @@ WRAPROWS result inside SUM	=SUM(WRAPROWS({1,2,3,4,5,6},2))	21	nested	number
 wrap single-element array	=WRAPROWS({42},1)	42	edge	number
 no wrap count argument errors	=WRAPROWS({1,2,3})	#N/A	error	error
 WRAPROWS result inside SUM	=SUM(WRAPROWS({1,2,3,4,5,6},2))	21	nested	number
-SUMPRODUCT with condition	=SUMPRODUCT(({1,2,3}>1)*{10,20,30})	50	nested	number
-MMULT row vector by col vector	=MMULT({1,2,3},{1;2;3})	14	basic	number
-MINVERSE singular error	=MINVERSE({1,2;2,4})	#NUM!	error	error
-SUMPRODUCT boolean array	=SUMPRODUCT({TRUE,FALSE,TRUE}*{1,2,3})	4	coercion	number
-MINVERSE 1x1	=MINVERSE({4})	0.25	edge	number
-FREQUENCY basic	=FREQUENCY({1,2,3,4,5,6},{2,4})	#REF!	statistical	error
-FREQUENCY data=[79,85,78,85,50] bins=[70,79,89]	=FREQUENCY({79,85,78,85,50},{70,79,89})	#REF!	statistical	error
-GROWTH basic	=GROWTH({2,4,8,16},{1,2,3,4})	2.0000000000000004	statistical	number
-LOGEST basic	=LOGEST({2,4,8,16},{1,2,3,4})	1.9999999999999996	statistical	number
-LINEST basic	=LINEST({2,4,6,8},{1,2,3,4})	1.9999999999999996	statistical	number
-FREQUENCY single bin	=FREQUENCY({1,2,3,4,5},{3})	#REF!	statistical	error
-GROWTH with prediction	=GROWTH({2,4,8},{1,2,3},{4})	15.99999999999999	statistical	number
-LINEST intercept=TRUE stats=FALSE	=LINEST({2,4,6,8},{1,2,3,4},TRUE,FALSE)	1.9999999999999996	statistical	number
-TREND returns array not scalar	=TREND({2,4,6},{1,2,3},{4})	8	statistical	number

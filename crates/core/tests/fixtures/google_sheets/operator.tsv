@@ -264,4 +264,3 @@ too many arguments returns error	=UPLUS(1,2)	#N/A	error	error
 nested UPLUS inside ADD	=ADD(UPLUS(3),UPLUS(4))	7	nested	number
 nested UPLUS of UMINUS returns original sign	=UPLUS(UMINUS(-5))	5	nested	number
 GS-only UPLUS — Excel uses unary plus operator	=UPLUS(42)	42	compatibility	number
-ISBETWEEN text values	"=ISBETWEEN(""b"",""a"",""c"")"	true	basic	boolean

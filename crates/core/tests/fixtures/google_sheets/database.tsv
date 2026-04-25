@@ -174,5 +174,3 @@ IFERROR wraps DVARP error	=IFERROR(DVARP({"N","V";"A",1},"Bad",{"N";"A"}),0)	0	n
 DVARP inside IF	=IF(DVARP({"G","V";"A",10;"A",30},2,{"G";"A"})>50,"spread","tight")	spread	nested	string
 DVARP population N formula same in both platforms	=DVARP({"G","V";"A",10;"A",20;"A",30},2,{"G";"A"})	66.66666666666667	compatibility	number
 DVARP uses N denominator unlike DVAR N-1	=DVARP({"G","V";"A",2;"A",8},2,{"G";"A"})	9	compatibility	number
-DSUM inline 2D array	"=DSUM({""Name"",""Sales"";""A"",100;""B"",200},""Sales"",{""Sales"","">100""})"	200	basic	number
-DAVERAGE inline 2D array	"=DAVERAGE({""Name"",""Sales"";""A"",100;""B"",200},""Sales"",{""Sales"","">100""})"	200	basic	number

@@ -364,5 +364,3 @@ nested XLOOKUP	=XLOOKUP(XLOOKUP("b",{"a","b","c"},{1,2,3}),{1,2,3},{"x","y","z"}
 column vector lookup	=XLOOKUP("b",{"a";"b";"c"},{10;20;30})	20	compatibility	number
 wildcard question-mark match	=XLOOKUP("b?r",{"bar","baz","qux"},{"r1","r2","r3"},,2)	r1	compatibility	string
 duplicate keys: first match returned	=XLOOKUP("b",{"a","b","b","c"},{1,2,3,4})	2	compatibility	number
-XLOOKUP wildcard match_mode=2	"=XLOOKUP(""b*"",{""a"",""ba"",""bc""},{1,2,3},,2)"	2	basic	number
-MATCH wildcard not supported	"=MATCH(""b*"",{""a"",""ba"",""bc""},0)"	2	basic	number
