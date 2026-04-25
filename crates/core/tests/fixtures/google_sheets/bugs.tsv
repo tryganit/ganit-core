@@ -1432,3 +1432,9 @@ rate passed as percentage string instead of decimal	"=CUMIPMT(""10%"",10,1000,1,
 XNPV: empty string in cash flow array — numeric coercion differs by platform	"=XNPV(0.08,{-1000,"""",700},{DATE(2020,1,1),DATE(2020,7,1),DATE(2021,1,1)})"	#VALUE!	compatibility	error
 Issue date equal to maturity returns #NUM!	=ACCRINTM(DATE(2010,6,30),DATE(2010,6,30),0.05,100)	0	error	number
 SYD with negative text number for salvage	"=SYD(1000,""-100"",5,1)"	#NUM!	coercion	error
+nested verify IMCOTH = 1/IMTANH	"=IMCOTH(""2+i"")"	0.984329226458191-0.0327977555337526i	nested	string
+tangent of 2-2i	"=IMTAN(""2-2i"")"	-0.0283929528682323-1.02383559457047i	official	string
+nested IMTAN of COMPLEX	=IMTAN(COMPLEX(2,2))	-0.0283929528682323+1.02383559457047i	nested	string
+tanh of large real approaches 1	"=IMTANH(""10"")"	0.999999995877693	edge	string
+nested compare with IMSINH/IMCOSH ratio	"=IMTANH(""2+i"")"	1.01479361614663+0.0338128260798967i	nested	string
+tanh of large real approaches 1	"=IMTANH(""10"")"	0.999999995877693	edge	string

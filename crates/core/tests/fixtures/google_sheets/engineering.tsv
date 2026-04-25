@@ -857,9 +857,3 @@ IMSECH basic	"=IMSECH(""1+i"")"	0.498337030555187-0.591083841721045i	engineering
 IMCOTH returns number not complex string	"=IMCOTH(""1"")"	1.3130352854993315	engineering	string
 IMLOG returns number not complex string	"=IMLOG(""1"",2)"	0	engineering	string
 IMTANH returns number not complex string	"=IMTANH(""1"")"	0.7615941559557649	engineering	string
-nested verify IMCOTH = 1/IMTANH	"=IMCOTH(""2+i"")"	0.984329226458191-0.0327977555337526i	nested	string
-tangent of 2-2i	"=IMTAN(""2-2i"")"	-0.0283929528682323-1.02383559457047i	official	string
-nested IMTAN of COMPLEX	=IMTAN(COMPLEX(2,2))	-0.0283929528682323+1.02383559457047i	nested	string
-tanh of large real approaches 1	"=IMTANH(""10"")"	0.999999995877693	edge	string
-nested compare with IMSINH/IMCOSH ratio	"=IMTANH(""2+i"")"	1.01479361614663+0.0338128260798967i	nested	string
-tanh of large real approaches 1	"=IMTANH(""10"")"	0.999999995877693	edge	string
