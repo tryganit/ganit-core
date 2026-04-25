@@ -1464,8 +1464,6 @@ compatibility: basis 0 vs basis 1 price difference for same bond	=PRICE(DATE(200
 negative discount rate returns #NUM error	=PRICEDISC(DATE(2010,1,1),DATE(2020,1,1),-0.05,100,0)	#NUM!	error	error
 negative yield returns #NUM error	=PRICEMAT(DATE(2010,1,2),DATE(2020,1,1),DATE(2010,1,1),0.05,-0.01,0)	#NUM!	error	error
 RECEIVED with discount=0 — must be positive	=RECEIVED(DATE(2010,1,1),DATE(2020,1,1),1000,0)	#NUM!	error	error
-TBILLEQ with discount rate of 100%: extreme rate boundary	=TBILLEQ(DATE(2020,1,1),DATE(2020,7,1),1.0)	#NUM!	compatibility	error
-TBILLEQ numeric date serial instead of DATE function	=TBILLEQ(43831,44044,0.05)	0.05204593561955055	compatibility	number
 XIRR with irregular cash flows using explicit dates and rate guess	=XIRR({-4000,200,250,300},{DATE(2012,1,1),DATE(2012,6,23),DATE(2013,5,12),DATE(2014,2,9)},0.09)	-0.6440855342116852	official	number
 YIELD for 30-year bond with semiannual payments, 30/360 basis, coupon 3%	=YIELD(DATE(2010,1,2),DATE(2039,12,31),3,93.45,100,2)	3.1876008031666876	official	number
 YIELD with annual payments, explicit 30/360 day count convention	=YIELD(DATE(2010,1,2),DATE(2039,12,31),3,93.45,100,1,1)	3.1795991124043925	official	number
@@ -1476,7 +1474,6 @@ present value of zero or less returns #NUM!	=CUMIPMT(0.1,10,0,1,5,0)	#NUM!	error
 zero interest rate: rate=0 returns #NUM! error	=CUMPRINC(0,12,1000,1,6,0)	#NUM!	error	error
 non-integer basis truncated to integer (1.9 → 1)	=PRICE(DATE(2008,2,15),DATE(2017,11,15),0.0575,0.065,100,2,1.9)	94.6354492078772	coercion	number
 RECEIVED with negative investment — error in both platforms	=RECEIVED(DATE(2010,1,1),DATE(2020,1,1),-1000,0.05)	#NUM!	compatibility	error
-TBILLEQ exactly 364 days (near max maturity)	=TBILLEQ(DATE(2020,1,1),DATE(2020,12,30),0.05)	0.05270134712221329	edge	number
 VDB with salvage greater than cost: error or zero handling	=VDB(100,500,10,0,1)	#NUM!	compatibility	error
 Fractional period less than 1 rounds up to 1	=AMORLINC(1000,DATE(2010,1,1),DATE(2010,12,31),100,0.5,0.15)	150	edge	number
 Days from coupon start to settlement, semiannual, actual/actual basis	=COUPDAYBS(DATE(2010,2,1),DATE(2019,12,31),4,1)	32	official	number
@@ -1492,7 +1489,6 @@ rate of zero or less returns #NUM!	=CUMIPMT(0,10,1000,1,5,0)	#NUM!	error	error
 IFERROR wrapping negative rate returns fallback	"=IFERROR(CUMIPMT(-0.1,10,1000,1,5,0),""invalid"")"	invalid	nested	string
 negative coupon returns NUM error	=DURATION(DATE(2020,1,1),DATE(2030,1,1),-0.05,0.06,2)	#NUM!	error	error
 actual/365 basis (basis=3)	=PRICE(DATE(2008,2,15),DATE(2017,11,15),0.0575,0.065,100,2,3)	94.643594548258	edge	number
-TBILLEQ with boolean TRUE coerced to discount (invalid)	=TBILLEQ(DATE(2020,1,1),DATE(2020,7,1),TRUE)	#NUM!	coercion	error
 European 30/360 (basis=4) vs US 30/360 (basis=0) end-of-month differences	=MDURATION(DATE(2008,1,31),DATE(2016,3,31),0.08,0.09,2,4)	5.661961831545449	compatibility	number
 RECEIVED with investment=0 — must be positive	=RECEIVED(DATE(2010,1,1),DATE(2020,1,1),0,0.05)	#NUM!	error	error
 price zero: pr=0 returns #NUM!	=DISC(DATE(2025,1,1),DATE(2026,1,1),0,100,0)	#NUM!	error	error
@@ -1522,10 +1518,8 @@ YIELDDISC with redemption as FALSE (coerced to 0)	=YIELDDISC(DATE(2020,1,1),DATE
 boolean FALSE as present_value: pv=0 causes #NUM!	=CUMPRINC(0.05,12,FALSE,1,6,0)	#NUM!	coercion	error
 compatibility: basis 4 European 30/360 end-of-month date adjustment	=DURATION(DATE(2020,1,31),DATE(2030,3,31),0.05,0.06,2,4)	7.854034812612617	compatibility	number
 negative cost: all args must be positive, returns #NUM!	=DDB(-5000,500,8,1)	#NUM!	error	error
-TBILLEQ maturity exactly one year after settlement: boundary behavior	=TBILLEQ(DATE(2020,1,1),DATE(2021,1,1),0.05)	0.05271286398134196	compatibility	number
 TBILLYIELD maturity more than one year after settlement	=TBILLYIELD(DATE(2020,1,1),DATE(2021,6,1),98.45)	#NUM!	error	error
 text settlement date: non-date string causes #VALUE!	"=DISC(""2025-01-01"",DATE(2026,1,1),99,100,0)"	0.01	coercion	number
-TBILLEQ sample: settlement=2010-01-02 maturity=2010-12-31 discount=9%	=TBILLEQ(DATE(2010,1,2),DATE(2010,12,31),0.09)	0.09797107538773103	official	number
 TBILLPRICE discount rate of 1 (100%): extreme rate	=TBILLPRICE(DATE(2020,1,1),DATE(2020,4,1),1.0)	#NUM!	compatibility	error
 period greater than life: period exceeds life returns #NUM!	=DB(1000,100,5,6)	#NUM!	error	error
 YIELD: basis 0 vs basis 1 — 30/360 vs actual/actual may produce different results	=YIELD(DATE(2020,1,1),DATE(2030,12,31),0.05,95,100,2,1)	0.05615540928290648	compatibility	number

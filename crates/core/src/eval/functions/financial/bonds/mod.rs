@@ -1115,7 +1115,8 @@ pub fn tbilleq_fn(args: &[Value]) -> Value {
     if settlement >= maturity {
         return Value::Error(ErrorKind::Num);
     }
-    if discount <= 0.0 {
+    // discount must be strictly between 0 and 1
+    if discount <= 0.0 || discount >= 1.0 {
         return Value::Error(ErrorKind::Num);
     }
 
@@ -1126,14 +1127,22 @@ pub fn tbilleq_fn(args: &[Value]) -> Value {
     }
 
     let result = if dsm <= 182.0 {
+        // Simple bond-equivalent yield formula
         365.0 * discount / (360.0 - discount * dsm)
     } else {
-        // For >182 days, Google Sheets still uses the simple formula in practice.
-        let denom = 360.0 - discount * dsm;
-        if denom == 0.0 {
+        // Compound formula for >182 days:
+        // y = (-D + sqrt(D² - (2D−1)·(1−1/P))) / (D−0.5)
+        // where D = DSM/365, P = 1 − discount·DSM/360
+        let p = 1.0 - discount * dsm / 360.0;
+        if p <= 0.0 {
             return Value::Error(ErrorKind::Num);
         }
-        365.0 * discount / denom
+        let d = dsm / 365.0;
+        let inside = d * d - (2.0 * d - 1.0) * (1.0 - 1.0 / p);
+        if inside < 0.0 {
+            return Value::Error(ErrorKind::Num);
+        }
+        (-d + inside.sqrt()) / (d - 0.5)
     };
 
     if !result.is_finite() {
